@@ -15,7 +15,9 @@
   --line:#D9DEDF; --line2:#C4CBCE; --accent:#1F5E7A; --accentInk:#FFFFFF; --accentSoft:#DCEAF0;
   --canvas:#FAFBFA;
   --tV:#2E9E4F; --tA:#E0A800; --tR:#D5403A;
-  --s-sin_pedir:#BFC6CA; --s-medir:#8A6FC4; --s-pedida:#8FA3B5; --s-en_obra:#2F6FB3; --s-instalada:#0B5D3B;
+  --s-instalada:#15803D; --s-en_obra:#2F6FB3; --s-en_obra-bg:#DCEAF8; --s-pedida:#56687A; --s-pedida-bg:#FFFFFF; --s-medir:#7B4FC9; --s-sin_pedir:#9AA5AD; --s-sin_pedir-bg:#EEF0F1;
+  --p-instalada:#15803D; --p-en_obra:#2F6FB3; --p-pedida:#E39410; --p-medir:#7B4FC9; --p-sin_pedir:#E3E7EA;
+  --wood:#B07A43; --wood2:#8A5A2B; --film:#9CC7E6;
   --s-inc_detectada:#D81B60; --s-inc_pale:#EF7D1A; --s-inc_macrif:#A0522D; --s-inc_reparar:#00838F; --s-descartada:#3A3F44;
   --ok:#0B6B45; --warn:#B9620B; --bad:#C4204F; --info:#1F5E7A;
   --okSoft:#DDEFE6; --warnSoft:#FBEBD9; --badSoft:#F8DDE6; --infoSoft:#DCEAF0;
@@ -28,7 +30,8 @@
     --bg:#131719; --panel:#1B2124; --panel2:#20272A; --ink:#E4E9EA; --ink2:#A7B3B8; --ink3:#728087;
     --line:#2D3539; --line2:#3B4549; --accent:#6FB3D1; --accentInk:#0E1A20; --accentSoft:#1E3440;
     --canvas:#161B1D;
-    --s-sin_pedir:#4A5359; --s-pedida:#7389A0; --s-en_obra:#4F8FD6; --s-instalada:#2FA36B; --s-descartada:#8A9197; --s-inc_macrif:#C0703F; --s-inc_reparar:#20A7B5;
+    --s-sin_pedir:#6C777E; --s-sin_pedir-bg:#262D30; --s-pedida:#9DB0C2; --s-pedida-bg:#1B2124; --s-en_obra:#5B9BE0; --s-en_obra-bg:#1F3347; --s-instalada:#2FB36A; --s-medir:#A07BE6;
+    --p-instalada:#2FB36A; --p-en_obra:#4F8FD6; --p-pedida:#E8A33A; --p-medir:#A07BE6; --p-sin_pedir:#3A4448; --s-descartada:#8A9197; --s-inc_macrif:#C0703F; --s-inc_reparar:#20A7B5;
     --ok:#3FBF8A; --warn:#F0A04B; --bad:#F06292; --info:#6FB3D1;
     --okSoft:#17332A; --warnSoft:#3A2A17; --badSoft:#3A1C27; --infoSoft:#1E3440;
   }
@@ -92,8 +95,9 @@ main.fit.multi{padding-bottom:84px}
 input[type=text],input[type=date],input[type=number],input[type=search],select,textarea{border:1px solid var(--line2);background:var(--panel);border-radius:5px;padding:5px 8px;min-width:0}
 textarea{width:100%;resize:vertical}
 .pill{display:inline-flex;align-items:center;gap:5px;padding:2px 9px 2px 6px;border-radius:12px;font-size:13px;font-weight:600;white-space:nowrap;border:1px solid transparent;color:#fff;background:var(--c)}
-.pill.hatch{color:var(--ink);background:repeating-linear-gradient(135deg,color-mix(in srgb,var(--c) 22%,var(--panel)) 0 4px,var(--panel) 4px 8px);border-color:var(--c)}
-.pill.hatch .ico{color:var(--c)}
+.pill.pale{color:var(--ink);background:var(--bgc);border-color:var(--c)}
+.pill.outline{color:var(--ink);background:var(--bgc);border:1.5px dashed var(--c)}
+.pill.pale .ico,.pill.outline .ico{color:var(--c)}
 .tdot{display:inline-block;width:11px;height:11px;border-radius:50%;vertical-align:middle;flex:none;background:var(--c)}
 .tchip{display:inline-flex;align-items:center;gap:4px;font-weight:700;font-variant-numeric:tabular-nums}
 .chip{display:inline-flex;align-items:center;gap:4px;padding:1px 6px;border-radius:4px;font-size:12px;font-weight:600;white-space:nowrap}
@@ -118,7 +122,8 @@ textarea{width:100%;resize:vertical}
 .pc{cursor:pointer}
 .pc polygon.body{stroke-width:1.6;vector-effect:non-scaling-stroke}
 .pc polygon.hit{fill:transparent;stroke:transparent;stroke-width:12;vector-effect:non-scaling-stroke}
-.pc.inst polygon.body{stroke:var(--ink)!important;stroke-width:2.2}
+.pc.inst polygon.body{stroke:#0B3D1F!important;stroke-width:1.6}
+.pc .tdotS{stroke:var(--canvas);stroke-width:.05}
 .pc.focus polygon.body{stroke:var(--accent)!important;stroke-width:4.5}
 .pc.sel polygon.body{stroke:var(--accent)!important;stroke-width:2.5}
 .pc polygon.halo{fill:var(--accent);stroke:var(--accent);stroke-width:9;stroke-linejoin:round;vector-effect:non-scaling-stroke;opacity:.9}
@@ -139,7 +144,7 @@ textarea{width:100%;resize:vertical}
 .stat3 b .ico{width:20px;height:20px}
 .stat3 small{font-size:12px}
 .stat3 .yes{background:var(--s-instalada);border-color:var(--s-instalada);color:#fff}
-.stat3 .no{background:repeating-linear-gradient(135deg,var(--panel2) 0 5px,var(--panel) 5px 10px)}
+.stat3 .no{background:var(--s-en_obra-bg);border-color:var(--s-en_obra);color:var(--ink)}
 .stat3 .inc{background:var(--badSoft);border-color:var(--s-inc_detectada);color:var(--bad)}
 .tipos3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}
 .tipos3 button{border:1px solid var(--line);border-left:6px solid var(--c);border-radius:5px;padding:6px 8px;background:var(--panel);text-align:left}
@@ -151,8 +156,9 @@ textarea{width:100%;resize:vertical}
 .lg{display:grid;grid-template-columns:22px 1fr auto;gap:8px;align-items:center;padding:3px 6px;border-radius:4px;border:0;background:none;text-align:left;width:100%}
 .lg:hover{background:var(--panel2)}
 .lg[aria-pressed="true"]{background:var(--accentSoft)}
-.sw{width:22px;height:18px;border-radius:4px;display:flex;align-items:center;justify-content:center;background:var(--c);color:#fff}
-.sw.h{background:repeating-linear-gradient(135deg,var(--c) 0 3px,var(--canvas) 3px 6px);box-shadow:inset 0 0 0 1.5px var(--c)}
+.sw{width:24px;height:18px;border-radius:4px;display:flex;align-items:center;justify-content:center;background:var(--c);color:#fff}
+.sw.pale{background:var(--bgc);box-shadow:inset 0 0 0 1.5px var(--c);color:var(--c)}
+.sw.outline{background:var(--bgc);border:1.5px dashed var(--c);color:var(--c)}
 .sw .ico{width:13px;height:13px;stroke-width:2.8}
 .sw.badge{background:var(--canvas);box-shadow:inset 0 0 0 1.5px var(--line2)}
 .sw.badge i{width:15px;height:15px;border-radius:50%;background:var(--c);display:flex;align-items:center;justify-content:center;color:#fff}
@@ -162,8 +168,9 @@ textarea{width:100%;resize:vertical}
 .piecehead{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
 .piecehead .code{font-family:var(--mono);font-size:22px;font-weight:600;letter-spacing:-.02em;display:flex;align-items:center;gap:8px}
 .bigstate{display:flex;align-items:center;gap:10px;padding:9px 11px;border-radius:6px;margin:10px 0;background:var(--c);color:#fff;font-weight:700;font-size:16px}
-.bigstate.hatch{background:repeating-linear-gradient(135deg,color-mix(in srgb,var(--c) 18%,var(--panel)) 0 6px,var(--panel) 6px 12px);color:var(--ink);box-shadow:inset 0 0 0 2px var(--c)}
-.bigstate.hatch .ico{color:var(--c)}
+.bigstate.pale,.bigstate.outline{background:var(--bgc);color:var(--ink);box-shadow:inset 0 0 0 2px var(--c)}
+.bigstate.outline{box-shadow:none;border:2px dashed var(--c)}
+.bigstate.pale .ico,.bigstate.outline .ico{color:var(--c)}
 .bigstate .ico{width:22px;height:22px}
 .bigstate small{font-weight:500;font-size:13px;opacity:.9;display:block}
 .actions{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px}
@@ -251,6 +258,25 @@ details.docrow[open] summary{background:var(--panel2)}
 .bigstats b{display:block;font-size:28px;line-height:1.05;font-variant-numeric:tabular-nums}
 .bigstats small{color:var(--ink2);font-size:13px}
 .miss{display:inline-flex;gap:9px;align-items:center}
+
+/* palés */
+.palgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:10px}
+.palcard{border:1px solid var(--line);border-radius:8px;background:var(--panel);padding:8px 10px 10px;display:flex;flex-direction:column;gap:3px;text-align:left;cursor:pointer;position:relative}
+.palcard:hover{border-color:var(--ink3);box-shadow:0 2px 10px rgba(0,0,0,.06)}
+.palcard.cerrado{border-top:5px solid var(--film)}
+.palcard.abierto{border-top:5px solid var(--s-en_obra)}
+.palcard.dev{border-top:5px solid var(--s-inc_pale);background:color-mix(in srgb,var(--s-inc_pale) 6%,var(--panel))}
+.palcard.vacio{opacity:.6}
+.palcard svg.pal{width:100%;height:auto;display:block}
+.palcard .pn{font-weight:700;font-size:16px;display:flex;justify-content:space-between;align-items:baseline;gap:6px}
+.palcard .cnt{font-size:24px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1}
+.palcard .cnt small{font-size:13px;color:var(--ink3);font-weight:600}
+.palstat{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+.palstat button{border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:var(--panel);display:flex;align-items:center;gap:12px;text-align:left}
+.palstat button[aria-pressed="true"]{outline:3px solid var(--accent);outline-offset:-1px}
+.palstat svg{width:64px;flex:none}
+.palstat b{font-size:28px;line-height:1;font-variant-numeric:tabular-nums;display:block}
+.palhero{max-width:300px;margin:4px auto 8px}
 
 /* calendar */
 .calhead{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
@@ -373,19 +399,22 @@ const GEO={"B01-P1-19":["V","222.96,-214.05 221.58,-213.55 221.83,-212.86 223.21
 /* =================== constantes =================== */
 const TIPOS={V:{n:'Verde',d:'Curva en sección · encuentros a 90º'},A:{n:'Amarilla',d:'Curva en sección · encuentros ≠ 90º'},R:{n:'Roja',d:'Curva en sección y en planta'}};
 const PLANTAS={P1:'Planta primera',P2:'Planta segunda',PS:'Planta solarium',PC:'Planta cubierta'};
-// estado de pieza: [clave, nombre, icono, sólido?]
+// estado de pieza: [clave, nombre, icono, estilo] estilo: solid | pale | outline
 const EST=[
-  ['instalada','Instalada','check',true],
-  ['en_obra','En obra, sin instalar',null,false],
-  ['pedida','Pedida, pendiente de llegar','clock',false],
-  ['medir','Pendiente de medir en obra','ruler',false],
-  ['sin_pedir','Sin pedir',null,false],
-  ['inc_detectada','Incidencia sin decidir','alert',true],
-  ['inc_pale','En palé, pendiente de retirar','pallet',true],
-  ['inc_macrif','Retirada · en Macrif','truck',true],
-  ['inc_reparar','Reparar en obra','wrench',true],
-  ['descartada','Descartada','x',true]];
-const ESTM=Object.fromEntries(EST.map(e=>[e[0],{n:e[1],ico:e[2],solid:e[3]}]));
+  ['instalada','Instalada','check','solid'],
+  ['en_obra','En obra, sin instalar',null,'pale'],
+  ['pedida','Pedida, pendiente de llegar','clock','outline'],
+  ['medir','Pendiente de medir en obra','ruler','solid'],
+  ['sin_pedir','Sin pedir (sin marcar)',null,'outline'],
+  ['inc_detectada','Incidencia sin decidir','alert','solid'],
+  ['inc_pale','En palé de devolución','pallet','solid'],
+  ['inc_macrif','Enviada a Macrif','truck','solid'],
+  ['inc_reparar','Reparar en obra','wrench','solid'],
+  ['descartada','Descartada','x','solid']];
+const ESTM=Object.fromEntries(EST.map(e=>[e[0],{n:e[1],ico:e[2],st:e[3],solid:e[3]==='solid'}]));
+// modo «Pedidos» del plano
+const PEDM=[['instalada','Instalada','check'],['en_obra','Llegada a obra',null],['pedida','Pedida, sin llegar','clock'],['medir','Falta medir en obra','ruler'],['sin_pedir','Sin pedir',null]];
+const pedKey=p=>p.inst?'instalada':p.ent.length?'en_obra':p.peds.length?'pedida':p.medir?'medir':'sin_pedir';
 const INC_TIPOS={mecanizado:'Mal mecanizada (Macrif)',rotura:'Rota en transporte',obra:'Dañada en obra',otra:'Otra'};
 const DESTINOS={'':'Sin decidir',macrif:'Devolver a Macrif (palé → camión)',obra:'Reparar en obra',descartar:'Descartar'};
 const FASES={detectada:'Detectada',pale:'En palé',retirada:'Retirada · en Macrif',vuelta:'Vuelta a obra',reparar:'Reparar en obra',reparada:'Reparada',descartada:'Descartada'};
@@ -406,15 +435,16 @@ const ico=(n,cls='')=>n?`<svg class="ico ${cls}" aria-hidden="true"><use href="#
 const estColor=e=>`var(--s-${e})`;
 const tipoColor=t=>t?`var(--t${t})`:'var(--ink3)';
 const tdot=t=>`<span class="tdot" style="--c:${tipoColor(t)}" title="${TIPOS[t]?.n||''}"></span>`;
-function pillE(p){const m=ESTM[p.estado];const extra=p.estado==='instalada'?' '+fd(p.inst):(p.inst&&p.estado!=='instalada'?' · instalada':'');return `<span class="pill ${m.solid?'':'hatch'}" style="--c:${estColor(p.estado)}">${ico(m.ico||'box')}${m.n}${extra}</span>`}
+function pillE(p){const m=ESTM[p.estado];const extra=p.estado==='instalada'?' '+fd(p.inst):(p.inst&&p.estado!=='instalada'?' · instalada':'');return `<span class="pill ${m.st}" style="--c:${estColor(p.estado)};--bgc:var(--s-${p.estado}-bg,var(--panel))">${ico(m.ico||'box')}${m.n}${extra}</span>`}
 function diasNat(desde){return Math.max(0,Math.round((new Date(today())-new Date(desde))/864e5))}
 function diasLab(desde){const d=new Date(desde+'T12:00:00'),h=new Date(today()+'T12:00:00');let n=0;d.setDate(d.getDate()+1);while(d<=h){const w=d.getDay();if(w>0&&w<6)n++;d.setDate(d.getDate()+1)}return n}
 function safeId(s){return String(s).replace(/[^A-Za-z0-9_\-.~:@+]/g,'_')}
 
 let db=null, downloads=null, FOTOS=null;
-const S={bloques:{},albs:{},facts:{},peds:{},rets:{},cfg:null,loaded:{b:false}};
+const S={bloques:{},albs:{},facts:{},peds:{},rets:{},pales:{},cfg:null,loaded:{b:false}};
 const UI={tab:'plano',planta:'P1',bloque:'B01',mode:'estado',show:'all',tipos:new Set(['V','A','R']),
   multi:false,range:false,sel:new Set(),focus:null,anchor:null,instDate:today(),bulkInc:false,
+  paleF:'all',drawerPale:null,paleSel:new Set(),
   tf:{q:'',estado:'',bloque:'',planta:'',tipo:'',fact:''},rep:{desde:'',hasta:today()},cal:null,drawer:null,vb:null,newPed:null,retForm:null};
 try{const s=JSON.parse(localStorage.getItem('sky-ui2')||'{}');['tab','planta','bloque','mode'].forEach(k=>{if(s[k])UI[k]=s[k]})}catch(e){}
 function saveUI(){try{localStorage.setItem('sky-ui2',JSON.stringify({tab:UI.tab,planta:UI.planta,bloque:UI.bloque,mode:UI.mode}))}catch(e){}}
@@ -444,7 +474,7 @@ function incFase(p,i){
 function stripInc(i){const o={...i};for(const k of Object.keys(o))if(k.startsWith('_'))delete o[k];delete o.accion;delete o.fechaEnvio;delete o.resuelta;delete o.pedidoEx;if(o.tipoInc){o.tipo=o.tipoInc;delete o.tipoInc}return o}
 
 /* =================== derivación =================== */
-let P={}, LIST=[], ALERTS=[], MACHI={}, PEDS=[];
+let P={}, LIST=[], ALERTS=[], MACHI={}, PEDS=[], PALES=[], DEVS=[];
 function parseId(id){const [b,p,n]=id.split('-');return {bl:b,pl:p,n}}
 function derive(){
   P={};
@@ -489,7 +519,43 @@ function derive(){
     const tot={V:0,A:0,R:0};lineasX.forEach(l=>{const c=l.c||(l.pz&&l.pz.color);if(tot[c]!=null)tot[c]++});
     return {...d,lineasX,llegadas:lineasX.length-pend.length,pend:pend.length,pendL:pend,faltan,tot,dn:diasNat(d.fecha),dl:diasLab(d.fecha)};
   });
+  buildPales(albs);
   buildAlerts(albs,facts);
+}
+function buildPales(albs){
+  const M={};
+  for(const a of albs){if(a.sinAlbaran)continue;for(const l of a.lineas||[]){
+    const key=l.pale!=null?`${a.fecha}-${l.pale}`:`${a.fecha}-${a.num}`;
+    const g=M[key]=M[key]||{key,fecha:a.fecha,pale:l.pale,albs:new Set(),lineas:[]};g.albs.add(a.num);g.lineas.push(l.p);
+  }}
+  PALES=Object.values(M).map(g=>{
+    const ov=S.pales['in_'+safeId(g.key)]||{};
+    const items=g.lineas.map(id=>{const p=P[id];if(!p)return null;
+      const k=p.ent.map(e=>(e.pale!=null?`${e.fecha}-${e.pale}`:`${e.fecha}-${e.doc}`)).lastIndexOf(g.key);
+      const latest=k===p.ent.length-1;const e=p.ent[k];
+      let where='palé';
+      if(!latest)where='volvió en otra entrega';
+      else if(p.inst)where='instalada';
+      else if(p.open&&['pale','retirada'].includes(p.open._fase)&&(p.open.fecha||'')>=e.fecha)where='devolución';
+      else if(p.estado==='descartada')where='descartada';
+      return {p,e,on:where==='palé',where};
+    }).filter(Boolean);
+    const rest=items.filter(x=>x.on);
+    const cnt={V:0,A:0,R:0};rest.forEach(x=>cnt[x.p.color]!=null&&cnt[x.p.color]++);
+    const peds=[...new Set(items.map(x=>x.p.ped).filter(Boolean))];
+    const vuelta=items.some(x=>x.e&&x.e.vuelta);
+    let st=ov.vaciado||!rest.length?'vacio':(ov.abierto||rest.length<items.length)?'abierto':'cerrado';
+    return {...g,albs:[...g.albs],items,rest,cnt,total:items.length,st,ov,peds,vuelta,docId:'in_'+safeId(g.key)};
+  }).sort((a,b)=>(b.fecha||'').localeCompare(a.fecha||'')||(b.pale||0)-(a.pale||0));
+  // palés de devolución
+  const devDocs=Object.entries(S.pales).filter(([,d])=>d.tipo==='dev').map(([id,d])=>({id,...d})).sort((a,b)=>(a.num||0)-(b.num||0));
+  const byId=Object.fromEntries(devDocs.map(d=>[d.id,{...d,items:[]}]));
+  const loose={id:null,num:null,virtual:true,items:[]};
+  for(const p of LIST)for(const i of p.incs){
+    if(i.paleDev&&byId[i.paleDev]){const d=byId[i.paleDev];if(d.enviado?(i.fechaRetirada===d.enviado):i._fase==='pale')d.items.push({p,i})}
+    else if(i._fase==='pale')loose.items.push({p,i});
+  }
+  DEVS=Object.values(byId);if(loose.items.length)DEVS.unshift(loose);
 }
 function buildAlerts(albs,facts){
   const A=[];const add=(sev,t,d,codes)=>{if(codes.length)A.push({sev,t,d,codes})};
@@ -532,8 +598,9 @@ function incsFor(p){return p.incs.map(stripInc)}
 /* =================== shell =================== */
 function kpis(){
   const n=LIST.length, ins=LIST.filter(p=>p.inst).length, ob=LIST.filter(p=>p.estado==='en_obra').length, inc=LIST.filter(p=>p.open).length, pale=LIST.filter(p=>p.estado==='inc_pale').length;
-  $('#kpis').innerHTML=[['check',ins,'instaladas','--s-instalada'],['box',ob,'en obra sin instalar','--s-en_obra'],['alert',inc,'incidencias','--s-inc_detectada'],['pallet',pale,'en palé','--s-inc_pale']].map(([i,b,s,c])=>`<div class="kpi" style="color:var(${c})">${ico(i)}<b>${b}</b><span>${s}</span></div>`).join('')+`<div class="kpi"><b>${n}</b><span>piezas<br>dibujadas</span></div>`;
-  const tabs=[['plano','Plano'],['piezas','Piezas'],['pedidos','Pedidos'],['incidencias','Incidencias',inc],['rendimiento','Rendimiento'],['macrif','Macrif',ALERTS.filter(a=>a.sev!=='info').length]];
+  $('#kpis').innerHTML=[['check',ins,'instaladas','--s-instalada'],['box',ob,'en obra sin instalar','--s-en_obra'],['pallet',PALES.filter(g=>g.st!=='vacio').length,'palés en obra','--wood2'],['alert',inc,'incidencias','--s-inc_detectada'],['back',DEVS.filter(d=>!d.enviado).reduce((t,d)=>t+d.items.length,0),'para devolver','--s-inc_pale']].map(([i,b,s,c])=>`<div class="kpi" style="color:var(${c})">${ico(i)}<b>${b}</b><span>${s}</span></div>`).join('')+`<div class="kpi"><b>${n}</b><span>piezas<br>dibujadas</span></div>`;
+  const nPal=PALES.filter(g=>g.st!=='vacio').length, nDev=DEVS.filter(d=>!d.enviado).reduce((t,d)=>t+d.items.length,0);
+  const tabs=[['plano','Plano'],['pales','Palés'],['piezas','Piezas'],['pedidos','Pedidos'],['incidencias','Incidencias',inc],['rendimiento','Rendimiento'],['macrif','Macrif',ALERTS.filter(a=>a.sev!=='info').length]];
   $('#tabs').innerHTML=tabs.map(([k,l,c])=>`<button class="tab" role="tab" aria-selected="${UI.tab===k}" data-tab="${k}">${l}${c?`<span class="cnt">${c}</span>`:''}</button>`).join('');
 }
 function render(){
@@ -543,7 +610,7 @@ function render(){
   m.classList.toggle('fit',UI.tab==='plano');
   m.classList.toggle('multi',UI.tab==='plano'&&UI.multi);
   if(!LIST.length){m.innerHTML='<div class="empty panel">Todavía no hay piezas cargadas.</div>';return}
-  ({plano:renderPlano,piezas:renderPiezas,pedidos:renderPedidos,incidencias:renderInc,rendimiento:renderRend,macrif:renderMacrif}[UI.tab]||renderPlano)(m);
+  ({plano:renderPlano,pales:renderPales,piezas:renderPiezas,pedidos:renderPedidos,incidencias:renderInc,rendimiento:renderRend,macrif:renderMacrif}[UI.tab]||renderPlano)(m);
   renderSelbar();renderDrawer();hydratePhotos();
 }
 
@@ -564,7 +631,7 @@ function renderPlano(m){
     <div class="plantools">
       <div class="seg" role="group" aria-label="Planta">${Object.entries(PLANTAS).map(([k,v])=>`<button data-planta="${k}" aria-pressed="${UI.planta===k}" title="${v}">${k}</button>`).join('')}</div>
       <div class="seg" role="group" aria-label="Bloque" style="overflow-x:auto;max-width:100%"><button data-bloque="ALL" aria-pressed="${UI.bloque==='ALL'}">Todos</button>${bls.map(b=>`<button data-bloque="${b}" aria-pressed="${UI.bloque===b}">${b}</button>`).join('')}${pend.map(b=>`<button disabled title="${b}: sin despiece todavía">${b}</button>`).join('')}</div>
-      <div class="seg" role="group" aria-label="Colorear"><button data-mode="estado" aria-pressed="${UI.mode==='estado'}">Estado</button><button data-mode="tipo" aria-pressed="${UI.mode==='tipo'}">Tipo V/A/R</button></div>
+      <div class="seg" role="group" aria-label="Colorear"><button data-mode="estado" aria-pressed="${UI.mode==='estado'}">Estado</button><button data-mode="pedidos" aria-pressed="${UI.mode==='pedidos'}">Pedidos</button><button data-mode="tipo" aria-pressed="${UI.mode==='tipo'}">Tipo V/A/R</button></div>
       <button class="btn ${UI.multi?'on':''}" data-act="multi" id="multibtn">${ico('select')} ${UI.multi?'Selección activa':'Seleccionar varias'}</button>
       <input type="search" id="findpiece" placeholder="Buscar pieza…" style="width:150px">
     </div>
@@ -596,40 +663,45 @@ function drawSvg(vis,refit){
     const pad=Math.max(x1-x0,y1-y0)*.05+2;
     UI.vb=[x0-pad,y0-pad-3,(x1-x0)+2*pad,(y1-y0)+2*pad+3];
   }
-  const defs=EST.filter(e=>!e[3]).map(([k])=>`<pattern id="h-${k}" patternUnits="userSpaceOnUse" width=".3" height=".3" patternTransform="rotate(45)"><rect width=".3" height=".3" style="fill:var(--canvas)"/><rect width=".12" height=".3" style="fill:var(--s-${k})"/></pattern>`).join('');
+
   const parts=vis.map(p=>{
     const g=GEO[p.id];const m=ESTM[p.estado];
     const cls=['pc'];if(UI.sel.has(p.id))cls.push('sel');if(UI.focus===p.id&&!UI.multi)cls.push('focus');if(!matchShow(p))cls.push('dim');if(g[4])cls.push('ghost');
     const cx=g[2],cy=g[3];
     const pts=g[1].split(' ').map(s=>{const [x,y]=s.split(',').map(Number);return `${(cx+(x-cx)*.93).toFixed(2)},${(cy+(y-cy)*.93).toFixed(2)}`}).join(' ');
-    let fill,stroke;
-    if(UI.mode==='tipo'){fill=p.inst?tipoColor(p.color):`url(#ht-${p.color})`;stroke=p.inst?'var(--ink)':tipoColor(p.color)}
-    else{const solid=m.solid;fill=solid?estColor(p.estado):`url(#h-${p.estado})`;stroke=tipoColor(p.color);if(p.inst&&p.estado==='instalada')cls.push('inst')}
-    const icon=UI.mode==='estado'?m.ico:(p.inst?'check':null);
-    const badge=icon?`<g class="badge" data-b="1"><circle cx="${cx}" cy="${cy}" r=".36" style="fill:${UI.mode==='estado'?estColor(p.estado):'var(--ink)'}"/><use href="#i-${icon}" x="${cx-.25}" y="${cy-.25}" width=".5" height=".5"/></g>`:'';
+    let fill,stroke,icon,bcol,dash='';
+    if(UI.mode==='tipo'){fill=p.inst?tipoColor(p.color):`url(#ht-${p.color})`;stroke=p.inst?'var(--ink)':tipoColor(p.color);icon=p.inst?'check':null;bcol='var(--ink)'}
+    else if(UI.mode==='pedidos'){const k=pedKey(p);const pm=PEDM.find(x=>x[0]===k);fill=`var(--p-${k})`;stroke=k==='sin_pedir'?'var(--line2)':'var(--canvas)';icon=pm[2];bcol='rgba(0,0,0,.35)';if(k==='sin_pedir')dash='stroke-dasharray:3 2;'}
+    else{fill=m.st==='solid'?estColor(p.estado):`var(--s-${p.estado}-bg)`;stroke=m.st==='solid'?'var(--canvas)':estColor(p.estado);icon=m.ico;bcol=estColor(p.estado);if(m.st==='outline')dash='stroke-dasharray:4 2.5;';if(p.estado==='instalada')cls.push('inst')}
+    if(UI.mode!=='estado'&&p.inst)cls.push('inst');
+    const badge=icon?`<g class="badge"><circle cx="${cx}" cy="${cy}" r=".36" style="fill:${m.st==='solid'&&UI.mode==='estado'?'rgba(0,0,0,.28)':bcol}"/><use href="#i-${icon}" x="${cx-.25}" y="${cy-.25}" width=".5" height=".5"/></g>`:'';
+    const tdotS=UI.mode!=='tipo'?`<circle class="tdotS" cx="${cx+.66}" cy="${cy}" r=".17" style="fill:${tipoColor(p.color)}"/>`:'';
     const selm=UI.sel.has(p.id)?`<g class="selmark"><circle cx="${cx}" cy="${cy-.95}" r=".42"/><use href="#i-check" x="${cx-.27}" y="${cy-1.22}" width=".54" height=".54"/></g>`:'';
     const halo=UI.sel.has(p.id)?`<polygon class="halo" points="${g[1]}"/>`:'';
-    return `<g class="${cls.join(' ')}" data-id="${p.id}"><title>${p.id} · ${m.n}</title>${halo}<polygon class="hit" points="${g[1]}"/><polygon class="body" points="${pts}" style="fill:${fill};stroke:${stroke}"/>${badge}<text x="${cx}" y="${cy}" font-size=".4">${p.n}</text>${selm}</g>`;
+    return `<g class="${cls.join(' ')}" data-id="${p.id}"><title>${p.id} · ${m.n}</title>${halo}<polygon class="hit" points="${g[1]}"/><polygon class="body" points="${pts}" style="fill:${fill};stroke:${stroke};${dash}"/>${badge}<text x="${cx}" y="${cy}" font-size=".4">${p.n}</text>${tdotS}${selm}</g>`;
   }).join('');
   const tdefs=['V','A','R'].map(k=>`<pattern id="ht-${k}" patternUnits="userSpaceOnUse" width=".3" height=".3" patternTransform="rotate(45)"><rect width=".3" height=".3" style="fill:var(--canvas)"/><rect width=".12" height=".3" style="fill:var(--t${k})"/></pattern>`).join('');
-  svg.innerHTML=`<defs>${defs}${tdefs}</defs><g id="pieces">${parts}</g>`;
+  svg.innerHTML=`<defs>${tdefs}</defs><g id="pieces">${parts}</g>`;
   applyVB();
 }
 function applyVB(){
   const svg=$('#plansvg');if(!svg||!UI.vb)return;svg.setAttribute('viewBox',UI.vb.join(' '));
   const r=svg.getBoundingClientRect();const scale=Math.min(r.width/UI.vb[2],r.height/UI.vb[3]);
   const near=scale>30;
-  svg.querySelectorAll('.pc').forEach(g=>{const t=g.querySelector('text'),b=g.querySelector('.badge');if(t)t.style.display=near?'':'none';if(b){b.setAttribute('transform',near?`translate(-.62 0)`:'');}});
+  svg.querySelectorAll('.pc').forEach(g=>{const t=g.querySelector('text'),b=g.querySelector('.badge'),d=g.querySelector('.tdotS');if(t)t.style.display=near?'':'none';if(d)d.style.display=near?'':'none';if(b){b.setAttribute('transform',near?`translate(-.62 0)`:'');}});
 }
 function zoomAt(f,cx,cy){const v=UI.vb;UI.vb=[cx-(cx-v[0])*f,cy-(cy-v[1])*f,v[2]*f,v[3]*f];applyVB()}
 function svgPt(e){const svg=$('#plansvg');const r=svg.getBoundingClientRect();const v=UI.vb;const s=Math.max(v[2]/r.width,v[3]/r.height);const ox=(r.width*s-v[2])/2,oy=(r.height*s-v[3])/2;return [v[0]-ox+(e.clientX-r.left)*s,v[1]-oy+(e.clientY-r.top)*s]}
-function swatch(k){const m=ESTM[k];return `<span class="sw ${m.solid?'':'h'}" style="--c:${estColor(k)}">${m.solid?ico(m.ico):(m.ico?`<i style="--c:${estColor(k)};background:${estColor(k)};width:14px;height:14px;border-radius:50%;display:flex;align-items:center;justify-content:center">${ico(m.ico)}</i>`:'')}</span>`}
+function swatch(k){const m=ESTM[k];return `<span class="sw ${m.st}" style="--c:${estColor(k)};--bgc:var(--s-${k}-bg,transparent)">${ico(m.ico)}</span>`}
+function swatchP(k,icn){return `<span class="sw solid" style="--c:var(--p-${k})">${ico(icn)}</span>`}
 function renderSide(vis){
   const side=$('#side');if(!side)return;
   const p=!UI.multi&&UI.focus&&P[UI.focus];
   const ni=vis.filter(q=>q.inst).length, nno=vis.length-ni, ninc=vis.filter(q=>q.open).length;
   const tip=['V','A','R'].map(t=>{const all=vis.filter(q=>q.color===t),i=all.filter(q=>q.inst).length;return `<button data-tipo="${t}" aria-pressed="${UI.tipos.has(t)}" style="--c:${tipoColor(t)}"><span class="label" style="color:${tipoColor(t)}">${TIPOS[t].n}s</span><div><b>${i}</b><span class="faint num"> / ${all.length}</span></div><div class="tbar"><u style="width:${all.length?i/all.length*100:0}%"></u></div></button>`}).join('');
-  const legend=UI.mode==='estado'?EST.map(([k])=>{const n=vis.filter(q=>q.estado===k).length;if(!n&&!['instalada','en_obra','pedida'].includes(k))return '';return `<div class="lg">${swatch(k)}<span>${ESTM[k].n}</span><b class="num">${n}</b></div>`}).join(''):'<p class="faint" style="margin:0;font-size:13px">Color = tipo. Relleno sólido = instalada · rayado = sin instalar.</p>';
+  const legend=UI.mode==='estado'?EST.map(([k])=>{const n=vis.filter(q=>q.estado===k).length;if(!n&&!['instalada','en_obra','pedida','medir','sin_pedir'].includes(k))return '';return `<div class="lg">${swatch(k)}<span>${ESTM[k].n}</span><b class="num">${n}</b></div>`}).join('')+'<p class="faint" style="margin:6px 0 0;font-size:12.5px">Punto de color junto al número = tipo (verde, amarilla, roja).</p>'
+    :UI.mode==='pedidos'?PEDM.map(([k,l,i])=>`<div class="lg">${swatchP(k,i)}<span>${l}</span><b class="num">${vis.filter(q=>pedKey(q)===k).length}</b></div>`).join('')+'<p class="faint" style="margin:6px 0 0;font-size:12.5px">«Falta medir» = marcadas por nosotros para medir en obra. «Sin pedir» = ni pedidas ni marcadas.</p>'
+    :'<p class="faint" style="margin:0;font-size:13px">Color = tipo. Relleno sólido = instalada · rayado = sin instalar.</p>';
   side.innerHTML=`${p?`<div class="piececard">${pieceCard(p)}</div>`:''}
   <section class="panel">
     <div class="sechead"><h2>${UI.bloque==='ALL'?'Bloques 01–05':'Bloque '+UI.bloque.slice(1)} · ${UI.planta}</h2><span class="muted num">${vis.length} piezas</span></div>
@@ -664,7 +736,7 @@ function pieceCard(p,inDrawer){
   return `<section class="${inDrawer?'':'panel'}" id="piececard">
     <div class="piecehead"><div><div class="code">${tdot(p.color)}${p.id}</div><div class="muted">${t.n} · ${p.tipo==='C'?'curva':'recta'} en planta · Bloque ${p.bl.slice(1)} · ${PLANTAS[p.pl]}</div></div>
     <button class="btn sm" data-act="${inDrawer?'closedrawer':'unfocus'}" aria-label="Cerrar ficha">${ico('x')}</button></div>
-    <div class="bigstate ${m.solid?'':'hatch'}" style="--c:${estColor(p.estado)}">${ico(m.ico||'box')}<div>${m.n}${sub?`<small>${sub}</small>`:''}</div></div>
+    <div class="bigstate ${m.st}" style="--c:${estColor(p.estado)};--bgc:var(--s-${p.estado}-bg,var(--panel))">${ico(m.ico||'box')}<div>${m.n}${sub?`<small>${sub}</small>`:''}</div></div>
     ${GEO[p.id]&&GEO[p.id][4]?'<p class="chip warn" style="margin:0 0 8px">No dibujada en el DWG</p>':''}
     <div class="actions">
       ${p.inst?`<button class="btn full" data-act="uninst" data-id="${p.id}">Quitar instalación (${fd(p.inst)})</button>`:`<div class="instrow"><input type="date" id="instd-${p.id}" value="${UI.instDate}" aria-label="Fecha de instalación"><button class="btn ok" data-act="inst1" data-id="${p.id}">${ico('check')} Instalada</button></div>`}
@@ -865,7 +937,7 @@ function renderInc(m){
     <p class="faint" style="margin:8px 0 0;font-size:13px">Recorrido: <b>Detectada</b> → si es de Macrif (mal mecanizada o rota en transporte) se deja <b>en palé</b> → el camión la <b>retira</b> → vuelve en un albarán posterior (<b>vuelta a obra</b>, sin nueva factura). Si se arregla aquí: <b>reparar en obra</b> → <b>reparada</b>.</p>
   </section>
   <div class="board">${cols.map(([f,ic,l,e])=>{const items=all.filter(x=>x.i._fase===f);return `<div class="col" style="--c:${estColor(e)}"><h3>${ico(ic)} ${l}<span class="n">${items.length}</span></h3>
-    ${f==='pale'&&items.length?`<button class="btn sm" style="background:var(--s-inc_pale);border-color:var(--s-inc_pale);color:#fff" data-act="retform">${ico('truck')} Registrar retirada del camión</button>`:''}
+    ${f==='pale'&&items.length?`<button class="btn sm" style="background:var(--s-inc_pale);border-color:var(--s-inc_pale);color:#fff" data-act="gotodev">${ico('pallet')} Ver palés de devolución</button>`:''}
     ${items.map(cardOf).join('')||'<p class="faint" style="margin:0">Nada.</p>'}</div>`}).join('')}</div>
   ${rf?`<section class="panel" style="padding:14px;border-color:var(--s-inc_pale)"><div class="sechead"><h2>${ico('truck')} Retirada del camión</h2><button class="btn sm" data-act="retcancel">Cancelar</button></div>
     <div class="formgrid"><label>Fecha de retirada<input type="date" id="rf-fecha" value="${today()}"></label><label>Referencia (albarán / pedido EX / nota)<input type="text" id="rf-ref" placeholder="PEDIDO EX03"></label></div>
@@ -983,6 +1055,7 @@ function renderMacrif(m){
 /* =================== drawer / fotos =================== */
 function renderDrawer(){
   const o=$('#overlay');
+  if(UI.drawerPale&&!UI.drawer){const keep=o.querySelector('.drawer')?.scrollTop||0;o.innerHTML=`<div class="modalbg" data-act="bgclose"><div class="drawer" role="dialog" aria-label="Palé">${paleDrawer()}</div></div>`;o.querySelector('.drawer').scrollTop=keep;return}
   if(!UI.drawer||!P[UI.drawer]){o.innerHTML='';return}
   const keep=o.querySelector('.drawer')?.scrollTop||0;
   o.innerHTML=`<div class="modalbg" data-act="bgclose"><div class="drawer" role="dialog" aria-label="Ficha de pieza">${pieceCard(P[UI.drawer],true)}${UI.tab!=='plano'?`<div class="row" style="margin-top:10px"><button class="btn sm" data-act="gotoplan" data-id="${UI.drawer}">Ver en el plano</button></div>`:''}</div></div>`;
@@ -1006,6 +1079,94 @@ function openPiece(id){
   }else{UI.drawer=id;renderDrawer();hydratePhotos()}
 }
 function centerOn(id){const g=GEO[id];if(!g||!UI.vb)return;const w=Math.min(UI.vb[2],14),h=UI.vb[3]*(w/UI.vb[2]);UI.vb=[g[2]-w/2,g[3]-h/2,w,h];applyVB()}
+
+/* =================== PALÉS =================== */
+function palletSVG({total,rest,cnt,st}){
+  // capas: hasta 10 niveles, proporcionales a lo que queda
+  const max=10, lv=total?Math.max(rest?1:0,Math.round(rest/Math.max(total,1)*max)):0;
+  const order=[];['R','A','V'].forEach(c=>{for(let i=0;i<(cnt[c]||0);i++)order.push(c)});
+  let layers='';
+  for(let k=0;k<lv;k++){
+    const c=order.length?order[Math.floor(k/lv*order.length)]:'V';
+    const y=74-k*6.2;
+    const col=st==='dev'?'var(--s-inc_pale)':`var(--t${c})`;
+    layers+=`<path d="M16 ${y} q44 -3.2 88 0 v4.6 q-44 -3.2 -88 0z" style="fill:#F7F7F3;stroke:#B9BDB8;stroke-width:.6"/><rect x="16" y="${y+1}" width="4" height="3.2" rx=".8" style="fill:${col}"/><rect x="100" y="${y+1}" width="4" height="3.2" rx=".8" style="fill:${col}"/>`;
+  }
+  const ghost=`<rect x="14" y="${74-(max-1)*6.2-2}" width="92" height="${(max)*6.2+2}" rx="3" style="fill:none;stroke:var(--line2);stroke-dasharray:3 3"/>`;
+  const film=st==='cerrado'&&lv?`<rect x="13" y="${74-(lv-1)*6.2-3}" width="94" height="${lv*6.2+5}" rx="4" style="fill:var(--film);opacity:.35;stroke:var(--film);stroke-width:1.2"/><path d="M40 ${74-(lv-1)*6.2-3} v${lv*6.2+5} M80 ${74-(lv-1)*6.2-3} v${lv*6.2+5}" style="stroke:#3E7FB0;stroke-width:2;opacity:.8"/>`:'';
+  const tag=st==='dev'?`<g transform="translate(92 6)"><circle r="11" style="fill:var(--s-inc_pale)"/><use href="#i-back" x="-7" y="-7" width="14" height="14" style="color:#fff"/></g>`:'';
+  const base=`<rect x="8" y="81" width="104" height="4.5" rx="1" style="fill:var(--wood)"/><rect x="12" y="85.5" width="12" height="6" style="fill:var(--wood2)"/><rect x="54" y="85.5" width="12" height="6" style="fill:var(--wood2)"/><rect x="96" y="85.5" width="12" height="6" style="fill:var(--wood2)"/><rect x="8" y="91.5" width="104" height="4" rx="1" style="fill:var(--wood)"/>`;
+  return `<svg class="pal" viewBox="0 0 120 98" aria-hidden="true">${ghost}${layers}${film}${base}${tag}</svg>`;
+}
+function palName(g){return g.pale!=null?`Palé ${g.pale}`:`Entrega sin nº de palé`}
+function renderPales(m){
+  const act=PALES.filter(g=>g.st!=='vacio');
+  const cer=act.filter(g=>g.st==='cerrado'),abi=act.filter(g=>g.st==='abierto');
+  const devA=DEVS.filter(d=>!d.enviado);
+  const devSent=DEVS.filter(d=>d.enviado).sort((a,b)=>(b.enviado||'').localeCompare(a.enviado||''));
+  const sum=a=>a.reduce((t,g)=>t+g.rest.length,0);
+  const F=UI.paleF;
+  const shown=F==='cerrado'?cer:F==='abierto'?abi:act;
+  const card=g=>`<button class="palcard ${g.st}" data-pale="${esc(g.key)}">
+    <span class="pn">${palName(g)}<span class="chip ${g.st==='cerrado'?'info':'neu'}">${g.st==='cerrado'?'Sin abrir':'Abierto'}</span></span>
+    ${palletSVG({total:g.total,rest:g.rest.length,cnt:g.cnt,st:g.st})}
+    <span class="cnt">${g.rest.length}<small> / ${g.total} piezas</small></span>
+    <span class="miss">${['V','A','R'].map(c=>g.cnt[c]?`<span class="tchip">${tdot(c)}${g.cnt[c]}</span>`:'').join('')}</span>
+    <span class="faint" style="font-size:12px">${g.albs.join(', ')} · ${fd(g.fecha)}${g.peds.length?' · '+g.peds.map(x=>x.replace('PEDIDO ','P')).join(', '):''}${g.vuelta?' · incluye vueltas':''}</span>
+  </button>`;
+  const devCard=d=>{const cnt={V:0,A:0,R:0};d.items.forEach(x=>cnt[x.p.color]!=null&&cnt[x.p.color]++);return `<button class="palcard dev" data-dev="${d.id||'loose'}">
+    <span class="pn">${d.virtual?'Sin palé asignado':'Devolución nº '+d.num}${d.cerrado?'<span class="chip warn">cerrado</span>':''}</span>
+    ${palletSVG({total:Math.max(d.items.length,6),rest:d.items.length,cnt,st:'dev'})}
+    <span class="cnt">${d.items.length}<small> piezas para Macrif</small></span>
+    <span class="miss">${['V','A','R'].map(c=>cnt[c]?`<span class="tchip">${tdot(c)}${cnt[c]}</span>`:'').join('')}</span>
+    <span class="faint" style="font-size:12px">${d.virtual?'Piezas en palé sin número':'Desde '+fd(d.creado)}</span></button>`};
+  m.dataset.view='pales';
+  m.innerHTML=`<div class="wrap" style="display:flex;flex-direction:column;gap:14px">
+  <div class="palstat">
+    <button data-palef="cerrado" aria-pressed="${F==='cerrado'}">${palletSVG({total:10,rest:10,cnt:{V:4,A:4,R:2},st:'cerrado'})}<span><span class="label">Sin abrir</span><b>${cer.length}</b><span class="muted">${sum(cer)} piezas</span></span></button>
+    <button data-palef="abierto" aria-pressed="${F==='abierto'}">${palletSVG({total:10,rest:5,cnt:{V:2,A:2,R:1},st:'abierto'})}<span><span class="label">Abiertos</span><b>${abi.length}</b><span class="muted">${sum(abi)} piezas por colocar</span></span></button>
+    <button data-act="gotodev">${palletSVG({total:6,rest:4,cnt:{},st:'dev'})}<span><span class="label">Para devolver a Macrif</span><b style="color:var(--s-inc_pale)">${devA.length}</b><span class="muted">${devA.reduce((t,d)=>t+d.items.length,0)} piezas</span></span></button>
+  </div>
+  <section class="panel" style="padding:14px">
+    <div class="sechead"><h2>${ico('box')} Material recibido en obra</h2><span class="muted">${shown.length} palés · ${sum(shown)} piezas ${F!=='all'?'<button class="btn sm" data-palef="all">Ver todos</button>':''}</span></div>
+    <p class="faint" style="margin:0 0 10px;font-size:13px">Cada palé resta sola las piezas que se instalan o que se apartan a devolución. Cuando se queda vacío desaparece. Pulsa un palé para ver sus piezas, marcarlo como abierto o instalar desde él.</p>
+    <div class="palgrid">${shown.map(card).join('')||'<p class="faint">No hay palés con material.</p>'}</div>
+  </section>
+  <section class="panel" style="padding:14px" id="devsec">
+    <div class="sechead"><h2 style="color:var(--s-inc_pale)">${ico('pallet')} Palés para devolver a Macrif</h2><button class="btn sm" data-act="newdev">+ Empezar palé nuevo</button></div>
+    <p class="faint" style="margin:0 0 10px;font-size:13px">Las piezas con incidencia que se devuelven entran en el último palé abierto. Al enviarlo con el camión desaparece de aquí y las piezas pasan a «Enviada a Macrif».</p>
+    <div class="palgrid">${devA.map(devCard).join('')||'<p class="faint">No hay nada pendiente de devolver.</p>'}</div>
+  </section>
+  <details class="panel" style="padding:10px 14px"><summary style="cursor:pointer;font-weight:600">Historial: palés vacíos (${PALES.filter(g=>g.st==='vacio').length}) y devoluciones enviadas (${devSent.length})</summary>
+    <div class="palgrid" style="margin-top:10px">${devSent.map(d=>`<button class="palcard dev vacio" data-dev="${d.id}"><span class="pn">Devolución nº ${d.num}<span class="chip ok">enviada ${fd(d.enviado)}</span></span><span class="cnt">${d.items.length}<small> piezas</small></span><span class="faint" style="font-size:12px">${esc(d.ref||'')}</span></button>`).join('')}${PALES.filter(g=>g.st==='vacio').map(g=>`<button class="palcard vacio" data-pale="${esc(g.key)}"><span class="pn">${palName(g)}<span class="chip neu">vacío</span></span><span class="cnt">0<small> / ${g.total}</small></span><span class="faint" style="font-size:12px">${g.albs.join(', ')} · ${fd(g.fecha)}</span></button>`).join('')}</div>
+  </details></div>`;
+}
+function paleDrawer(){
+  const key=UI.drawerPale;
+  if(key.startsWith('dev:')){
+    const id=key.slice(4);const d=DEVS.find(x=>(x.id||'loose')===id);if(!d)return '<p>Palé no encontrado.</p>';
+    const cnt={V:0,A:0,R:0};d.items.forEach(x=>cnt[x.p.color]!=null&&cnt[x.p.color]++);
+    return `<div class="piecehead"><div><div class="code">${ico('pallet')} ${d.virtual?'Sin palé asignado':'Devolución nº '+d.num}</div><div class="muted">${d.enviado?'Enviada el '+fd(d.enviado)+(d.ref?' · '+esc(d.ref):''):d.virtual?'Piezas en palé de devolución sin número':'Abierto desde '+fd(d.creado)}</div></div><button class="btn sm" data-act="closedrawer">${ico('x')}</button></div>
+    <div class="palhero">${palletSVG({total:Math.max(d.items.length,6),rest:d.items.length,cnt,st:'dev'})}</div>
+    <p style="margin:0 0 8px;text-align:center"><b style="font-size:22px">${d.items.length}</b> piezas ${missChips(cnt)}</p>
+    ${!d.enviado&&d.items.length?`<section class="inc" style="--c:var(--s-inc_pale)"><b>${ico('truck')} Enviar con el camión</b><div class="g"><label>Fecha<input type="date" id="dv-fecha" value="${today()}"></label><label>Referencia<input type="text" id="dv-ref" placeholder="Albarán / PEDIDO EX"></label></div><button class="btn" style="background:var(--s-inc_pale);border-color:var(--s-inc_pale);color:#fff" data-act="devsend" data-dev="${d.id||'loose'}">Registrar envío (${d.items.length} piezas)</button></section>`:''}
+    ${!d.virtual&&!d.enviado?`<div class="row" style="margin:8px 0"><button class="btn sm" data-act="devclose" data-dev="${d.id}">${d.cerrado?'Reabrir palé':'Cerrar palé (las nuevas irán a otro)'}</button></div>`:''}
+    <div class="tblwrap" style="margin-top:8px"><table><thead><tr><th>Pieza</th><th>Incidencia</th><th>Detectada</th><th>Pedido</th><th></th></tr></thead><tbody>
+    ${d.items.map(({p,i})=>`<tr class="click" data-open="${p.id}"><td class="mono">${tdot(p.color)} ${p.id}</td><td>${INC_TIPOS[i.tipoInc]}${i.fotos&&i.fotos.length?' '+ico('camera'):''}</td><td class="num">${fd(i.fecha)}</td><td>${esc(p.ped||'—')}</td><td>${!d.enviado&&!d.virtual?`<button class="btn sm" data-act="devout" data-k="${p.id}__${i._ix}">Sacar</button>`:''}</td></tr>`).join('')||'<tr><td colspan="5" class="faint">Vacío.</td></tr>'}
+    </tbody></table></div>`;
+  }
+  const g=PALES.find(x=>x.key===key);if(!g)return '<p>Palé no encontrado.</p>';
+  const sel=UI.paleSel;
+  return `<div class="piecehead"><div><div class="code">${ico('box')} ${palName(g)}</div><div class="muted">Llegó el ${fd(g.fecha)} · ${g.albs.map(a=>'albarán '+esc(a)).join(', ')}</div></div><button class="btn sm" data-act="closedrawer">${ico('x')}</button></div>
+    <div class="palhero">${palletSVG({total:g.total,rest:g.rest.length,cnt:g.cnt,st:g.st})}</div>
+    <p style="margin:0 0 6px;text-align:center"><b style="font-size:24px">${g.rest.length}</b> <span class="muted">de ${g.total} piezas quedan en el palé</span> ${missChips(g.cnt)}</p>
+    <dl class="kv"><dt>Estado</dt><dd>${g.st==='cerrado'?'Sin abrir':g.st==='abierto'?'Abierto':'Vacío'}${g.ov.abierto?' · abierto el '+fd(g.ov.abierto):''}</dd><dt>Pedidos</dt><dd>${g.peds.map(esc).join(', ')||'—'}</dd><dt>Bloques / plantas</dt><dd>${[...new Set(g.items.map(x=>x.p.bl+' '+x.p.pl))].join(', ')}</dd><dt>m² en el palé</dt><dd>${f2(g.rest.reduce((t,x)=>t+(x.p.m2Ref||0),0))} m²</dd></dl>
+    <div class="row" style="margin:10px 0">${g.st==='cerrado'?`<button class="btn" data-act="palopen" data-pale="${esc(g.key)}">Marcar abierto</button>`:''}${g.st!=='vacio'?`<button class="btn" data-act="palempty" data-pale="${esc(g.key)}">Marcar vacío (quitar de pantalla)</button>`:(g.ov.vaciado?`<button class="btn" data-act="palundo" data-pale="${esc(g.key)}">Volver a mostrar</button>`:'')}</div>
+    ${g.rest.length?`<section class="inc" style="--c:var(--s-instalada)"><div class="row" style="justify-content:space-between"><b>Instalar desde este palé</b><button class="btn sm" data-act="palselall" data-pale="${esc(g.key)}">${sel.size?'Ninguna':'Todas'}</button></div><div class="row"><input type="date" id="pl-date" value="${UI.instDate}"><button class="btn ok" data-act="palinst" data-pale="${esc(g.key)}" ${sel.size?'':'disabled'}>${ico('check')} Instalar ${sel.size||''}</button></div></section>`:''}
+    <div class="tblwrap" style="margin-top:8px"><table><thead><tr><th></th><th>Pieza</th><th>Pedido</th><th>Dónde está</th></tr></thead><tbody>
+    ${g.items.map(x=>`<tr><td>${x.on?`<input type="checkbox" data-palchk="${x.p.id}" ${sel.has(x.p.id)?'checked':''} aria-label="Seleccionar ${x.p.id}">`:''}</td><td class="mono"><button class="linkbtn mono" data-open="${x.p.id}">${tdot(x.p.color)} ${x.p.id}</button></td><td>${esc(x.p.ped||'—')}</td><td>${x.on?'<span class="chip info">en el palé</span>':x.where==='instalada'?`<span class="chip ok">${ico('check')} instalada ${fd(x.p.inst)}</span>`:x.where==='devolución'?'<span class="chip warn">a devolución</span>':`<span class="chip neu">${x.where}</span>`}</td></tr>`).join('')}
+    </tbody></table></div>`;
+}
 /* =================== acciones =================== */
 let toastT;function toast(t){clearTimeout(toastT);let el=$('#toast');if(!el){el=document.createElement('div');el.id='toast';el.className='toast';el.setAttribute('role','status');document.body.appendChild(el)}el.textContent=t;el.hidden=false;toastT=setTimeout(()=>el.hidden=true,2800)}
 function rerenderKeepScroll(){const m=$('#main');const y=m.scrollTop,wy=window.scrollY;render();m.scrollTop=y;if(narrow())window.scrollTo(0,wy)}
@@ -1020,6 +1181,14 @@ async function doUninstall(ids){
 }
 function kParse(k){const [id,ix]=k.split('__');return {p:P[id],ix:+ix,id}}
 async function saveIncs(p,incs,msg,extra={}){return patchPieces({[p.id]:withLog(p,msg,{...extra,incs})},msg)}
+async function currentDev(){
+  const open=Object.entries(S.pales).filter(([,x])=>x.tipo==='dev'&&!x.enviado&&!x.cerrado).sort((a,b)=>(b[1].num||0)-(a[1].num||0));
+  if(open.length)return open[0][0];
+  const nums=Object.values(S.pales).filter(x=>x.tipo==='dev').map(x=>x.num||0);
+  const id='D-'+Date.now().toString(36);
+  await db.doc('pales/'+id).set({tipo:'dev',num:(nums.length?Math.max(...nums):0)+1,creado:today(),cerrado:false,enviado:null,ref:''});
+  return id;
+}
 function newInc(tipo,dest,desc){const d=today();const i={id:'i'+Date.now().toString(36)+Math.random().toString(36).slice(2,5),tipo,fecha:d,desc:desc||'',destino:dest||'',fotos:[]};if(dest==='macrif')i.fechaPale=d;return i}
 async function compressImage(file){
   const img=await new Promise((res,rej)=>{const u=URL.createObjectURL(file);const im=new Image();im.onload=()=>{URL.revokeObjectURL(u);res(im)};im.onerror=rej;im.src=u});
@@ -1028,7 +1197,7 @@ async function compressImage(file){
   return await new Promise(r=>c.toBlob(r,'image/jpeg',0.82));
 }
 document.addEventListener('click',async e=>{
-  let t=e.target.closest('[data-tab],[data-planta],[data-bloque],[data-mode],[data-show],[data-tipo],[data-z],[data-act],[data-open],[data-foto]');
+  let t=e.target.closest('[data-tab],[data-planta],[data-bloque],[data-mode],[data-show],[data-tipo],[data-z],[data-act],[data-open],[data-foto],[data-pale],[data-dev],[data-palef],[data-palchk]');
   if(!t)return;
   if(t.dataset.foto&&t.closest('.card'))t=t.closest('.card');
   if(t.tagName==='LABEL'||e.target.closest('label.addphoto'))return;
@@ -1040,12 +1209,31 @@ document.addEventListener('click',async e=>{
   if(t.dataset.show){UI.show=UI.show===t.dataset.show?'all':t.dataset.show;render();return}
   if(t.dataset.tipo){const k=t.dataset.tipo;if(UI.tipos.has(k)&&UI.tipos.size>1)UI.tipos.delete(k);else UI.tipos.add(k);render();return}
   if(t.dataset.z){const v=UI.vb;if(t.dataset.z==='fit'){UI.vb=null;drawSvg(visiblePieces(),true)}else zoomAt(t.dataset.z==='in'?.7:1.4,v[0]+v[2]/2,v[1]+v[3]/2);return}
-  if(t.dataset.open&&!t.dataset.act){openPiece(t.dataset.open);return}
+  if(t.dataset.palchk){const x=t.dataset.palchk;t.checked?UI.paleSel.add(x):UI.paleSel.delete(x);renderDrawer();return}
+  if(t.dataset.palef){UI.paleF=UI.paleF===t.dataset.palef?'all':t.dataset.palef;render();return}
+  if(t.dataset.pale&&!t.dataset.act){UI.drawer=null;UI.drawerPale=t.dataset.pale;UI.paleSel=new Set();renderDrawer();return}
+  if(t.dataset.dev&&!t.dataset.act){UI.drawer=null;UI.drawerPale='dev:'+t.dataset.dev;renderDrawer();return}
+  if(t.dataset.open&&!t.dataset.act){if(UI.drawerPale){UI.drawerPale=null}openPiece(t.dataset.open);return}
   const a=t.dataset.act,id=t.dataset.id;
   switch(a){
   case 'closelight':$('#lightbox').innerHTML='';return;
-  case 'bgclose':if(e.target===t){UI.drawer=null;if(UI.tab==='plano')UI.focus=null;render()}return;
-  case 'closedrawer':UI.drawer=null;if(UI.tab==='plano')UI.focus=null;render();return;
+  case 'bgclose':if(e.target===t){UI.drawer=null;UI.drawerPale=null;if(UI.tab==='plano')UI.focus=null;render()}return;
+  case 'closedrawer':UI.drawer=null;UI.drawerPale=null;if(UI.tab==='plano')UI.focus=null;render();return;
+  case 'gotodev':UI.tab='pales';saveUI();$('#main').dataset.view='';render();setTimeout(()=>{const s=$('#devsec');if(s)s.scrollIntoView({behavior:'smooth'})},50);return;
+  case 'palopen':case 'palempty':case 'palundo':{const g=PALES.find(x=>x.key===t.dataset.pale);const patch=a==='palopen'?{abierto:today()}:a==='palempty'?{vaciado:today()}:{vaciado:null};try{await db.doc('pales/'+g.docId).update({tipo:'in',key:g.key,...patch});toast(a==='palopen'?'Palé marcado como abierto':a==='palempty'?'Palé marcado como vacío':'Palé visible otra vez');if(a==='palempty')UI.drawerPale=null}catch(err){toast('No se pudo guardar')}return}
+  case 'palselall':{const g=PALES.find(x=>x.key===t.dataset.pale);UI.paleSel=UI.paleSel.size?new Set():new Set(g.rest.map(x=>x.p.id));renderDrawer();return}
+  case 'palinst':{const d=$('#pl-date').value||today();UI.instDate=d;const ids=[...UI.paleSel];UI.paleSel=new Set();await doInstall(ids,d);return}
+  case 'newdev':{const nums=DEVS.filter(x=>!x.virtual).map(x=>x.num||0);const open=Object.entries(S.pales).filter(([,x])=>x.tipo==='dev'&&!x.enviado&&!x.cerrado);for(const [pid] of open)await db.doc('pales/'+pid).update({cerrado:true});const id='D-'+Date.now().toString(36);await db.doc('pales/'+id).set({tipo:'dev',num:(nums.length?Math.max(...nums):0)+1,creado:today(),cerrado:false,enviado:null,ref:''});toast('Nuevo palé de devolución preparado');return}
+  case 'devclose':{const x=S.pales[t.dataset.dev];await db.doc('pales/'+t.dataset.dev).update({cerrado:!x.cerrado});return}
+  case 'devout':{const {p,ix}=kParse(t.dataset.k);const incs=incsFor(p);incs[ix]={...incs[ix],paleDev:null};await saveIncs(p,incs,'Sacada del palé de devolución');return}
+  case 'devsend':{
+    const did=t.dataset.dev;const dv=DEVS.find(x=>(x.id||'loose')===did);const fecha=$('#dv-fecha').value||today(),ref=$('#dv-ref').value;
+    let id=dv.id;
+    if(!id){const nums=DEVS.filter(x=>!x.virtual).map(x=>x.num||0);id='D-'+Date.now().toString(36);await db.doc('pales/'+id).set({tipo:'dev',num:(nums.length?Math.max(...nums):0)+1,creado:today(),cerrado:true,enviado:fecha,ref})}
+    else await db.doc('pales/'+id).update({enviado:fecha,ref,cerrado:true});
+    const patches={};dv.items.forEach(({p,i})=>{const incs=incsFor(p);incs[i._ix]={...incs[i._ix],paleDev:id,fechaRetirada:fecha,retiradaRef:ref,retiradaId:id};patches[p.id]=withLog(p,`Enviada a Macrif ${fd(fecha)}`,{incs})});
+    try{await db.doc('retiradas/'+id).set({fecha,ref,piezas:dv.items.map(({p,i})=>({p:p.id,ix:i._ix}))})}catch(err){}
+    UI.drawerPale=null;await patchPieces(patches,`Enviadas ${dv.items.length} piezas a Macrif`);return}
   case 'unfocus':UI.focus=null;render();return;
   case 'gotoplan':UI.drawer=null;UI.tab='plano';saveUI();render();openPiece(id);return;
   case 'showall':UI.show='all';UI.tipos=new Set(['V','A','R']);render();return;
@@ -1058,18 +1246,18 @@ document.addEventListener('click',async e=>{
   case 'instsel':{const d=$('#seldate').value;if(!d){toast('Indica la fecha');return}UI.instDate=d;const ids=[...UI.sel];UI.sel.clear();UI.multi=false;await doInstall(ids,d);render();return}
   case 'uninstsel':{const ids=[...UI.sel];UI.sel.clear();UI.multi=false;await doUninstall(ids);render();return}
   case 'medirsel':{const ids=[...UI.sel].filter(x=>!P[x].peds.length);const patches={};ids.forEach(x=>patches[x]=withLog(P[x],'Marcada pendiente de medir en obra',{medir:true}));UI.sel.clear();UI.multi=false;if(ids.length)await patchPieces(patches,`${ids.length} piezas marcadas para medir en obra`);else toast('Las seleccionadas ya están pedidas');render();return}
-  case 'bulkinc':{const tipo=$('#bi-tipo').value,dest=$('#bi-dest').value,desc=$('#bi-desc').value;const ids=[...UI.sel];const patches={};ids.forEach(x=>{const p=P[x];const extra={incs:[...incsFor(p),newInc(tipo,dest,desc)]};if(dest==='macrif'&&p.inst)extra.inst=null;patches[x]=withLog(p,`Incidencia: ${INC_TIPOS[tipo]}`,extra)});UI.sel.clear();UI.multi=false;UI.bulkInc=false;await patchPieces(patches,`${ids.length} incidencias creadas`);render();return}
+  case 'bulkinc':{const tipo=$('#bi-tipo').value,dest=$('#bi-dest').value,desc=$('#bi-desc').value;const ids=[...UI.sel];const patches={};const dev=dest==='macrif'?await currentDev():null;ids.forEach(x=>{const p=P[x];const ni=newInc(tipo,dest,desc);if(dev)ni.paleDev=dev;const extra={incs:[...incsFor(p),ni]};if(dest==='macrif'&&p.inst)extra.inst=null;patches[x]=withLog(p,`Incidencia: ${INC_TIPOS[tipo]}`,extra)});UI.sel.clear();UI.multi=false;UI.bulkInc=false;await patchPieces(patches,`${ids.length} incidencias creadas`);render();return}
   case 'inst1':{const d=$('#instd-'+id).value;if(!d){toast('Indica la fecha');return}UI.instDate=d;await doInstall([id],d);return}
   case 'uninst':await doUninstall([id]);return;
   case 'medir':{const p=P[id];await patchPieces({[id]:withLog(p,p.medir?'Quitada marca de medir en obra':'Marcada pendiente de medir en obra',{medir:!p.medir})},p.medir?'Marca quitada':'Marcada para medir en obra');return}
   case 'medirgroup':{const ids=t.dataset.ids.split(',');const patches={};ids.forEach(x=>patches[x]=withLog(P[x],'Marcada pendiente de medir en obra',{medir:true}));await patchPieces(patches,`${ids.length} piezas marcadas para medir en obra`);return}
   case 'savenotes':{const p=P[id];await patchPieces({[id]:withLog(p,'Notas editadas',{notas:$('#notes-'+id).value})},'Notas guardadas');return}
   case 'addinc':{const p=P[id];await saveIncs(p,[...incsFor(p),newInc('mecanizado','','')],'Incidencia creada');return}
-  case 'incdest':{const {p,ix}=kParse(t.dataset.k);const incs=incsFor(p);const d=t.dataset.dest;incs[ix]={...incs[ix],destino:d};const extra={};if(d==='macrif'){incs[ix].fechaPale=incs[ix].fechaPale||today();if(p.inst)extra.inst=null}await saveIncs(p,incs,d==='macrif'?'Pieza en palé para retirar':'Pendiente de reparar en obra',extra);return}
+  case 'incdest':{const {p,ix}=kParse(t.dataset.k);const incs=incsFor(p);const d=t.dataset.dest;incs[ix]={...incs[ix],destino:d};const extra={};if(d==='macrif'){incs[ix].fechaPale=incs[ix].fechaPale||today();incs[ix].paleDev=incs[ix].paleDev||await currentDev();if(p.inst)extra.inst=null}await saveIncs(p,incs,d==='macrif'?'Pieza en palé para retirar':'Pendiente de reparar en obra',extra);return}
   case 'incret1':{const k=t.dataset.k;const {p,ix}=kParse(k);const incs=incsFor(p);incs[ix]={...incs[ix],fechaRetirada:$('#ret-'+k).value||today()};await saveIncs(p,incs,'Retirada por el camión');return}
   case 'incvuelta':{const k=t.dataset.k;const {p,ix}=kParse(k);const incs=incsFor(p);incs[ix]={...incs[ix],fechaVuelta:$('#vue-'+k).value||today()};await saveIncs(p,incs,'Vuelta a obra');return}
   case 'increp':{const k=t.dataset.k;const {p,ix}=kParse(k);const incs=incsFor(p);incs[ix]={...incs[ix],fechaReparada:$('#rep-'+k).value||today()};await saveIncs(p,incs,'Reparada en obra');return}
-  case 'saveinc':{const k=t.dataset.k;const {p,ix}=kParse(k);const g=x=>$(`#${x}-${CSS.escape(k)}`).value;const incs=incsFor(p);incs[ix]={...incs[ix],tipo:g('it'),fecha:g('if')||null,destino:g('ia'),desc:g('id'),fechaPale:g('ipl')||null,fechaRetirada:g('ie')||null,retiradaRef:g('ip'),fechaReparada:g('ir')||null};await saveIncs(p,incs,'Incidencia editada');return}
+  case 'saveinc':{const k=t.dataset.k;const {p,ix}=kParse(k);const g=x=>$(`#${x}-${CSS.escape(k)}`).value;const incs=incsFor(p);incs[ix]={...incs[ix],tipo:g('it'),fecha:g('if')||null,destino:g('ia'),desc:g('id'),fechaPale:g('ipl')||null,fechaRetirada:g('ie')||null,retiradaRef:g('ip'),fechaReparada:g('ir')||null};if(incs[ix].destino==='macrif'&&!incs[ix].fechaRetirada&&!incs[ix].paleDev)incs[ix].paleDev=await currentDev();await saveIncs(p,incs,'Incidencia editada');return}
   case 'delinc':{if(t.dataset.confirm!=='1'){t.dataset.confirm='1';t.textContent='¿Seguro? Pulsa otra vez';return}const {p,ix}=kParse(t.dataset.k);const incs=incsFor(p).filter((_,i)=>i!==ix);await saveIncs(p,incs,'Incidencia eliminada');return}
   case 'newinccode':{const c=$('#newinc-code').value.toUpperCase().replace(/\s/g,'');const mm=c.match(/^B0?(\d{1,2})-(P1|P2|PS|PC)-(\w{1,2})$/);const id2=mm?`B${mm[1].padStart(2,'0')}-${mm[2]}-${/^\d+$/.test(mm[3])?mm[3].padStart(2,'0'):mm[3]}`:c;openPiece(id2);return}
   case 'retform':UI.retForm={};render();return;
@@ -1164,7 +1352,7 @@ document.addEventListener('focusout',()=>{if(schedule._pending){schedule._pendin
   const sb=window.supabase.createClient(SB_URL,SB_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
 
   /* ---- caché local + oyentes ---- */
-  const cache={pieza:{},pedidos:{},albaranes:{},facturas:{},config:{},retiradas:{}};
+  const cache={pieza:{},pedidos:{},albaranes:{},facturas:{},config:{},retiradas:{},pales:{}};
   const L={coll:{},doc:{}};let loaded=false,pending=0;
   const snapDocs=arr=>({docs:arr,size:arr.length,empty:!arr.length,metadata:{hasPendingWrites:pending>0,fromCache:false},docChanges:()=>[]});
   function build(name){
@@ -1178,7 +1366,7 @@ document.addEventListener('focusout',()=>{if(schedule._pending){schedule._pendin
     for(const n of names)(L.coll[n]||[]).forEach(f=>f(snapDocs(build(n))));
     for(const [path,fs] of Object.entries(L.doc)){const [c,id]=path.split('/');if(c===col){const d=cache[c][id];fs.forEach(f=>f({id,exists:!!d,data:()=>d,metadata:{hasPendingWrites:false}}))}}
   }
-  const emitAll=()=>['pieza','pedidos','albaranes','facturas','config','retiradas'].forEach(emit);
+  const emitAll=()=>['pieza','pedidos','albaranes','facturas','config','retiradas','pales'].forEach(emit);
   const colOf=c=>c==='bloques'?'pieza':c;
   const fail=e=>{throw {code:'unavailable',message:(e&&e.message)||'Error de conexión'}};
   async function track(p){pending++;sync('Guardando…');try{return await p}finally{pending--;if(!pending)sync('Guardado · '+new Date().toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'}))}}
@@ -1234,6 +1422,7 @@ document.addEventListener('focusout',()=>{if(schedule._pending){schedule._pendin
   db.collection('albaranes').onSnapshot(s=>{S.albs={};s.docs.forEach(d=>S.albs[d.id]=d.data());S.loaded.a=true;schedule()},err);
   db.collection('facturas').onSnapshot(s=>{S.facts={};s.docs.forEach(d=>S.facts[d.id]=d.data());S.loaded.f=true;schedule()},err);
   db.collection('pedidos').onSnapshot(s=>{S.peds={};s.docs.forEach(d=>S.peds[d.id]=d.data());schedule()},err);
+  db.collection('pales').onSnapshot(s=>{S.pales={};s.docs.forEach(d=>S.pales[d.id]=d.data());schedule()},err);
   db.collection('retiradas').onSnapshot(s=>{S.rets={};s.docs.forEach(d=>S.rets[d.id]=d.data());schedule()},err);
   db.doc('config/proyecto').onSnapshot(s=>{S.cfg=s.exists?s.data():null;schedule()},err);
 
