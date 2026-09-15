@@ -127,15 +127,17 @@ textarea{width:100%;resize:vertical}
 .canvasbox .banner{position:absolute;left:50%;transform:translateX(-50%);top:10px;background:var(--accent);color:var(--accentInk);padding:5px 12px;border-radius:14px;font-weight:600;font-size:13.5px;white-space:nowrap}
 .canvasbox .hint{position:absolute;left:10px;bottom:8px;font-size:12px;color:var(--ink3);background:var(--canvas);padding:2px 6px;border-radius:4px}
 .pc{cursor:pointer}
-.pc polygon.body{stroke-width:1.6;vector-effect:non-scaling-stroke}
+#plansvg .pc polygon.body{stroke:var(--canvas)!important;stroke-width:.09;stroke-linejoin:round}
+#tlines polygon{fill:none;stroke-width:.34;stroke-linejoin:round;pointer-events:none}
+#tlines .dim{opacity:.13}
+#tlines .focus{stroke:var(--accent)!important;stroke-width:.5}
 .pc polygon.hit{fill:transparent;stroke:transparent;stroke-width:12;vector-effect:non-scaling-stroke}
-.pc.inst polygon.body{stroke:#0B3D1F!important;stroke-width:1.6}
 .pc .tdotS{stroke:var(--canvas);stroke-width:.05}
-.pc.focus polygon.body{stroke:var(--accent)!important;stroke-width:4.5}
-.pc.sel polygon.body{stroke:var(--accent)!important;stroke-width:2.5}
+
+#plansvg .pc.sel polygon.body{stroke:var(--accent)!important;stroke-width:.14}
 .pc polygon.halo{fill:var(--accent);stroke:var(--accent);stroke-width:9;stroke-linejoin:round;vector-effect:non-scaling-stroke;opacity:.9}
 .pc.dim{opacity:.13}
-.pc.ghost polygon.body{stroke-dasharray:4 3}
+.pc.ghost polygon.body{stroke-dasharray:.2 .15}
 .pc text{font-family:var(--mono);font-weight:600;pointer-events:none;text-anchor:middle;dominant-baseline:central;paint-order:stroke;stroke-width:.09;stroke-linejoin:round;fill:var(--ink);stroke:var(--canvas)}
 .pc.inst text{fill:#fff;stroke:none}
 .pc .badge circle{stroke:var(--canvas);stroke-width:.06}
@@ -472,6 +474,65 @@ details.doccard[open]>summary{background:var(--accentSoft)}
 .alert .revok,.alert .revform{margin:4px 0 0}
 .alert.done{opacity:.72}.alert.done .t{text-decoration:line-through;text-decoration-color:var(--ink3)}
 @media (max-width:760px){details.doccard>summary{grid-template-columns:40px 1fr}.dnums,.dchips{grid-column:1/-1;justify-content:flex-start}.dicon{width:40px;height:40px}}
+
+/* inicio */
+.dash{display:flex;flex-direction:column;gap:14px}
+.dhero{padding:16px 18px}
+.dh-big{display:flex;align-items:baseline;gap:12px;margin:2px 0 10px;flex-wrap:wrap}
+.dh-big b{font-size:44px;line-height:1;color:var(--k-instalada);font-variant-numeric:tabular-nums}
+.dh-big span{color:var(--ink2);font-size:15px}
+.dstack{display:flex;gap:2px;border-radius:5px;overflow:hidden;background:var(--panel2)}
+.dstack u{display:block;height:100%;min-width:2px}
+.dlegend{display:flex;flex-wrap:wrap;gap:4px 8px;margin-top:10px}
+.dlegend button{border:1px solid var(--line);background:var(--panel);border-radius:5px;padding:4px 9px;display:inline-flex;gap:6px;align-items:center;font-size:13.5px;color:var(--ink2)}
+.dlegend button:hover{border-color:var(--ink3)}
+.dlegend b{color:var(--ink)}
+.dlegend i,.legend-inline i,i.lg{width:12px;height:12px;border-radius:3px;display:inline-block;vertical-align:-1px;margin-right:3px}
+.dkpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:10px}
+.dkpi{text-align:left;border:1px solid var(--line);border-top:4px solid var(--c);border-radius:7px;background:var(--panel);padding:10px 12px;display:flex;flex-direction:column;gap:2px;color:var(--ink)}
+.dkpi[data-act]:hover{border-color:var(--c)}
+.dk-h{display:flex;gap:6px;align-items:center;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--ink2)}
+.dk-h .ico{width:15px;height:15px;color:var(--c)}
+.dkpi b{font-size:32px;line-height:1.1;font-variant-numeric:tabular-nums}
+.dkpi small{color:var(--ink2);font-size:12.5px}
+.dgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(520px,1fr));gap:14px}
+@media (max-width:1100px){.dgrid,.maps{grid-template-columns:1fr}}
+.dcard{padding:14px 16px}
+.dcard .sechead{margin-bottom:8px;gap:10px}
+.dtipos{display:flex;flex-direction:column;gap:12px}
+.dtipo{border-left:5px solid var(--c);padding:4px 0 4px 10px;display:flex;flex-direction:column;gap:5px}
+.dt-h{display:flex;justify-content:space-between;align-items:center}
+.dt-name{font-weight:800;font-size:15px}
+.dt-nums{display:flex;gap:6px 18px;flex-wrap:wrap;font-size:14px;color:var(--ink2)}
+.dt-nums b{font-size:20px;color:var(--ink)}
+.dt-bar{display:flex;gap:2px;height:14px;background:var(--panel2);border-radius:4px;overflow:hidden}
+.dt-bar u{display:block;height:100%}
+.dmini{display:flex;gap:6px 18px;flex-wrap:wrap;font-size:14px;color:var(--ink2)}
+.dmini b{font-size:20px;color:var(--ink)}
+.dfases{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.dfase{border:1px solid var(--line);border-left:5px solid var(--c);border-radius:6px;padding:8px 10px;display:flex;flex-direction:column;gap:4px}
+.df-h{display:flex;gap:6px;align-items:center;font-size:13px;font-weight:700;color:var(--ink2)}.df-h .ico{color:var(--c);width:16px;height:16px}
+.dfase>b{font-size:26px;line-height:1}
+.dpales{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.dpal{border:1px solid var(--line);border-radius:6px;padding:10px;display:flex;flex-direction:column;gap:4px}
+.dpal>b{font-size:32px;line-height:1}
+.dpal.dev{border-color:var(--s-inc_pale);background:color-mix(in srgb,var(--s-inc_pale) 7%,var(--panel))}
+.dpal.dev>b{color:var(--s-inc_pale)}
+.dpal small{color:var(--ink2);font-size:12.5px}
+.dpal-split{display:flex;flex-direction:column;gap:3px;font-size:13.5px}
+.dpal-split i{width:10px;height:10px;border-radius:2px;display:inline-block;margin-right:5px}
+.dnote{margin-top:12px;display:flex;gap:10px;align-items:center;width:100%;text-align:left;border:1px solid var(--bad);background:var(--badSoft);color:var(--ink);border-radius:6px;padding:8px 10px}
+.dnote .ico{color:var(--bad);width:20px;height:20px}.dnote small{display:block;color:var(--ink2)}
+.maps{display:grid;grid-template-columns:repeat(auto-fit,minmax(520px,1fr));gap:10px}
+@media (max-width:520px){.maps{grid-template-columns:1fr}.dfases,.dpales{grid-template-columns:1fr}}
+.mapcard{margin:0;border:1px solid var(--line);border-radius:6px;background:var(--canvas);padding:8px}
+.mapcard figcaption{display:flex;justify-content:space-between;align-items:center;font-size:14px;margin-bottom:2px}
+.mapcard svg{width:100%;height:auto;max-height:340px;display:block}
+.mp polygon{stroke:var(--canvas);stroke-width:.09;stroke-linejoin:round}
+.mtl{fill:none;stroke-width:.34;stroke-linejoin:round;pointer-events:none}
+.mp{cursor:pointer}.mp:hover polygon{fill:var(--accent)!important}
+.mpl{font-size:2.3px;font-weight:700;fill:var(--ink2);text-anchor:middle;font-family:var(--mono)}
+.dtable .dstack{width:100%}
 </style>
 </head>
 <body>
@@ -576,11 +637,11 @@ function safeId(s){return String(s).replace(/[^A-Za-z0-9_\-.~:@+]/g,'_')}
 
 let db=null, downloads=null, FOTOS=null;
 const S={bloques:{},albs:{},facts:{},peds:{},rets:{},pales:{},revs:{},cfg:null,loaded:{b:false}};
-const UI={tab:'plano',planta:'P1',bloque:'B01',mode:'estado',show:'all',tipos:new Set(['V','A','R']),
+const UI={tab:'inicio',planta:'P1',bloque:'B01',mode:'estado',show:'all',tipos:new Set(['V','A','R']),
   multi:false,range:false,sel:new Set(),focus:null,anchor:null,instDate:today(),bulkInc:false,
   paleF:'all',drawerPale:null,paleSel:new Set(),pf:{tipo:'',bloque:'',planta:'',pedido:'',q:''},
   tf:{q:'',estado:'',bloque:'',planta:'',tipo:'',fact:''},rep:{desde:'',hasta:today()},cal:null,drawer:null,vb:null,newPed:null,retForm:null};
-try{const s=JSON.parse(localStorage.getItem('sky-ui2')||'{}');['tab','planta','bloque','mode'].forEach(k=>{if(s[k])UI[k]=s[k]})}catch(e){}
+try{const s=JSON.parse(localStorage.getItem('sky-ui2')||'{}');['planta','bloque','mode'].forEach(k=>{if(s[k])UI[k]=s[k]})}catch(e){}
 function saveUI(){try{localStorage.setItem('sky-ui2',JSON.stringify({tab:UI.tab,planta:UI.planta,bloque:UI.bloque,mode:UI.mode}))}catch(e){}}
 const narrow=()=>window.matchMedia('(max-width:900px)').matches;
 
@@ -738,7 +799,7 @@ function kpis(){
   const n=LIST.length, ins=LIST.filter(p=>p.inst).length, ob=LIST.filter(p=>p.estado==='en_obra').length, inc=LIST.filter(p=>p.open).length, pale=LIST.filter(p=>p.estado==='inc_pale').length;
   $('#kpis').innerHTML=[['check',ins,'instaladas','--s-instalada'],['box',ob,'en obra sin instalar','--s-en_obra'],['pallet',PALES.filter(g=>g.st!=='vacio').length,'palés en obra','--wood2'],['alert',inc,'incidencias','--s-inc_detectada'],['back',DEVS.filter(d=>!d.enviado).reduce((t,d)=>t+d.items.length,0),'para devolver','--s-inc_pale']].map(([i,b,s,c])=>`<div class="kpi" style="color:var(${c})">${ico(i)}<b>${b}</b><span>${s}</span></div>`).join('')+`<div class="kpi"><b>${n}</b><span>piezas<br>dibujadas</span></div>`;
   const nPal=PALES.filter(g=>g.st!=='vacio').length, nDev=DEVS.filter(d=>!d.enviado).reduce((t,d)=>t+d.items.length,0);
-  const tabs=[['plano','Plano'],['pales','Palés'],['piezas','Piezas'],['pedidos','Pedidos'],['incidencias','Incidencias',inc],['rendimiento','Rendimiento'],['macrif','Macrif',ALERTS.filter(a=>a.sev!=='info'&&!alertOk(a)).length]];
+  const tabs=[['inicio','Inicio'],['plano','Plano'],['pales','Palés'],['piezas','Piezas'],['pedidos','Pedidos'],['incidencias','Incidencias',inc],['rendimiento','Rendimiento'],['macrif','Macrif',ALERTS.filter(a=>a.sev!=='info'&&!alertOk(a)).length]];
   $('#tabs').innerHTML=tabs.map(([k,l,c])=>`<button class="tab" role="tab" aria-selected="${UI.tab===k}" data-tab="${k}">${l}${c?`<span class="cnt">${c}</span>`:''}</button>`).join('');
 }
 function render(){
@@ -748,7 +809,7 @@ function render(){
   m.classList.toggle('fit',UI.tab==='plano');
   m.classList.toggle('multi',UI.tab==='plano'&&UI.multi);
   if(!LIST.length){m.innerHTML='<div class="empty panel">Todavía no hay piezas cargadas.</div>';return}
-  ({plano:renderPlano,pales:renderPales,piezas:renderPiezas,pedidos:renderPedidos,incidencias:renderInc,rendimiento:renderRend,macrif:renderMacrif}[UI.tab]||renderPlano)(m);
+  ({inicio:renderInicio,plano:renderPlano,pales:renderPales,piezas:renderPiezas,pedidos:renderPedidos,incidencias:renderInc,rendimiento:renderRend,macrif:renderMacrif}[UI.tab]||renderPlano)(m);
   renderSelbar();renderDrawer();hydratePhotos();
 }
 
@@ -804,15 +865,16 @@ function drawSvg(vis,refit){
     const g=GEO[p.id];const m=ESTM[p.estado];
     const cls=['pc'];if(UI.sel.has(p.id))cls.push('sel');if(UI.focus===p.id&&!UI.multi)cls.push('focus');if(!matchShow(p))cls.push('dim');if(g[4])cls.push('ghost');
     const cx=g[2],cy=g[3];
-    const pts=g[1].split(' ').map(s=>{const [x,y]=s.split(',').map(Number);return `${(cx+(x-cx)*.93).toFixed(2)},${(cy+(y-cy)*.93).toFixed(2)}`}).join(' ');
-    const fill=estColor(p.estado),stroke='var(--canvas)',icon=m.ico,ink=estInk(p.estado);
+    const pts=g[1].split(' ').map(s=>{const [x,y]=s.split(',').map(Number);return `${(cx+(x-cx)*.97).toFixed(2)},${(cy+(y-cy)*.97).toFixed(2)}`}).join(' ');
+    const fill=estColor(p.estado),stroke='none',icon=m.ico,ink=estInk(p.estado);
     const badge=icon?`<g class="badge"><use href="#i-${icon}" x="${cx-.27}" y="${cy-.27}" width=".54" height=".54" style="color:${ink}"/></g>`:'';
     const tdotS='';
     const selm=UI.sel.has(p.id)?`<g class="selmark"><circle cx="${cx}" cy="${cy-.95}" r=".42"/><use href="#i-check" x="${cx-.27}" y="${cy-1.22}" width=".54" height=".54"/></g>`:'';
     const halo=UI.sel.has(p.id)?`<polygon class="halo" points="${g[1]}"/>`:'';
     return `<g class="${cls.join(' ')}" data-id="${p.id}"><title>${p.id} · ${m.n}</title>${halo}<polygon class="hit" points="${g[1]}"/><polygon class="body" points="${pts}" style="fill:${fill};stroke:${stroke}"/>${badge}<text x="${cx}" y="${cy}" font-size=".4" style="fill:${ink};stroke:none">${p.n}</text>${tdotS}${selm}</g>`;
   }).join('');
-  svg.innerHTML=`<g id="pieces">${parts}</g>`;
+  const tl=vis.map(p=>`<polygon class="tline${!matchShow(p)?' dim':''}${UI.focus===p.id&&!UI.multi?' focus':''}" points="${GEO[p.id][1]}" style="stroke:${tipoColor(p.color)}"/>`).join('');
+  svg.innerHTML=`<g id="tlines">${tl}</g><g id="pieces">${parts}</g>`;
   applyVB();
 }
 function applyVB(){
@@ -842,7 +904,7 @@ function renderSide(vis){
     <div class="row" style="justify-content:space-between;margin-top:4px"><span><b style="font-size:22px">${tot?Math.round(ni/tot*100):0}%</b> <span class="muted">instalado</span></span><span class="muted num">${ni} / ${tot} piezas</span></div></div>
     <div class="legend big">${rows.map(([k,l,icn,f])=>{const n=k==='inc'?incI.length:cnt(k);return `<button class="lg" data-show="${f}" aria-pressed="${UI.show===f}"><span class="sw" style="--c:var(--k-${k});color:${DARK.has(k)?'var(--kInkDark)':'#fff'}">${ico(icn)}</span><span>${l}</span><b class="num">${n}</b></button>`}).join('')}</div>
     ${incI.length?`<div class="faint" style="font-size:12.5px;margin:4px 0 0 32px">${['inc_detectada','inc_pale','inc_macrif','inc_reparar'].map(e=>{const n=vis.filter(q=>q.estado===e).length;return n?`${ico(ESTM[e].ico)} ${n} ${ESTM[e].n.toLowerCase()}`:''}).filter(Boolean).join(' · ')}</div>`:''}
-    <div class="label" style="margin:14px 0 6px">Tipo de pieza (pulsa para filtrar)</div>
+    <div class="label" style="margin:14px 0 6px">Tipo de pieza = color del contorno (pulsa para filtrar)</div>
     <div class="tipos3">${tip}</div>
     ${UI.show!=='all'||UI.tipos.size<3?`<button class="btn sm" data-act="showall" style="width:100%">Mostrar todas</button>`:''}
   </section>`;
@@ -1134,9 +1196,9 @@ function perRange(){
 function daysBetween(d0,d1){const out=[];const d=new Date(d0+'T12:00:00'),e=new Date(d1+'T12:00:00');while(d<=e){out.push(iso(d));d.setDate(d.getDate()+1)}return out}
 const isWE=s=>{const w=new Date(s+'T12:00:00').getDay();return w===0||w===6};
 const nf1=n=>Number(n).toLocaleString('es-ES',{maximumFractionDigits:1});
-function barChartSVG(rows,avg,unit){
+function barChartSVG(rows,avg,unit,W=860,H=230){
   // rows: [{k,label,v,we,tip}]
-  const W=860,H=230,L=34,R=10,T=14,B=34;const n=rows.length||1;
+  const L=34,R=10,T=14,B=34;const n=rows.length||1;
   const max=Math.max(4,...rows.map(r=>r.v));const nice=Math.ceil(max/4)*4;
   const x=i=>L+(W-L-R)*(i/n),bw=Math.max(2,(W-L-R)/n-3),y=v=>T+(H-T-B)*(1-v/nice);
   const ticks=[0,nice/4,nice/2,3*nice/4,nice];
@@ -1144,7 +1206,7 @@ function barChartSVG(rows,avg,unit){
   return `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Piezas instaladas por ${unit}">
     ${ticks.map(t=>`<line x1="${L}" x2="${W-R}" y1="${y(t)}" y2="${y(t)}" class="grid"/><text x="${L-6}" y="${y(t)+4}" class="ax" text-anchor="end">${t}</text>`).join('')}
     ${rows.map((r,i)=>`${r.we?`<rect x="${x(i)}" y="${T}" width="${(W-L-R)/n}" height="${H-T-B}" class="weband"/>`:''}<g class="bar"><rect x="${x(i)+1.5}" y="${y(r.v)}" width="${bw}" height="${Math.max(0,H-B-y(r.v))}" rx="${Math.min(4,bw/2)}" class="b"/>${r.v?`<text x="${x(i)+1.5+bw/2}" y="${y(r.v)-4}" class="vl" text-anchor="middle">${bw>14?r.v:''}</text>`:''}<rect x="${x(i)}" y="${T}" width="${(W-L-R)/n}" height="${H-T-B}" fill="transparent"><title>${r.tip}</title></rect></g>${i%step===0?`<text x="${x(i)+bw/2}" y="${H-B+16}" class="ax" text-anchor="middle">${r.label}</text>`:''}`).join('')}
-    ${avg>0?`<line x1="${L}" x2="${W-R}" y1="${y(avg)}" y2="${y(avg)}" class="avg"/><text x="${W-R}" y="${y(avg)-6}" class="avgl" text-anchor="end">media ${nf1(avg)} / ${unit} lab.</text>`:''}
+    ${avg>0?`<line x1="${L}" x2="${W-R}" y1="${y(avg)}" y2="${y(avg)}" class="avg"/><text x="${L+6}" y="${y(avg)-6}" class="avgl" text-anchor="start" style="paint-order:stroke;stroke:var(--panel);stroke-width:4px">media ${nf1(avg)} / ${unit} lab.</text>`:''}
   </svg>`;
 }
 function lineChartSVG(days,instCum,arrCum,total){
@@ -1447,6 +1509,113 @@ function paleDrawer(){
     </tbody></table></div>`;
 }
 
+/* =================== INICIO (dashboard) =================== */
+const GRP=[['instalada','Instaladas'],['en_obra','En obra sin instalar'],['pedida','Pendientes de llegar'],['inc','Con incidencia'],['medir','Falta medir'],['sin_pedir','Sin pedir']];
+const grpOf=p=>p.open||['inc_detectada','inc_pale','inc_macrif','inc_reparar'].includes(p.estado)?'inc':p.estado==='descartada'?'inc':p.estado;
+function stackBar(counts,total,h){
+  return `<div class="dstack" style="height:${h||14}px">${GRP.map(([k,l])=>counts[k]?`<u style="width:${counts[k]/total*100}%;background:${k==='inc'?'var(--k-inc)':estColor(k)}" title="${l}: ${counts[k]}"></u>`:'').join('')}</div>`;
+}
+function countGrp(arr){const c={};GRP.forEach(([k])=>c[k]=0);arr.forEach(p=>{const g=grpOf(p);c[g]=(c[g]||0)+1});return c}
+function planMap(pl){
+  const ps=LIST.filter(p=>p.pl===pl&&GEO[p.id]);if(!ps.length)return '';
+  let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;const bb={};
+  for(const p of ps){const b=bb[p.bl]=bb[p.bl]||[1e9,1e9,-1e9,-1e9];for(const pt of GEO[p.id][1].split(' ')){const [x,y]=pt.split(',').map(Number);x0=Math.min(x0,x);y0=Math.min(y0,y);x1=Math.max(x1,x);y1=Math.max(y1,y);b[0]=Math.min(b[0],x);b[1]=Math.min(b[1],y);b[2]=Math.max(b[2],x);b[3]=Math.max(b[3],y)}}
+  const pad=3,top=5;
+  const poly=ps.map(p=>`<g data-open="${p.id}" class="mp"><title>${p.id} · ${TIPOS[p.color]?.n||''} · ${ESTM[p.estado].n}${p.inst?' '+fd(p.inst):''}</title><polygon points="${GEO[p.id][1]}" style="fill:${estColor(p.estado)}"/></g>`).join('');
+  const tl=ps.map(p=>`<polygon class="mtl" points="${GEO[p.id][1]}" style="stroke:${tipoColor(p.color)}"/>`).join('');
+  const labs=Object.entries(bb).map(([b,r])=>{const all=ps.filter(p=>p.bl===b);const i=all.filter(p=>p.inst).length;const inc=all.filter(p=>p.open).length;return `<text x="${(r[0]+r[2])/2}" y="${r[1]-1.4}" class="mpl">B${b.slice(1)} · ${Math.round(i/all.length*100)}%${inc?` · ⚠${inc}`:''}</text>`}).join('');
+  const all=ps.length,ins=ps.filter(p=>p.inst).length;
+  return `<figure class="mapcard"><figcaption><button class="linkbtn" data-act="goplan" data-pl="${pl}" data-bl="ALL"><b>${PLANTAS[pl]}</b></button><span class="muted num">${ins}/${all} instaladas</span></figcaption>
+    <svg viewBox="${x0-pad} ${y0-pad-top} ${x1-x0+2*pad} ${y1-y0+2*pad+top}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Mapa de ${PLANTAS[pl]}"><g>${tl}</g>${poly}${labs}</svg></figure>`;
+}
+function renderInicio(m){
+  const N=LIST.length;
+  const G=countGrp(LIST);
+  const pedidas=LIST.filter(p=>p.peds.length), llegadas=LIST.filter(p=>p.ent.length);
+  const falta=LIST.filter(p=>p.estado==='pedida'), enMacrif=LIST.filter(p=>p.estado==='inc_macrif');
+  const medir=LIST.filter(p=>p.estado==='medir'), sinp=LIST.filter(p=>p.estado==='sin_pedir');
+  const ins=LIST.filter(p=>p.inst);
+  const tipos=['V','A','R'].map(c=>{const a=LIST.filter(p=>p.color===c);return {c,a,cnt:countGrp(a),falta:a.filter(p=>p.estado==='pedida').length,sinp:a.filter(p=>p.estado==='sin_pedir'||p.estado==='medir').length,m2:a.filter(p=>p.estado==='pedida').reduce((t,p)=>t+(p.m2Ref||0),0)}});
+  const fmax=Math.max(1,...tipos.map(t=>t.falta+t.sinp));
+  // rendimiento: últimos 28 días
+  const d1=today();const d0=(()=>{const d=new Date(d1+'T12:00:00');d.setDate(d.getDate()-27);return iso(d)})();
+  const instD={};ins.forEach(p=>instD[p.inst]=(instD[p.inst]||0)+1);
+  const days=daysBetween(d0,d1);const rows=days.map(s=>({k:s,label:s.slice(8),v:instD[s]||0,we:isWE(s),tip:`${fd(s)}: ${instD[s]||0} instaladas`}));
+  const n28=rows.reduce((t,r)=>t+r.v,0),lab28=days.filter(s=>!isWE(s)).length;
+  const wk=o=>{const d=new Date(d1+'T12:00:00');const mon=new Date(d);mon.setDate(d.getDate()-((d.getDay()+6)%7)-7*o);const sun=new Date(mon);sun.setDate(mon.getDate()+6);return ins.filter(p=>p.inst>=iso(mon)&&p.inst<=iso(sun)).length};
+  const wThis=wk(0),wPrev=wk(1);
+  const ritmo=lab28?n28/lab28:0;
+  // incidencias
+  const opens=LIST.filter(p=>p.open);
+  const fases=[['detectada','alert','Sin decidir','inc_detectada'],['pale','pallet','En palé para devolver','inc_pale'],['retirada','truck','En Macrif (esperando vuelta)','inc_macrif'],['reparar','wrench','Reparar en obra','inc_reparar']];
+  const byF=k=>opens.filter(p=>p.open._fase===k);
+  // palés
+  const pAb=PALES.filter(g=>g.st==='abierto'),pCe=PALES.filter(g=>g.st==='cerrado');
+  const devs=DEVS.filter(d=>!d.enviado&&d.items.length);const devN=devs.reduce((t,d)=>t+d.items.length,0);
+  const pendRev=typeof alertOk==='function'?ALERTS.filter(a=>a.sev!=='info'&&!alertOk(a)).length:0;
+  const codes=(arr,max)=>`<div class="codes-inline">${arr.slice(0,max).map(p=>`<button class="codebtn" style="--c:${tipoColor(p.color)}" data-open="${p.id}">${p.id}</button>`).join('')}${arr.length>max?`<span class="faint" style="font-size:12px;align-self:center">+${arr.length-max} más</span>`:''}</div>`;
+  const bls=[...new Set(LIST.map(p=>p.bl))].sort();const pend=(S.cfg&&S.cfg.bloquesPendientes)||[];
+  const kpi=(k,label,val,sub,show,ico_)=>`<button class="dkpi" style="--c:${k}" ${show?`data-act="goplan" data-gshow="${show}"`:''}><span class="dk-h">${ico(ico_)}${label}</span><b>${val}</b><small>${sub}</small></button>`;
+  m.dataset.view='inicio';
+  m.innerHTML=`<div class="wrap dash">
+  <section class="panel dhero">
+    <div class="dh-l"><span class="label">Avance de la obra</span><div class="dh-big"><b>${Math.round(ins.length/N*100)}%</b><span>${ins.length} de ${N} piezas instaladas</span></div>
+      ${stackBar(G,N,22)}
+      <div class="dlegend">${GRP.map(([k,l])=>`<button data-act="goplan" data-gshow="${({instalada:'inst',en_obra:'obra',pedida:'pend',inc:'inc',medir:'medir',sin_pedir:'sinp'})[k]}"><i style="background:${k==='inc'?'var(--k-inc)':estColor(k)}"></i>${l} <b class="num">${G[k]}</b></button>`).join('')}</div>
+    </div>
+  </section>
+  <div class="dkpis">
+    ${kpi('var(--k-pedida)','Piezas pedidas',pedidas.length,`${Object.keys(S.peds).length} pedidos · ${N-pedidas.length} sin pedido`,'','clock')}
+    ${kpi('var(--k-en_obra)','En obra sin instalar',G.en_obra,`${llegadas.length} han llegado en total`,'obra','box')}
+    ${kpi('var(--k-pedida)','Faltan por llegar',falta.length,`${f2(falta.reduce((t,p)=>t+(p.m2Ref||0),0))} m²${enMacrif.length?` · +${enMacrif.length} en Macrif`:''}`,'pend','truck')}
+    ${kpi('var(--k-instalada)','Instaladas esta semana',wThis,`semana pasada ${wPrev} · ritmo ${nf1(ritmo)}/día lab.`,'inst','check')}
+    ${kpi('var(--k-medir)','Pendientes de medir',medir.length,`${sinp.length} más sin pedir ni marcar`,'medir','ruler')}
+    ${kpi('var(--k-inc)','Incidencias abiertas',opens.length,`${byF('detectada').length} sin decidir`,'inc','alert')}
+  </div>
+  <div class="dgrid">
+    <section class="panel dcard">
+      <div class="sechead"><h2>Qué falta por llegar, por tipo</h2><button class="btn sm" data-tab="pedidos">Pedidos</button></div>
+      <div class="dtipos">${tipos.map(t=>`<div class="dtipo" style="--c:${tipoColor(t.c)}">
+        <div class="dt-h"><span class="dt-name">${tdot(t.c)} ${TIPOS[t.c].n}s</span><span class="muted num">${t.a.length} piezas</span></div>
+        <div class="dt-nums"><span><b style="color:var(--ink)">${t.falta}</b> pedidas sin llegar${t.falta?` <small class="faint">(${f2(t.m2)} m²)</small>`:''}</span><span><b>${t.sinp}</b> sin pedir / medir</span></div>
+        <div class="dt-bar"><u style="width:${t.falta/fmax*100}%;background:var(--k-pedida)"></u><u style="width:${t.sinp/fmax*100}%;background:var(--k-medir)"></u></div>
+        ${stackBar(t.cnt,t.a.length,8)}
+        <div class="faint num" style="font-size:12px">${t.cnt.instalada} instaladas · ${t.cnt.en_obra} en obra · ${t.cnt.inc} incidencia</div>
+      </div>`).join('')}</div>
+      <p class="faint" style="font-size:12px;margin:8px 0 0">Barra gruesa: <i class="lg" style="background:var(--k-pedida)"></i>pedidas sin llegar · <i class="lg" style="background:var(--k-medir)"></i>sin pedir o pendientes de medir. Barra fina: situación de todas las piezas de ese tipo.</p>
+    </section>
+    <section class="panel dcard">
+      <div class="sechead"><h2>Rendimiento · últimas 4 semanas</h2><button class="btn sm" data-tab="rendimiento">Ver detalle</button></div>
+      <div class="dmini"><span><b>${n28}</b> instaladas</span><span><b>${nf1(ritmo)}</b> por día laborable</span><span><b>${ritmo?Math.ceil((N-ins.length)/ritmo):'—'}</b> días lab. para terminar a este ritmo</span></div>
+      ${n28?barChartSVG(rows,ritmo,'día',460,260):'<p class="empty">Sin instalaciones en las últimas 4 semanas.</p>'}
+    </section>
+    <section class="panel dcard">
+      <div class="sechead"><h2>Incidencias pendientes</h2><button class="btn sm" data-tab="incidencias">Gestionar</button></div>
+      <div class="dfases">${fases.map(([k,i,l,e])=>{const a=byF(k);return `<div class="dfase" style="--c:${faseColor(e)}"><span class="df-h">${ico(i)} ${l}</span><b>${a.length}</b>${a.length?codes(a,6):'<span class="faint" style="font-size:12.5px">Nada pendiente</span>'}</div>`}).join('')}</div>
+    </section>
+    <section class="panel dcard">
+      <div class="sechead"><h2>Palés</h2><button class="btn sm" data-tab="pales">Ver palés</button></div>
+      <div class="dpales">
+        <div class="dpal"><span class="label">En obra</span><b>${pAb.length+pCe.length}</b><div class="dpal-split"><span><i style="background:var(--wood2,#B07A45)"></i><b>${pCe.length}</b> sin abrir <small>(${pCe.reduce((t,g)=>t+g.rest.length,0)} piezas)</small></span><span><i style="background:var(--k-en_obra)"></i><b>${pAb.length}</b> abiertos <small>(${pAb.reduce((t,g)=>t+g.rest.length,0)} piezas quedan)</small></span></div></div>
+        <div class="dpal dev"><span class="label">Para devolver a Macrif</span><b>${devN}</b><small>piezas en ${devs.length} palé${devs.length===1?'':'s'}${devs.length?` · el más antiguo desde ${fd(devs.map(d=>d.creado||d.items[0]?.i.fechaPale).filter(Boolean).sort()[0])}`:''}</small>${devN?`<button class="btn sm" data-act="gotodev">${ico('truck')} Preparar envío</button>`:''}</div>
+      </div>
+      <div class="sechead" style="margin-top:12px"><h2>Pendientes de medir en obra</h2><span class="muted num">${medir.length}</span></div>
+      ${medir.length?codes(medir,18):'<p class="faint" style="margin:0">Ninguna pieza marcada para medir.</p>'}
+      ${pendRev?`<button class="dnote" data-tab="macrif">${ico('alert')} <span><b>${pendRev} comprobaciones de Macrif sin revisar</b><small>albaranes y facturas con descuadres</small></span></button>`:''}
+    </section>
+  </div>
+  <section class="panel dcard">
+    <div class="sechead"><div><h2>Mapa del proyecto</h2><p class="faint" style="margin:2px 0 0;font-size:13px">Relleno = estado de la pieza · contorno = tipo (verde, amarilla, roja). Toca una pieza para abrir su ficha o el nombre de la planta para ir al plano.</p></div>
+    <span class="legend-inline">${GRP.map(([k,l])=>`<span><i style="background:${k==='inc'?'var(--k-inc)':estColor(k)}"></i>${l}</span>`).join('')}</span></div>
+    <div class="maps">${Object.keys(PLANTAS).map(planMap).join('')}</div>
+    <div class="tblwrap" style="margin-top:12px"><table class="dtable"><thead><tr><th>Bloque</th><th style="min-width:160px">Situación</th><th class="r">Piezas</th><th class="r">Instaladas</th><th class="r">En obra</th><th class="r">Faltan llegar</th><th class="r">Medir / sin pedir</th><th class="r">Incidencias</th></tr></thead><tbody>
+      ${bls.map(b=>{const a=LIST.filter(p=>p.bl===b);const c=countGrp(a);return `<tr class="click" data-act="goplan" data-bl="${b}"><td><b>Bloque ${b.slice(1)}</b></td><td>${stackBar(c,a.length,12)}</td><td class="r num">${a.length}</td><td class="r num"><b>${c.instalada}</b> <span class="faint">${Math.round(c.instalada/a.length*100)}%</span></td><td class="r num">${c.en_obra||'—'}</td><td class="r num">${c.pedida||'—'}</td><td class="r num">${c.medir+c.sin_pedir||'—'}</td><td class="r num">${c.inc?`<span class="chip bad">${c.inc}</span>`:'—'}</td></tr>`}).join('')}
+      ${pend.map(b=>`<tr><td class="faint">Bloque ${b.slice(1)}</td><td colspan="7" class="faint">Sin despiece todavía</td></tr>`).join('')}
+    </tbody></table></div>
+  </section>
+  </div>`;
+}
+
 /* =================== acciones =================== */
 let toastT;function toast(t){clearTimeout(toastT);let el=$('#toast');if(!el){el=document.createElement('div');el.id='toast';el.className='toast';el.setAttribute('role','status');document.body.appendChild(el)}el.textContent=t;el.hidden=false;toastT=setTimeout(()=>el.hidden=true,2800)}
 function rerenderKeepScroll(){const m=$('#main');const y=m.scrollTop,wy=window.scrollY;render();m.scrollTop=y;if(narrow())window.scrollTo(0,wy)}
@@ -1528,6 +1697,7 @@ document.addEventListener('click',async e=>{
     const patches={};dv.items.forEach(({p,i})=>{const incs=incsFor(p);incs[i._ix]={...incs[i._ix],paleDev:id,fechaRetirada:fecha,retiradaRef:ref,retiradaId:id};patches[p.id]=withLog(p,`Enviada a Macrif ${fd(fecha)}`,{incs})});
     try{await db.doc('retiradas/'+id).set({fecha,ref,piezas:dv.items.map(({p,i})=>({p:p.id,ix:i._ix}))})}catch(err){}
     UI.drawerPale=null;await patchPieces(patches,`Enviadas ${dv.items.length} piezas a Macrif`);return}
+  case 'goplan':{UI.tab='plano';UI.drawer=null;if(t.dataset.bl)UI.bloque=t.dataset.bl;if(t.dataset.pl)UI.planta=t.dataset.pl;if(t.dataset.bl&&t.dataset.bl!=='ALL'&&!t.dataset.pl){const q=LIST.find(p=>p.bl===t.dataset.bl&&p.pl===UI.planta)||LIST.find(p=>p.bl===t.dataset.bl);if(q)UI.planta=q.pl}UI.show=t.dataset.gshow||'all';UI.tipos=new Set(['V','A','R']);UI.focus=null;saveUI();$('#main').dataset.view='';render();$('#main').scrollTop=0;return}
   case 'unfocus':UI.focus=null;UI.incForm=null;render();return;
   case 'gotoplan':UI.drawer=null;UI.tab='plano';saveUI();render();openPiece(id);return;
   case 'showall':UI.show='all';UI.tipos=new Set(['V','A','R']);render();return;
