@@ -621,6 +621,27 @@ details.doccard[open]>summary{background:var(--accentSoft)}
 .offbanner{background:var(--warnSoft);color:var(--ink);border-bottom:1px solid var(--warn);padding:7px 18px;font-size:13.5px}
 .offbanner b{color:var(--warn)}
 @media (max-width:900px){.offbanner{padding:6px 12px;font-size:13px}.userbox .sync{font-size:11.5px}}
+
+/* presencia y actividad */
+.peers{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--panel);border-radius:16px;padding:2px 10px 2px 3px;position:relative;cursor:pointer}
+.peers:hover{border-color:var(--accent)}
+.peers .avs{display:inline-flex}.peers .avs .av+.av{margin-left:-7px}
+.peers .pcount{font-size:13px;font-weight:700}.peers .pl{font-weight:500;color:var(--ink2)}
+.pdot{position:absolute;top:-5px;right:-5px;background:var(--bad);color:#fff;font-style:normal;font-size:10.5px;border-radius:9px;padding:0 5px;min-width:16px;text-align:center}
+.av{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:var(--av);color:#fff;font-weight:800;font-size:11px;border:2px solid var(--panel);flex:none;letter-spacing:0}
+.peerlist{display:flex;flex-direction:column;gap:8px}
+.peer{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--line);border-radius:8px;padding:8px 10px}
+.peer .pi{display:flex;flex-direction:column;gap:1px;min-width:0}.peer small{font-size:12.5px;color:var(--ink2)}
+.feedday{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--ink3);margin:12px 0 4px}
+.feed{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.feed li{display:flex;gap:10px;padding:8px 2px;border-bottom:1px solid var(--line);font-size:14px}
+.feed li.live{background:color-mix(in srgb,var(--ok) 6%,transparent)}
+.viewing{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:6px 0;padding:6px 8px;border-radius:6px;background:var(--infoSoft);font-size:13px}
+.viewing .av{width:20px;height:20px;font-size:9px}
+@keyframes flashpc{0%,100%{opacity:1}50%{opacity:.35}}
+.pc.flash polygon.body{animation:flashpc 1.1s ease-in-out 6}
+.prow.flash{box-shadow:inset 0 0 0 2px var(--ok);animation:flashpc 1.1s ease-in-out 4}
+@media (max-width:900px){.peers .pl{display:none}.peers{padding:2px 7px 2px 2px}.peers .avs .av:nth-child(n+3){display:none}}
 </style>
 </head>
 <body>
@@ -646,7 +667,7 @@ details.doccard[open]>summary{background:var(--accentSoft)}
     <div class="brand"><h1>SKY MARBELLA</h1><small>Cantos de forjado · Solid surface Betacryl 100 Classic White</small></div>
     <div class="kpis" id="kpis"></div>
   </div>
-  <div class="tabrow"><nav class="tabs" role="tablist" id="tabs"></nav><div class="userbox"><input type="search" id="gsearch" placeholder="Buscar pieza · ej. 3p114" aria-label="Buscar pieza" enterkeyhint="search"><span class="sync" id="sync">Conectando…</span><span class="who" id="who"></span><button class="btn sm" id="logout" hidden>Salir</button></div></div>
+  <div class="tabrow"><nav class="tabs" role="tablist" id="tabs"></nav><div class="userbox"><button class="peers" id="peers" data-act="live" hidden aria-label="Quién está conectado y actividad"></button><input type="search" id="gsearch" placeholder="Buscar pieza · ej. 3p114" aria-label="Buscar pieza" enterkeyhint="search"><span class="sync" id="sync">Conectando…</span><span class="who" id="who"></span><button class="btn sm" id="logout" hidden>Salir</button></div></div>
 </header>
  <div id="offbanner" class="offbanner" hidden role="status"></div>
 <nav class="bnav" id="bnav" aria-label="Secciones"></nav><div id="navsheet" class="navsheet" hidden></div>
@@ -727,7 +748,7 @@ function diasNat(desde){return Math.max(0,Math.round((new Date(today())-new Date
 function diasLab(desde){const d=new Date(desde+'T12:00:00'),h=new Date(today()+'T12:00:00');let n=0;d.setDate(d.getDate()+1);while(d<=h){const w=d.getDay();if(w>0&&w<6)n++;d.setDate(d.getDate()+1)}return n}
 function safeId(s){return String(s).replace(/[^A-Za-z0-9_\-.~:@+]/g,'_')}
 
-let db=null, downloads=null, FOTOS=null;
+let db=null, downloads=null, FOTOS=null, LIVE=null;
 const S={bloques:{},albs:{},facts:{},peds:{},rets:{},pales:{},revs:{},cfg:null,loaded:{b:false}};
 const UI={tab:'inicio',planta:'P1',bloque:'B01',mode:'estado',show:'all',tipos:new Set(['V','A','R']),
   multi:false,range:false,sel:new Set(),focus:null,anchor:null,instDate:today(),bulkInc:false,
@@ -735,6 +756,7 @@ const UI={tab:'inicio',planta:'P1',bloque:'B01',mode:'estado',show:'all',tipos:n
   tf:{q:'',estado:'',bloque:'',planta:'',tipo:'',fact:''},rep:{desde:'',hasta:today()},cal:null,drawer:null,vb:null,newPed:null,retForm:null};
 try{const s=JSON.parse(localStorage.getItem('sky-ui2')||'{}');['planta','bloque','mode'].forEach(k=>{if(s[k])UI[k]=s[k]})}catch(e){}
 function saveUI(){try{localStorage.setItem('sky-ui2',JSON.stringify({tab:UI.tab,planta:UI.planta,bloque:UI.bloque,mode:UI.mode}))}catch(e){}}
+try{UI.liveToasts=localStorage.getItem('sky-avisos')!=='0'}catch(e){}
 const narrow=()=>window.matchMedia('(max-width:900px)').matches;
 
 /* =================== incidencias: normalización =================== */
@@ -917,7 +939,7 @@ function render(){
   m.classList.toggle('multi',UI.tab==='plano'&&UI.multi);
   if(!LIST.length){m.innerHTML='<div class="empty panel">Todavía no hay piezas cargadas.</div>';return}
   ({inicio:renderInicio,plano:renderPlano,pales:renderPales,piezas:renderPiezas,pedidos:renderPedidos,incidencias:renderInc,rendimiento:renderRend,macrif:renderMacrif}[UI.tab]||renderPlano)(m);
-  renderSelbar();renderDrawer();hydratePhotos();
+  renderSelbar();renderDrawer();hydratePhotos();renderPeers();if(window.__presTick)window.__presTick();
 }
 
 /* =================== PLANO =================== */
@@ -972,7 +994,7 @@ function drawSvg(vis,refit){
 
   const parts=vis.map(p=>{
     const g=GEO[p.id];const m=ESTM[p.estado];
-    const cls=['pc'];if(UI.sel.has(p.id))cls.push('sel');if(UI.focus===p.id&&!UI.multi)cls.push('focus');if(!matchShow(p))cls.push('dim');if(g[4])cls.push('ghost');
+    const cls=['pc'];if(LIVE&&LIVE.flash[p.id]&&Date.now()-LIVE.flash[p.id]<20000)cls.push('flash');if(UI.sel.has(p.id))cls.push('sel');if(UI.focus===p.id&&!UI.multi)cls.push('focus');if(!matchShow(p))cls.push('dim');if(g[4])cls.push('ghost');
     const cx=g[2],cy=g[3];
     const pts=g[1].split(' ').map(s=>{const [x,y]=s.split(',').map(Number);return `${(cx+(x-cx)*.97).toFixed(2)},${(cy+(y-cy)*.97).toFixed(2)}`}).join(' ');
     const fill=estColor(p.estado),stroke='none',icon=m.ico,ink=estInk(p.estado);
@@ -996,7 +1018,7 @@ function renderPList(vis){
     const extra=p.inst?`instalada ${fd(p.inst)}`:p.open?(INC_TIPOS[p.open.tipoInc]||'incidencia'):L?(L.t==='in'?palName(L.g):`devolución nº ${L.d.num||'—'}`):p.estado==='pedida'?esc(p.ped||''):'';
     const canQ=!UI.multi&&!p.inst&&!p.open&&p.ent.length;
     const head=UI.bloque==='ALL'&&p.bl!==last?`<div class="plhead">Bloque ${p.bl.slice(1)}</div>`:'';last=p.bl;
-    return `${head}<div class="prow ${sel?'sel':''} ${UI.focus===p.id&&!UI.multi?'focus':''}" role="button" tabindex="0" data-prow="${p.id}" style="--t:${tipoColor(p.color)}">
+    return `${head}<div class="prow ${LIVE&&LIVE.flash[p.id]&&Date.now()-LIVE.flash[p.id]<20000?'flash':''} ${sel?'sel':''} ${UI.focus===p.id&&!UI.multi?'focus':''}" role="button" tabindex="0" data-prow="${p.id}" style="--t:${tipoColor(p.color)}">
       ${UI.multi?`<span class="pchk" aria-hidden="true">${sel?ico('check'):''}</span>`:''}
       <span class="pn">${esc(p.n)}</span>
       <span class="pmain"><b class="mono">${p.id}</b><small>${TIPOS[p.color]?.n||''}${extra?' · '+extra:''}</small></span>
@@ -1095,6 +1117,7 @@ function pieceCard(p,inDrawer){
     <div class="piecehead"><div><div class="code">${tdot(p.color)}${p.id}</div><div class="muted">${t.n} · ${p.tipo==='C'?'curva':'recta'} en planta · Bloque ${p.bl.slice(1)} · ${PLANTAS[p.pl]}</div></div>
     <div class="row" style="gap:4px;flex:none">${(()=>{const sib=LIST.filter(q=>q.bl===p.bl&&q.pl===p.pl);const k=sib.indexOf(p);return `<button class="btn sm" data-act="pnav" data-id="${sib[k-1]?.id||''}" ${k>0?'':'disabled'} aria-label="Pieza anterior">‹</button><button class="btn sm" data-act="pnav" data-id="${sib[k+1]?.id||''}" ${k<sib.length-1?'':'disabled'} aria-label="Pieza siguiente">›</button>`})()}<button class="btn sm" data-act="${inDrawer?'closedrawer':'unfocus'}" aria-label="Cerrar ficha">${ico('x')}</button></div></div>
     <div class="bigstate" style="--c:${estColor(p.estado)};color:${estInk(p.estado)}">${ico(m.ico||'box')}<div>${m.n}${sub?`<small>${sub}</small>`:''}</div></div>
+    ${(()=>{const o=peersAhora().filter(x=>!x.yo&&x.pieza===p.id);return o.length?`<p class="viewing">${o.map(x=>avatar(x.u,20)).join('')} <b>${o.map(x=>esc(nombreDe(x.u))).join(', ')}</b> también está${o.length>1?'n':''} con esta pieza ahora</p>`:''})()}
     ${GEO[p.id]&&GEO[p.id][4]?'<p class="chip warn" style="margin:0 0 8px">No dibujada en el DWG</p>':''}
     ${actionsBlock(p)}
     ${(()=>{const L=PALOC[p.id];if(!L)return '';return L.t==='in'?`<button class="whereis" data-pale="${esc(L.g.key)}">${ico('box')}<span><b>Está en el ${palName(L.g).toLowerCase()}</b><small>${L.g.st==='cerrado'?'sin abrir':'abierto'} · llegó el ${fd(L.g.fecha)} · ${L.g.albs.join(', ')}</small></span></button>`:`<button class="whereis dev" data-dev="${L.d.id||'loose'}">${ico('pallet')}<span><b>En ${L.d.virtual?'palé de devolución sin número':'el palé de devolución nº '+L.d.num}</b><small>pendiente de enviar a Macrif</small></span></button>`})()}
@@ -1497,6 +1520,7 @@ function renderMacrif(m){
 /* =================== drawer / fotos =================== */
 function renderDrawer(){
   const o=$('#overlay');
+  if(UI.live){const keep=o.querySelector('.drawer')?.scrollTop||0;o.innerHTML=`<div class="modalbg" data-act="bgclose"><div class="drawer livedrawer" role="dialog" aria-label="Actividad">${liveDrawer()}</div></div>`;o.querySelector('.drawer').scrollTop=keep;return}
   if(UI.drawerPale&&!UI.drawer){const keep=o.querySelector('.drawer')?.scrollTop||0;o.innerHTML=`<div class="modalbg" data-act="bgclose"><div class="drawer" role="dialog" aria-label="Palé">${paleDrawer()}</div></div>`;o.querySelector('.drawer').scrollTop=keep;return}
   if(!UI.drawer||!P[UI.drawer]){o.innerHTML='';return}
   const keep=o.querySelector('.drawer')?.scrollTop||0;
@@ -1836,7 +1860,70 @@ function renderBnav(counts){
     `<button data-act="navmore" aria-expanded="${!!UI.navMore}" aria-current="${inMore?'page':'false'}">${ico('dots')}<span>Más</span>${counts.macrif?`<i>${counts.macrif}</i>`:''}</button>`;
   const sh=$('#navsheet');if(!sh)return;
   sh.hidden=!UI.navMore;
-  sh.innerHTML=UI.navMore?`<div class="navsheet-bg" data-act="navmore"></div><div class="navsheet-in">${NAV_MORE.map(([k,l,i])=>`<button data-tab="${k}" aria-current="${UI.tab===k?'page':'false'}">${ico(i)}<span>${l}</span>${counts[k]?`<i>${counts[k]}</i>`:''}</button>`).join('')}<div class="navsheet-foot"><span class="faint">${esc(me())}</span><button class="btn sm" data-act="logout2">Salir</button></div></div>`:'';
+  sh.innerHTML=UI.navMore?`<div class="navsheet-bg" data-act="navmore"></div><div class="navsheet-in">${NAV_MORE.map(([k,l,i])=>`<button data-tab="${k}" aria-current="${UI.tab===k?'page':'false'}">${ico(i)}<span>${l}</span>${counts[k]?`<i>${counts[k]}</i>`:''}</button>`).join('')}<button data-act="live">${ico('select')}<span>Actividad</span>${LIVE&&LIVE.peers.length>1?`<i>${LIVE.peers.length}</i>`:''}</button><div class="navsheet-foot"><span class="faint">${esc(me())}</span><button class="btn sm" data-act="logout2">Salir</button></div></div>`:'';
+}
+
+/* =================== QUIÉN ESTÁ CONECTADO Y QUÉ HACE =================== */
+// LIVE lo rellena e_boot: peers (presencia), feed (cambios), names (email → nombre), loadHistory()
+const TAB_N={inicio:'Inicio',plano:'Plano',pales:'Palés',piezas:'Piezas',pedidos:'Pedidos',incidencias:'Incidencias',rendimiento:'Rendimiento',macrif:'Macrif'};
+function nombreDe(u){if(!u)return 'Alguien';const n=LIVE&&LIVE.names[String(u).toLowerCase()];return n||String(u).split('@')[0]}
+function iniciales(u){const n=nombreDe(u).trim().split(/[\s._-]+/);return ((n[0]||'?')[0]+((n[1]||'')[0]||'')).toUpperCase()}
+const PCOL=['#1F5E7A','#8E44AD','#C0392B','#16A085','#D35400','#2C3E50','#7F8C8D','#B7950B'];
+function colorDe(u){let h=0;for(const ch of String(u||''))h=(h*31+ch.charCodeAt(0))|0;return PCOL[Math.abs(h)%PCOL.length]}
+function avatar(u,sz){return `<span class="av" style="--av:${colorDe(u)};${sz?`width:${sz}px;height:${sz}px;font-size:${Math.round(sz*.42)}px`:''}" title="${esc(nombreDe(u))}">${esc(iniciales(u))}</span>`}
+function hace(t){const s=Math.round((Date.now()-t)/1000);if(s<45)return 'ahora';if(s<3600)return `hace ${Math.round(s/60)} min`;if(s<86400)return `hace ${Math.round(s/3600)} h`;return new Date(t).toLocaleString('es-ES',{dateStyle:'short',timeStyle:'short'})}
+// describe un cambio de documento en lenguaje de obra
+function describeChange(col,id,op,antes,despues,por,t){
+  const a=antes||{},d=despues||{};let who=por,msg='',pieza=null,when=t||Date.now(),key=`${col}/${id}/${op}/${Math.round(when/60000)}`;
+  if(col==='pieza'){
+    pieza=id;const la=(a.log||[]).length,ld=(d.log||[]);const last=ld[ld.length-1];
+    if(op==='DELETE')msg=`Pieza ${id} eliminada`;
+    else if(last&&ld.length>la){msg=last.m;who=last.u||por;when=Date.parse(last.t)||when;key=`pieza/${id}/${last.t}`}
+    else if(d.notas!==a.notas)msg='Notas editadas';
+    else if(d.inst!==a.inst)msg=d.inst?`Instalada ${fd(d.inst)}`:'Quitada instalación';
+    else return null; // cambio sin interés (p. ej. reenvío idéntico)
+  }else if(col==='pales'){
+    const dev=(d.tipo||a.tipo)==='dev';const num=d.num||a.num;
+    if(op==='DELETE')msg=dev?`Palé de devolución nº ${num} eliminado`:'Palé: cambio deshecho';
+    else if(dev&&!a.tipo)msg=`Palé de devolución nº ${num} empezado`;
+    else if(dev&&d.enviado&&d.enviado!==a.enviado)msg=a.enviado?`Envío del palé nº ${num} corregido (${fd(d.enviado)})`:`Palé de devolución nº ${num} enviado a Macrif`;
+    else if(dev&&!d.enviado&&a.enviado)msg=`Envío del palé nº ${num} deshecho`;
+    else if(dev&&d.cerrado!==a.cerrado)msg=`Palé de devolución nº ${num} ${d.cerrado?'cerrado':'reabierto'}`;
+    else if(!dev){const k=(d.key||a.key||id).replace(/^in_/,'');msg=d.vaciado&&!a.vaciado?`Palé ${k} marcado vacío`:d.abierto&&!a.abierto?`Palé ${k} marcado abierto`:`Palé ${k} actualizado`}
+    else msg=`Palé de devolución nº ${num} actualizado`;
+  }else if(col==='revisiones'){
+    const qué=id.startsWith('alb_')?'albarán '+id.slice(4):id.startsWith('fac_')?'factura '+id.slice(4):'comprobación de Macrif';
+    msg=op==='DELETE'?`Revisión quitada (${qué})`:`${d.ok?'Revisado':'Nota en'} ${qué}${d.nota?` · «${d.nota}»`:''}`;
+  }else if(col==='pedidos')msg=op==='DELETE'?`Pedido ${a.num||id} eliminado`:`Pedido ${d.num||id} ${op==='INSERT'?'añadido':'guardado'}`;
+  else if(col==='retiradas')msg=op==='DELETE'?'Retirada eliminada':`Retirada del camión registrada (${(d.piezas||[]).length} piezas)`;
+  else if(col==='albaranes')msg=`Albarán ${d.num||a.num||id} ${op==='DELETE'?'eliminado':'cargado'}`;
+  else if(col==='facturas')msg=`Factura ${d.num||a.num||id} ${op==='DELETE'?'eliminada':'cargada'}`;
+  else msg=`Cambio en ${col}`;
+  return {key,col,id,pieza,who,msg,t:when};
+}
+function peersAhora(){return LIVE?LIVE.peers:[]}
+function renderPeers(){
+  const el=$('#peers');if(!el)return;
+  const ps=peersAhora();const otros=ps.filter(p=>!p.yo);
+  el.hidden=!LIVE||!LIVE.ready;
+  el.innerHTML=`<span class="avs">${ps.slice(0,4).map(p=>avatar(p.u,24)).join('')}</span><span class="pcount">${ps.length}<span class="pl"> conectado${ps.length===1?'':'s'}</span></span>${LIVE&&LIVE.unseen?`<i class="pdot">${LIVE.unseen}</i>`:''}`;
+  el.title=otros.length?`También conectados: ${otros.map(p=>nombreDe(p.u)).join(', ')}`:'Solo tú ahora mismo';
+}
+function liveDrawer(){
+  const ps=peersAhora();const F=UI.liveF||'';
+  const feed=(LIVE?LIVE.feed:[]).filter(x=>!F||String(x.who||'').toLowerCase()===F);
+  const personas=[...new Set((LIVE?LIVE.feed:[]).map(x=>String(x.who||'').toLowerCase()).filter(Boolean))];
+  const grupos={};feed.forEach(x=>{const d=new Date(x.t);const k=iso(d);(grupos[k]=grupos[k]||[]).push(x)});
+  return `<div class="piecehead"><div><div class="code">${ico('select')} Actividad</div><div class="muted">Quién está conectado y qué cambia cada uno</div></div><button class="btn sm" data-act="closelive" aria-label="Cerrar">${ico('x')}</button></div>
+  <div class="label" style="margin:10px 0 6px">Conectados ahora (${ps.length})</div>
+  <div class="peerlist">${ps.map(p=>`<div class="peer">${avatar(p.u,34)}<div class="pi"><b>${esc(nombreDe(p.u))}${p.yo?' <span class="faint">(tú)</span>':''}</b><small>${p.dev==='movil'?'Móvil':'Ordenador'} · en ${TAB_N[p.tab]||p.tab||'—'}${p.pieza?` · viendo <button class="linkbtn mono" data-open="${esc(p.pieza)}">${esc(p.pieza)}</button>`:''}</small><small class="faint">conectado ${hace(p.desde)} · última acción ${hace(p.t)}</small></div></div>`).join('')||'<p class="faint">Nadie más conectado.</p>'}</div>
+  <p class="faint" style="font-size:12px;margin:6px 0 0">Quien está sin cobertura no aparece como conectado; sus cambios salen abajo cuando le vuelve la señal.</p>
+  <div class="row" style="justify-content:space-between;margin:16px 0 6px"><span class="label">Cambios${F?` de ${esc(nombreDe(F))}`:''}</span><label class="row" style="gap:6px;font-size:13px"><input type="checkbox" id="live-avisos" ${UI.liveToasts!==false?'checked':''}> Avisarme de cambios de otros</label></div>
+  ${personas.length>1?`<div class="row" style="gap:6px;flex-wrap:wrap;margin-bottom:8px"><button class="btn sm ${F?'':'on'}" data-act="livef" data-v="">Todos</button>${personas.map(u=>`<button class="btn sm ${F===u?'on':''}" data-act="livef" data-v="${esc(u)}">${avatar(u,18)} ${esc(nombreDe(u))}</button>`).join('')}</div>`:''}
+  ${LIVE&&LIVE.histState==='loading'?'<p class="faint">Cargando historial…</p>':''}
+  ${LIVE&&LIVE.histState==='error'?'<p class="chip warn" style="white-space:normal">No se pudo cargar el historial (sin cobertura). Se muestran solo los cambios de esta sesión.</p>':''}
+  ${Object.entries(grupos).map(([d,xs])=>`<div class="feedday">${d===today()?'Hoy':fd(d)}</div><ul class="feed">${xs.map(x=>`<li class="${x.live?'live':''}">${avatar(x.who,28)}<div><div><b>${esc(nombreDe(x.who))}</b> <span class="faint num">${new Date(x.t).toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'})}</span>${x.live&&Date.now()-x.t<120000?' <span class="chip ok">en directo</span>':''}</div><div>${x.pieza?`<button class="linkbtn mono" data-open="${esc(x.pieza)}">${esc(x.pieza)}</button> · `:''}${esc(x.msg)}</div></div></li>`).join('')}</ul>`).join('')||'<p class="faint">Sin cambios registrados todavía.</p>'}
+  ${LIVE&&LIVE.more?`<button class="btn sm full" data-act="livemore" style="margin-top:8px">Cargar más</button>`:''}`;
 }
 
 /* =================== acciones =================== */
@@ -1916,12 +2003,16 @@ document.addEventListener('click',async e=>{
   if(t.dataset.prow&&!t.dataset.act){tapPiece(t.dataset.prow,e.shiftKey);return}
   if(t.dataset.pale&&!t.dataset.act){UI.drawer=null;UI.drawerPale=t.dataset.pale;UI.paleSel=new Set();renderDrawer();return}
   if(t.dataset.dev&&!t.dataset.act){UI.drawer=null;UI.drawerPale='dev:'+t.dataset.dev;renderDrawer();return}
-  if(t.dataset.open&&!t.dataset.act){if(UI.drawerPale){UI.drawerPale=null}openPiece(t.dataset.open);return}
+  if(t.dataset.open&&!t.dataset.act){UI.live=false;if(UI.drawerPale){UI.drawerPale=null}openPiece(t.dataset.open);return}
   const a=t.dataset.act,id=t.dataset.id;
   switch(a){
   case 'closelight':if(e.target.closest('.lbscroll')&&!e.target.closest('[data-act]'))return;$('#lightbox').innerHTML='';return;
   case 'lbzoom':{const lb=$('.lightbox.plano');if(lb)lb.classList.toggle('zoomed');return}
-  case 'bgclose':if(e.target===t){UI.drawer=null;UI.drawerPale=null;if(UI.tab==='plano')UI.focus=null;render()}return;
+  case 'bgclose':if(e.target===t){UI.live=false;UI.drawer=null;UI.drawerPale=null;if(UI.tab==='plano')UI.focus=null;render()}return;
+  case 'closelive':UI.live=false;renderDrawer();return;
+  case 'live':UI.navMore=false;UI.live=true;UI.drawer=null;UI.drawerPale=null;if(LIVE){LIVE.unseen=0;LIVE.loadHistory&&LIVE.loadHistory()}kpis();renderDrawer();return;
+  case 'livef':UI.liveF=t.dataset.v;renderDrawer();return;
+  case 'livemore':if(LIVE&&LIVE.loadHistory)LIVE.loadHistory(true);return;
   case 'closedrawer':UI.drawer=null;UI.drawerPale=null;if(UI.tab==='plano')UI.focus=null;render();return;
   case 'gotodev':UI.tab='pales';saveUI();$('#main').dataset.view='';render();setTimeout(()=>{const s=$('#devsec');if(s)s.scrollIntoView({behavior:'smooth'})},50);return;
   case 'palopen':case 'palempty':case 'palundo':{const g=PALES.find(x=>x.key===t.dataset.pale);const patch=a==='palopen'?{abierto:today()}:a==='palempty'?{vaciado:today()}:{vaciado:null};try{await db.doc('pales/'+g.docId).update({tipo:'in',key:g.key,...patch});toast(a==='palopen'?'Palé marcado como abierto':a==='palempty'?'Palé marcado como vacío':'Palé visible otra vez');if(a==='palempty')UI.drawerPale=null}catch(err){toast('No se pudo guardar')}return}
@@ -2047,6 +2138,7 @@ document.addEventListener('change',async e=>{
   if(id==='rc-solo'){UI.rc.solo=e.target.checked;return}
   if(e.target.dataset.rc){const n=e.target.dataset.rc;e.target.checked?UI.rc.sel.add(n):UI.rc.sel.delete(n);rerenderKeepScroll();return}
   if(id==='hoy-fecha'){UI.hoy=e.target.value||today();rerenderKeepScroll();return}
+  if(id==='live-avisos'){UI.liveToasts=e.target.checked;try{localStorage.setItem('sky-avisos',e.target.checked?'1':'0')}catch(x){}return}
   if(id==='hide-rev'){UI.hideRev=e.target.checked;rerenderKeepScroll();return}
   if(e.target.dataset.incdest){const k=e.target.dataset.incdest;document.querySelectorAll(`[data-for][data-k="${CSS.escape(k)}"]`).forEach(el=>el.hidden=el.dataset.for!==e.target.value);return}
   if(id==='seldate')UI.instDate=e.target.value;
@@ -2067,7 +2159,7 @@ document.addEventListener('change',async e=>{
 });
 let tfT;document.addEventListener('input',e=>{if(e.target.id==='tf-q'){clearTimeout(tfT);tfT=setTimeout(()=>{UI.tf.q=e.target.value;render();const el=$('#tf-q');el.focus();el.setSelectionRange(el.value.length,el.value.length)},250)}});
 document.addEventListener('toggle',e=>{const el=e.target;if(el.classList&&el.classList.contains('doccard')){if(el.open)UI.mopen=el.dataset.key;else if(UI.mopen===el.dataset.key)UI.mopen=null}},true);
-document.addEventListener('keydown',e=>{if(e.key==='/'&&!/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)){const g=$('#gsearch');if(g){e.preventDefault();g.focus()}return}if(e.key==='Escape'){if(UI.navMore){UI.navMore=false;kpis();return}if($('#lightbox').innerHTML){$('#lightbox').innerHTML='';return}if(UI.drawer){UI.drawer=null;render()}else if(UI.multi){UI.multi=false;UI.sel.clear();render()}else if(UI.focus){UI.focus=null;render()}}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&UI.live){UI.live=false;renderDrawer();return}if(e.key==='/'&&!/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)){const g=$('#gsearch');if(g){e.preventDefault();g.focus()}return}if(e.key==='Escape'){if(UI.navMore){UI.navMore=false;kpis();return}if($('#lightbox').innerHTML){$('#lightbox').innerHTML='';return}if(UI.drawer){UI.drawer=null;render()}else if(UI.multi){UI.multi=false;UI.sel.clear();render()}else if(UI.focus){UI.focus=null;render()}}});
 
 /* pan / zoom / toque en el plano */
 (function(){
@@ -2224,10 +2316,54 @@ document.addEventListener('focusout',()=>{if(schedule._pending){schedule._pendin
     return rows.length;
   }
   let channel=null,started=false;
+  /* ---- presencia y actividad en directo ---- */
+  LIVE={peers:[],feed:[],names:{},flash:{},ready:false,unseen:0,histState:'',more:false,off:0};
+  const sesKey=Math.random().toString(36).slice(2,10);let pres=null,myEmail='',desde=Date.now(),lastAct=Date.now(),lastPayload='';
+  const feedKeys=new Set();
+  function addFeed(x,live){if(!x||feedKeys.has(x.key))return false;feedKeys.add(x.key);x.live=!!live;LIVE.feed.push(x);LIVE.feed.sort((a,b)=>b.t-a.t);if(LIVE.feed.length>600)LIVE.feed.length=600;return true}
+  async function loadNames(){try{const {data}=await withTimeout(sb.from('usuarios_permitidos').select('email,nombre').limit(200),10000);(data||[]).forEach(r=>{if(r.nombre)LIVE.names[String(r.email).toLowerCase()]=r.nombre})}catch(x){}}
+  LIVE.loadHistory=async more=>{
+    if(!more&&LIVE.histState==='ok')return;
+    LIVE.histState='loading';if(UI.live)renderDrawer();
+    try{const from=more?LIVE.off:0;const {data,error}=await withTimeout(sb.from('docs_historial').select('hid,col,id,op,cambiado,cambiado_por,data_anterior,data_nueva').order('hid',{ascending:false}).range(from,from+59),20000);if(error)throw error;
+      (data||[]).forEach(r=>addFeed(describeChange(r.col,r.id,r.op,r.data_anterior,r.data_nueva,r.cambiado_por,Date.parse(r.cambiado)),false));
+      LIVE.off=from+(data||[]).length;LIVE.more=(data||[]).length===60;LIVE.histState='ok'}
+    catch(x){LIVE.histState='error'}
+    if(UI.live)renderDrawer();
+  };
+  function presPayload(){return {u:myEmail,dev:narrow()?'movil':'ordenador',tab:UI.tab,pieza:UI.drawer||UI.focus||null,desde,t:lastAct}}
+  window.__presTick=()=>{if(!pres||!LIVE.ready)return;const p=presPayload();const s=JSON.stringify({...p,t:0});if(s===lastPayload)return;lastPayload=s;lastAct=Date.now();p.t=lastAct;clearTimeout(window.__presT);window.__presT=setTimeout(()=>{try{pres.track(p)}catch(x){}},800)};
+  function startPresence(email){
+    if(pres)return;myEmail=email;
+    pres=sb.channel('presencia',{config:{presence:{key:sesKey}}});
+    pres.on('presence',{event:'sync'},()=>{
+      const st=pres.presenceState();const arr=[];
+      for(const [k,metas] of Object.entries(st)){const m=(metas||[]).slice().sort((a,b)=>(b.t||0)-(a.t||0))[0];if(m&&m.u)arr.push({...m,key:k,yo:k===sesKey})}
+      arr.sort((a,b)=>(b.yo-a.yo)||(a.desde-b.desde));LIVE.peers=arr;LIVE.ready=true;renderPeers();if(UI.live)renderDrawer();
+      const f=$('#piececard');if(f&&(UI.focus||UI.drawer))schedule();
+    }).subscribe(st=>{if(st==='SUBSCRIBED'){LIVE.ready=true;lastPayload='';window.__presTick();try{pres.track(presPayload())}catch(x){}}});
+    loadNames();
+  }
+  function onDocEvent(p){
+    try{
+      const r=p.new&&p.new.col?p.new:p.old||{};const col=r.col,id=r.id;if(!col)return;
+      const antes=(p.old&&p.old.data)||null;const despues=p.eventType==='DELETE'?null:(p.new&&p.new.data);
+      const x=describeChange(col,id,p.eventType,antes,despues,(p.new&&p.new.updated_by)||'',Date.now());
+      if(!x||!addFeed(x,true))return;
+      const mine=String(x.who||'').toLowerCase()===String(myEmail).toLowerCase();
+      if(!mine){
+        if(x.pieza)LIVE.flash[x.pieza]=Date.now();
+        if(!UI.live)LIVE.unseen++;
+        if(UI.liveToasts!==false)toast(`${nombreDe(x.who)}: ${x.pieza?x.pieza+' · ':''}${x.msg}`,x.pieza?[['Ver',()=>openPiece(x.pieza)]]:null);
+        setTimeout(()=>{schedule()},20000);
+      }
+      renderPeers();if(UI.live)renderDrawer();
+    }catch(er){}
+  }
   async function start(session){
     if(session&&session.access_token)realSession=true;
     if(started){if(realSession){$('#login').hidden=true;flush()}return}
-    started=true;
+    started=true;startPresence(session.user.email);
     $('#login').hidden=true;$('#who').textContent=session.user.email;$('#logout').hidden=false;
     sync('Cargando…');
     let n=0;
@@ -2240,6 +2376,7 @@ document.addEventListener('focusout',()=>{if(schedule._pending){schedule._pendin
   function startChannel(){
     if(channel)return;
     channel=sb.channel('docs-cambios').on('postgres_changes',{event:'*',schema:'public',table:'docs'},p=>{
+      onDocEvent(p);
       if(p.eventType==='DELETE'){const o=p.old||{};if(o.col&&cache[o.col]){delete cache[o.col][o.id];emit(o.col)}return}
       const r=p.new;if(!r||!r.col)return;(cache[r.col]=cache[r.col]||{})[r.id]=r.data;outbox.filter(o=>o.col===r.col&&o.id===r.id).forEach(applyOp);emit(r.col);saveSnap();
     }).subscribe(st=>{if(st==='SUBSCRIBED'){online=true;status()}else if(st==='CHANNEL_ERROR'||st==='TIMED_OUT'||st==='CLOSED'){status()}});
