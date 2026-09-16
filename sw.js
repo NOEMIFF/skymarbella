@@ -1,5 +1,5 @@
 // SKY MARBELLA · permite abrir la app sin cobertura
-const V='sky-v15';
+const V='sky-v16';
 const CORE=['./','index.html'];
 const PLANOS=["planos_PEDIDO_07.js", "planos_PEDIDO_14.js", "planos_PEDIDO_15.js", "planos_PEDIDO_16.js", "planos_PEDIDO_17.js", "planos_PEDIDO_18.js", "planos_PEDIDO_19.js", "pdf.js", "pdf.worker.js"];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(V).then(c=>c.addAll(CORE)).then(()=>self.skipWaiting()));
