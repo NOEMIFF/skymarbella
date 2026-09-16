@@ -2325,11 +2325,11 @@ window.addEventListener('resize',()=>sugHide());
 const PROVS={macrif:{n:'Macrif',rol:'Proveedor de piezas',ico:'box'},ainan:{n:'Mecanizados Ainan',rol:'Proveedor de sistema · costillas',ico:'wrench'}};
 const adjKey=(prov,tipo,num)=>safeId(`${prov}_${tipo}_${num}`);
 const adjOf=(prov,tipo,num)=>(S.adj||{})[adjKey(prov,tipo,num)]||null;
-function adjChip(prov,tipo,num){const a=adjOf(prov,tipo,num);return a?`<span class="chip info" title="Documento adjunto">${ico('down')} ${/^image\//.test(a.tipo||'')?'foto':'PDF'}</span>`:''}
+function adjChip(prov,tipo,num){const a=adjOf(prov,tipo,num);return a?`<span class="chip info" title="Documento adjunto">${ico('down')} ${a.drive?'Drive':/^image\//.test(a.tipo||'')?'foto':'PDF'}</span>`:''}
 function adjBox(prov,tipo,num){
   const a=adjOf(prov,tipo,num);const k=adjKey(prov,tipo,num);const adm=LIVE&&LIVE.admin;
   const nombre=(tipo==='alb'?'albarán':tipo==='fac'?'factura':'pedido');
-  if(a)return `<div class="adjbox"><button class="btn pri" data-act="docver" data-k="${k}" data-t="${esc((tipo==='alb'?'Albarán ':tipo==='fac'?'Factura ':'Pedido ')+num)}">${ico('down')} Ver ${/^image\//.test(a.tipo||'')?'foto del':'PDF del'} ${nombre}</button><span class="faint">${esc(a.nombre||'')} · subido el ${fd(a.subido)}</span>${adm?`<label class="btn sm">Cambiar<input type="file" accept="application/pdf,image/*" hidden data-adjup="${k}" data-prov="${prov}" data-tipo="${tipo}" data-num="${esc(num)}"></label>`:''}</div>`;
+  if(a)return `<div class="adjbox"><button class="btn pri" data-act="docver" data-k="${k}" data-t="${esc((tipo==='alb'?'Albarán ':tipo==='fac'?'Factura ':'Pedido ')+num)}">${ico('down')} Ver ${/^image\//.test(a.tipo||'')?'foto del':'PDF del'} ${nombre}</button><span class="faint">${esc(a.nombre||'')}${a.drive?' · en Google Drive':' · subido el '+fd(a.subido)}</span>${adm?`<label class="btn sm">Cambiar<input type="file" accept="application/pdf,image/*" hidden data-adjup="${k}" data-prov="${prov}" data-tipo="${tipo}" data-num="${esc(num)}"></label>`:''}</div>`;
   return `<div class="adjbox none">${adm?`<label class="btn">${ico('down')} Adjuntar PDF del ${nombre}<input type="file" accept="application/pdf,image/*" hidden data-adjup="${k}" data-prov="${prov}" data-tipo="${tipo}" data-num="${esc(num)}"></label>`:''}<span class="faint">Sin documento adjunto${adm?'':' (lo sube el administrador)'}</span></div>`;
 }
 // costillas de un documento de Ainan: líneas {concepto?, cant, bl?, pl?}
@@ -2418,6 +2418,7 @@ async function subirAdjunto(file,prov,tipo,num){
 }
 async function verAdjunto(k,titulo){
   const a=(S.adj||{})[k];if(!a)return;
+  if(a.drive){const w=window.open(`https://drive.google.com/file/d/${encodeURIComponent(a.drive)}/view`,'_blank','noopener');if(!w)location.href=`https://drive.google.com/file/d/${encodeURIComponent(a.drive)}/view`;return}
   vistaPrevia(async()=>{const blob=await DOCS.get(a.path);if(!blob)throw new Error('No se pudo descargar el documento (¿sin cobertura y sin copia en este dispositivo?)');return {blob,nombre:a.nombre||titulo+'.pdf',titulo,tipo:a.tipo||blob.type||'application/pdf'}});
 }
 
