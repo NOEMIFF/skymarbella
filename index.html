@@ -819,6 +819,24 @@ button.day{font:inherit;color:inherit;text-align:left;cursor:pointer;align-items
 .day .evs{display:flex;flex-direction:column;gap:1px}
 .day .arr em{font-style:normal}.day .arr i{font-style:normal}
 .day .arr.vu{color:var(--ok)}
+.day .arr.re{color:var(--k-inc)}
+
+/* ===== retrabajo, llegada sin constar y alta de documentos ===== */
+.reinst{display:flex;gap:9px;align-items:flex-start;padding:8px 11px;border-radius:9px;background:color-mix(in srgb,var(--k-inc) 8%,var(--panel));border:1px solid color-mix(in srgb,var(--k-inc) 30%,var(--line));margin:0 0 10px}
+.reinst .ico{width:17px;height:17px;flex:none;color:var(--k-inc);margin-top:2px}
+.reinst small{display:block;font-size:12.5px;color:var(--ink2);line-height:1.4;margin-top:2px}
+.nollega{display:flex;gap:9px;align-items:flex-start;padding:10px 11px;border-radius:9px;background:color-mix(in srgb,var(--bad) 8%,var(--panel));border:1px solid color-mix(in srgb,var(--bad) 35%,var(--line));margin:0 0 10px}
+.nollega .ico{width:18px;height:18px;flex:none;color:var(--bad);margin-top:1px}
+.nollega small{display:block;font-size:12.5px;color:var(--ink2);line-height:1.4;margin-top:2px}
+.dopt.off{opacity:.55}
+.docform{padding:14px}
+.docform .g3{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:8px}
+.docform label{display:block;font-size:12.5px;color:var(--ink2);font-weight:600}
+.docform label input{width:100%;margin-top:3px}
+.docform table.dlt td{padding:4px 5px;vertical-align:middle}
+.docform table.dlt input,.docform table.dlt select{width:100%;min-width:74px}
+.docform table.dlt th{white-space:nowrap}
+@media(max-width:720px){.docform table.dlt input,.docform table.dlt select{min-width:64px;font-size:13px}}
 .caltip{margin:10px 2px 0;font-size:13px}
 .caldet{margin-top:12px;border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:var(--panel2)}
 
@@ -1132,7 +1150,7 @@ function derive(){
   for(const [bl,doc] of Object.entries(S.bloques)){
     for(const [id,v] of Object.entries(doc.piezas||{})){
       const g=GEO[id];
-      P[id]={...v,id,bl,pl:v.pl||parseId(id).pl,n:parseId(id).n,color:v.color||(g&&g[0]),incs:(v.incs||[]).map(normInc),log:v.log||[],fotos:(v.fotos||[]).map(f=>typeof f==='string'?{path:f,nota:''}:f),ent:[],fac:[],peds:[]};
+      P[id]={...v,id,bl,pl:v.pl||parseId(id).pl,n:parseId(id).n,color:v.color||(g&&g[0]),incs:(v.incs||[]).map(normInc),log:v.log||[],fotos:(v.fotos||[]).map(f=>typeof f==='string'?{path:f,nota:''}:f),instH:(v.instH||[]).filter(h=>h&&h.f).map(h=>({...h})).sort((a,b)=>a.f.localeCompare(b.f)),ent:[],fac:[],peds:[]};
     }
   }
   const peds=Object.values(S.peds).sort((a,b)=>(a.fecha||'').localeCompare(b.fecha||'')||a.num.localeCompare(b.num));
@@ -1162,6 +1180,11 @@ function derive(){
     p.factEst=fx>1?'doble':fx&&!en?'sin_entrega':fx?'facturada':en?'sin_facturar':'nada';
     p.m2Ref=p.m2??(p.ent.length?p.ent[p.ent.length-1].m2:null);
     p.notasL=notasDe(p);p.nNotas=p.notasL.length;
+    // retrabajo: veces que esta pieza ya se había colocado y hubo que quitarla
+    p.nReinst=(p.instH||[]).length;
+    p.instPri=p.nReinst?p.instH[0].f:(p.inst||null);   // primera vez que se colocó
+    // ¿consta que haya llegado a obra antes de la fecha en la que se marcó instalada?
+    p.llegoAObra=p.ent.length>0;
   }
   ALL=Object.values(P).sort((a,b)=>a.bl.localeCompare(b.bl)||(a.o||0)-(b.o||0));
   // las piezas anuladas salen del cómputo: es como si nunca se hubieran previsto
@@ -1227,6 +1250,8 @@ function buildAlerts(albs,facts){
   add('warn','Color del albarán distinto al plano','El albarán la describe con otro tipo del que tiene en el DWG.',LIST.filter(p=>p.ent.some(e=>e.c&&p.color&&e.c!==p.color)).map(p=>p.id));
   add('warn','Color del pedido distinto al plano','En el pedido figura con otro color del que tiene en el DWG.',LIST.filter(p=>p.peds.some(e=>e.c&&p.color&&e.c!==p.color)).map(p=>p.id));
   add('bad','Entregadas sin pedido registrado','Han llegado en un albarán pero no están en ningún pedido.',LIST.filter(p=>p.ent.some(e=>!p.peds.some(x=>x.fecha<=e.fecha))).map(p=>p.id));
+  add('bad','Instaladas sin constar su llegada a obra','Están dadas por instaladas pero no aparecen en ningún albarán ni entrega: o falta registrar el albarán, o se marcó la pieza equivocada.',LIST.filter(p=>p.inst&&!p.ent.length).map(p=>p.id));
+  add('info','Colocadas más de una vez','Se instalaron, hubo que quitarlas y se volvieron a colocar. Es el retrabajo de la obra.',LIST.filter(p=>p.nReinst).map(p=>p.id));
   add('warn','Pedidas dos veces para fabricar','Aparecen en más de un pedido de fabricación.',LIST.filter(p=>p.peds.filter(x=>x.tipo==='fabricacion').length>1).map(p=>p.id));
   add('info','Sin dibujar en el DWG','Existen en el despiece pero no están dibujadas en el plano (trazo discontinuo).',LIST.filter(p=>GEO[p.id]&&GEO[p.id][4]).map(p=>p.id));
   for(const f of facts){
@@ -1553,8 +1578,11 @@ function actionsBlock(p){
   if(p.estado==='descartada')return `<button class="btn ghost full" style="--c:var(--ok)" data-act="desanular" data-id="${p.id}">${ico('back')} Volver a activar esta pieza</button>`;
   // una pieza instalada solo ofrece «incidencia»: la fecha se edita desde el propio estado (lápiz)
   if(p.inst)return `<button class="btn ghost full" style="--c:var(--k-inc)" data-act="incopen" data-id="${p.id}">${ico('alert')} ${p.open?'Registrar otra incidencia':'Registrar incidencia'}</button>${medir}`;
-  return `<div class="decide">
-    <div class="dopt ok"><span class="dh">${ico('check')} Instalada</span><input type="date" id="instd-${p.id}" value="${UI.instDate}" aria-label="Fecha de instalación">${UI.instDate!==today()?'<span class="chip warn">¡No es la fecha de hoy!</span>':''}<button class="btn ok" data-act="inst1" data-id="${p.id}">Marcar instalada</button></div>
+  const llego=p.ent.length>0;
+  return `${llego?'':`<div class="nollega">${ico('alert')}<div><b>No consta que esta pieza haya llegado a obra</b><small>No aparece en ningún albarán ni entrega. Registra primero la llegada: así el recuento con Macrif cuadra y sabemos qué hay realmente en obra.</small>
+    <div class="row" style="gap:6px;margin-top:6px"><button class="btn sm pri" data-act="goalb">${ico('down')} Registrar la llegada</button><button class="btn sm" data-act="inst1" data-id="${p.id}" data-forzar="1">Instalarla igualmente</button></div></div></div>`}
+  <div class="decide">
+    <div class="dopt ok ${llego?'':'off'}"><span class="dh">${ico('check')} Instalada</span><input type="date" id="instd-${p.id}" value="${UI.instDate}" aria-label="Fecha de instalación">${UI.instDate!==today()?'<span class="chip warn">¡No es la fecha de hoy!</span>':''}<button class="btn ok" data-act="inst1" data-id="${p.id}" ${llego?'':'disabled title="Antes hay que registrar su llegada a obra"'}>Marcar instalada</button></div>
     <div class="dopt warn"><span class="dh">${ico('alert')} Incidencia</span><span class="faint" style="font-size:12.5px;line-height:1.3">Mal mecanizada, rota, dañada en obra, sin medios auxiliares, reposición de andamios…</span><button class="btn warn" data-act="incopen" data-id="${p.id}">${p.open?'Otra incidencia':'Registrar'}</button></div>
   </div>${medir}`;
 }
@@ -1577,14 +1605,19 @@ function pieceCard(p,inDrawer){
   p.ent.forEach(e=>tl.push([e.fecha,`${e.vuelta?'<b>Vuelta a obra</b> en':'Llega en'} ${e.sinAlb?'entrega':'albarán'} <b class="mono">${esc(e.doc)}</b> · ${f3(e.m2)} m²${e.pale?` · palé ${e.pale}`:''}`,e.vuelta?'var(--ok)':'var(--s-en_obra)']));
   p.fac.forEach(f=>tl.push([f.fecha,`Facturada en <b class="mono">${esc(f.doc)}</b> · ${f3(f.m2)} m²`,'var(--ink3)']));
   p.incs.forEach(i=>{tl.push([i.fecha,`Incidencia: <b>${INC_TIPOS[i.tipoInc]}</b>`,'var(--s-inc_detectada)']);if(i.fechaPale)tl.push([i.fechaPale,'Dejada en palé','var(--s-inc_pale)']);if(i.fechaRetirada)tl.push([i.fechaRetirada,`Retirada por el camión${i.retiradaRef?` (${esc(i.retiradaRef)})`:''}`,'var(--s-inc_macrif)']);if(i.fechaReparada)tl.push([i.fechaReparada,'Reparada en obra','var(--ok)'])});
-  if(p.inst)tl.push([p.inst,'<b>Instalada</b>','var(--s-instalada)']);
+  // instalaciones anteriores: la pieza se puso, hubo que quitarla y se volvió a poner
+  (p.instH||[]).forEach((h,i)=>{tl.push([h.f,`<b>Instalada</b> <span class="faint">(${i+1}ª vez)</span>`,'var(--s-instalada)']);
+    if(h.quitada)tl.push([h.quitada,`Quitada de su sitio${h.motivo?` · ${esc(h.motivo)}`:''}`,'var(--k-inc)'])});
+  if(p.inst)tl.push([p.inst,`<b>Instalada</b>${p.nReinst?` <span class="faint">(${p.nReinst+1}ª vez · definitiva)</span>`:''}`,'var(--s-instalada)']);
   tl.sort((a,b)=>(a[0]||'').localeCompare(b[0]||''));
-  const sub=p.estado==='pedida'?`${esc(p.ped)} · hace ${diasNat(p.fped)} días (${diasLab(p.fped)} lab.)`:p.estado==='instalada'?`el ${fd(p.inst)}`:p.open?INC_TIPOS[p.open.tipoInc]:p.estado==='en_obra'?`llegó el ${fd(p.ent[p.ent.length-1].fecha)}`:'';
+  const sub=p.estado==='pedida'?`${esc(p.ped)} · hace ${diasNat(p.fped)} días (${diasLab(p.fped)} lab.)`:p.estado==='instalada'?`el ${fd(p.inst)}${p.nReinst?` · se colocó por primera vez el ${fd(p.instPri)}`:''}`:p.open?INC_TIPOS[p.open.tipoInc]:p.estado==='en_obra'?`llegó el ${fd(p.ent[p.ent.length-1].fecha)}${p.nReinst?` · ya estuvo colocada el ${fd(p.instPri)}`:''}`:'';
   return `<section class="${inDrawer?'':'panel'} piececard" id="piececard">
     <div class="piecehead"><div><div class="code">${tdot(p.color)}${p.id}</div><div class="muted">${t.n} · ${p.tipo==='C'?'curva':'recta'} en planta · Bloque ${p.bl.slice(1)} · ${PLANTAS[p.pl]}</div></div>
     <div class="row" style="gap:4px;flex:none">${(()=>{const sib=LIST.filter(q=>q.bl===p.bl&&q.pl===p.pl);const k=sib.indexOf(p);return `<button class="btn sm" data-act="pnav" data-id="${sib[k-1]?.id||''}" ${k>0?'':'disabled'} aria-label="Pieza anterior">‹</button><button class="btn sm" data-act="pnav" data-id="${sib[k+1]?.id||''}" ${k<sib.length-1?'':'disabled'} aria-label="Pieza siguiente">›</button>`})()}<button class="btn sm" data-act="${inDrawer?'closedrawer':'unfocus'}" aria-label="Cerrar ficha">${ico('x')}</button></div></div>
     <div class="bigstate" style="--c:${estColor(p.estado)};color:${estInk(p.estado)}">${ico(m.ico||'box')}<div>${m.n}${sub?`<small>${sub}</small>`:''}</div>${p.inst?`<button class="stedit" data-act="insttoggle" data-id="${p.id}" aria-expanded="${UI.instEdit===p.id}" title="Cambiar la fecha de instalación">${ico(UI.instEdit===p.id?'x':'edit')}</button>`:''}</div>
-    ${p.inst&&UI.instEdit===p.id?`<div class="stediting"><label for="instd-${p.id}">Fecha de instalación</label><div class="row"><input type="date" id="instd-${p.id}" value="${p.inst}"><button class="btn ok sm" data-act="instedit" data-id="${p.id}">Guardar</button><button class="btn sm danger" data-act="uninst" data-id="${p.id}">Quitar instalación</button></div></div>`:''}
+    ${p.nReinst?`<div class="reinst">${ico('back')}<div><b>Esta pieza se ha colocado ${p.nReinst+1} ${p.nReinst+1===2?'veces':'veces'}</b><small>${(p.instH||[]).map((h,i)=>`${i+1}ª el ${fd(h.f)}${h.quitada?` (quitada el ${fd(h.quitada)}${h.motivo?` · ${esc(h.motivo)}`:''})`:''}`).join(' · ')}${p.inst?` · ${p.nReinst+1}ª el ${fd(p.inst)}`:' · ahora mismo no está puesta'}</small></div></div>`:''}
+    ${p.inst&&UI.instEdit===p.id?`<div class="stediting"><label for="instd-${p.id}">Fecha de instalación${p.nReinst?' (la última, la que cuenta)':''}</label><div class="row"><input type="date" id="instd-${p.id}" value="${p.inst}"><button class="btn ok sm" data-act="instedit" data-id="${p.id}">Guardar</button><button class="btn sm danger" data-act="uninst" data-id="${p.id}">Quitar instalación</button></div>
+      ${p.nReinst?`<div class="label" style="margin-top:10px">Colocaciones anteriores</div>${(p.instH||[]).map((h,ix)=>`<div class="row" style="gap:6px;margin-top:4px"><input type="date" id="insth-${p.id}-${ix}" value="${h.f}" aria-label="Fecha de una colocación anterior"><button class="btn sm pri" data-act="insthsave" data-id="${p.id}" data-ix="${ix}">Guardar</button><button class="btn sm danger" data-act="insthdel" data-id="${p.id}" data-ix="${ix}" title="Esta colocación no ocurrió">${ico('x')}</button></div>`).join('')}`:''}</div>`:''}
     ${GEO[p.id]&&GEO[p.id][4]?'<p class="chip warn" style="margin:0 0 8px">No dibujada en el DWG</p>':''}
     ${GEO[p.id]&&GEO[p.id][5]?'<p class="chip warn" style="margin:0 0 8px;white-space:normal">Código provisional: en el plano su etiqueta no lleva número</p>':''}
     ${p.estado==='descartada'?`<div class="anulmsg">${ico('x')}<span><b>Pieza anulada: fuera del cómputo de la obra</b><small>No cuenta ni en el avance ni en lo que falta. Sigue aquí para dejar constancia de por qué se quitó.</small></span></div>`:''}
@@ -1665,16 +1698,56 @@ function filtered(){
   const f=UI.tf,q=f.q.trim().toUpperCase().replace(/\s/g,'');
   return ALL.filter(p=>(!q||p.id.includes(q))&&(!f.estado||p.estado===f.estado)&&(!f.bloque||p.bl===f.bloque)&&(!f.planta||p.pl===f.planta)&&(!f.tipo||p.color===f.tipo)&&(!f.fact||p.factEst===f.fact));
 }
+// todas las fechas que existen en la obra: llegadas (con o sin albarán), instalaciones
+// (también las anteriores, si una pieza se instaló más de una vez), retiradas y pedidos
+function calFechas(){
+  const out=[];
+  ALL.forEach(p=>{
+    if(p.inst)out.push(p.inst);
+    (p.instH||[]).forEach(h=>{if(h&&h.f)out.push(h.f)});
+    (p.ent||[]).forEach(e=>{if(e.fecha)out.push(e.fecha)});
+    (p.incs||[]).forEach(i=>{if(i.fecha)out.push(i.fecha);if(i.fechaRetirada)out.push(i.fechaRetirada);if(i.fechaVuelta)out.push(i.fechaVuelta)});
+  });
+  Object.values(S.albs||{}).forEach(a=>{if(a&&a.fecha)out.push(a.fecha)});
+  Object.values(S.peds||{}).forEach(d=>{if(d&&d.fecha)out.push(d.fecha)});
+  return out.filter(Boolean).sort();
+}
+// lista de meses del desplegable: desde el primer movimiento de la obra hasta el mes que viene
 function calMeses(){
-  const ds=[...LIST.map(p=>p.inst),...LIST.flatMap(p=>p.ent.map(e=>e.fecha))].filter(Boolean).sort();
-  const a=new Date((ds[0]||today())+'T12:00:00'),b=new Date();b.setMonth(b.getMonth()+1);
+  const ds=calFechas();
+  const hoy=new Date();
+  const a=new Date((ds[0]||today())+'T12:00:00');
+  const b=new Date(hoy.getFullYear(),hoy.getMonth()+1,1);
+  const ultima=ds.length?new Date(ds[ds.length-1]+'T12:00:00'):null;
+  const fin=ultima&&ultima>b?new Date(ultima.getFullYear(),ultima.getMonth(),1):b;
   const out=[];const d=new Date(a.getFullYear(),a.getMonth(),1);
-  while(d<=b){out.push([d.getFullYear(),d.getMonth(),(s=>s[0].toUpperCase()+s.slice(1))(d.toLocaleDateString('es-ES',{month:'long',year:'numeric'}))]);d.setMonth(d.getMonth()+1)}
+  while(d<=fin){out.push([d.getFullYear(),d.getMonth(),(s=>s[0].toUpperCase()+s.slice(1))(d.toLocaleDateString('es-ES',{month:'long',year:'numeric'}))]);d.setMonth(d.getMonth()+1)}
   return out.reverse();
+}
+// fechas que se pintan en el calendario: llegadas e instalaciones (los pedidos no se pintan)
+function calFechasCal(){
+  const out=[];
+  ALL.forEach(p=>{if(p.inst)out.push(p.inst);(p.instH||[]).forEach(h=>{if(h&&h.f)out.push(h.f)});(p.ent||[]).forEach(e=>{if(e.fecha)out.push(e.fecha)})});
+  return out.filter(Boolean).sort();
+}
+// primer mes en el que hubo algo que ver en el calendario (la primera entrega a obra)
+function calMesPrimero(){
+  const ds=calFechasCal();const hoy=new Date();
+  if(!ds.length)return {y:hoy.getFullYear(),m:hoy.getMonth()};
+  const d=new Date(ds[0]+'T12:00:00');return {y:d.getFullYear(),m:d.getMonth()};
+}
+// mes que se abre por defecto: el actual si hay movimiento, si no el último mes con movimiento
+function calMesPorDefecto(){
+  const hoy=new Date();const act={y:hoy.getFullYear(),m:hoy.getMonth()};
+  const ds=calFechas();if(!ds.length)return act;
+  const pre=iso(new Date(act.y,act.m,1)).slice(0,7);
+  if(ds.some(s=>s.slice(0,7)===pre))return act;
+  const u=new Date(ds[ds.length-1]+'T12:00:00');
+  return {y:u.getFullYear(),m:u.getMonth()};
 }
 function calDetalle(Pm){
   const s=UI.calDay;if(!s||new Date(s+'T12:00:00').getMonth()!==Pm.m||new Date(s+'T12:00:00').getFullYear()!==Pm.y)return '<p class="faint caltip">Toca un día para ver qué se instaló y qué llegó.</p>';
-  const ins=LIST.filter(p=>p.inst===s);const lle=LIST.filter(p=>p.ent.some(e=>e.fecha===s&&!e.sinAlb&&!e.vuelta));const vu=LIST.filter(p=>p.ent.some(e=>e.fecha===s&&e.vuelta));
+  const ins=LIST.filter(p=>p.inst===s||(p.instH||[]).some(h=>h.f===s));const lle=LIST.filter(p=>p.ent.some(e=>e.fecha===s&&!e.vuelta));const vu=LIST.filter(p=>p.ent.some(e=>e.fecha===s&&e.vuelta));
   const codes=a=>a.length?`<div class="codes-inline">${a.map(p=>`<button class="codebtn" style="--c:${tipoColor(p.color)}" data-open="${p.id}">${p.id}</button>`).join('')}</div>`:'<span class="faint">—</span>';
   return `<div class="caldet"><div class="row" style="justify-content:space-between"><b>${(x=>x[0].toUpperCase()+x.slice(1))(new Date(s+'T12:00:00').toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long'}))}</b><button class="btn sm" data-act="calday" data-d="">${ico('x')}</button></div>
     <div class="caldet-g"><div><span class="label" style="color:var(--s-instalada)">Instaladas · ${ins.length}</span>${codes(ins)}</div><div><span class="label" style="color:var(--s-en_obra)">Llegan a obra · ${lle.length}</span>${codes(lle)}</div>${vu.length?`<div><span class="label" style="color:var(--ok)">Vuelven de Macrif · ${vu.length}</span>${codes(vu)}</div>`:''}</div></div>`;
@@ -1928,8 +2001,13 @@ function lineChartSVG(days,instCum,arrCum,total,W=860,H=250){
 }
 function renderRend(m){
   const {d0,d1,label}=perRange();const Pm=UI.per;
-  const inst={},arr={},vue={};
-  LIST.forEach(p=>{if(p.inst)inst[p.inst]=(inst[p.inst]||0)+1;p.ent.forEach(e=>{if(e.sinAlb)return;const t=e.vuelta?vue:arr;t[e.fecha]=(t[e.fecha]||0)+1})});
+  const inst={},arr={},vue={},sinA={},reinst={};
+  LIST.forEach(p=>{
+    if(p.inst)inst[p.inst]=(inst[p.inst]||0)+1;
+    // instalaciones anteriores de una pieza que se devolvió y se volvió a colocar
+    (p.instH||[]).forEach(h=>{if(h&&h.f)reinst[h.f]=(reinst[h.f]||0)+1});
+    p.ent.forEach(e=>{if(!e.fecha)return;if(e.sinAlb){sinA[e.fecha]=(sinA[e.fecha]||0)+1;return}const t=e.vuelta?vue:arr;t[e.fecha]=(t[e.fecha]||0)+1})
+  });
   const days=daysBetween(d0,d1>today()&&Pm.mode==='mes'?(d0>today()?d1:today()):d1);
   const allDays=daysBetween(d0,d1);
   const inR=LIST.filter(p=>p.inst&&p.inst>=d0&&p.inst<=d1);
@@ -1951,13 +2029,15 @@ function renderRend(m){
   const wkRows=Object.entries(WK).sort();const wkMax=Math.max(1,...wkRows.map(([,o])=>o.i));
   // calendario (solo modo mes)
   let cal='';
-  const CM=Pm.mode==='mes'?{y:Pm.y,m:Pm.m}:(UI.calM||(UI.calM={y:new Date().getFullYear(),m:new Date().getMonth()}));
+  // el calendario va por su cuenta: se puede mirar cualquier mes de la obra sin tocar el periodo
+  const CM=UI.calM||(UI.calM=calMesPorDefecto());
   const calLabel=(s=>s[0].toUpperCase()+s.slice(1))(new Date(CM.y,CM.m,1).toLocaleDateString('es-ES',{month:'long',year:'numeric'}));
   {
     const first=new Date(CM.y,CM.m,1);const start=new Date(first);start.setDate(1-((first.getDay()+6)%7));
     const last=new Date(CM.y,CM.m+1,0);const end=new Date(last);end.setDate(last.getDate()+(7-((last.getDay()+6)%7))-1);
-    const maxDay=Math.max(1,...Object.values(inst));const d=new Date(start);const tday=today();
-    while(d<=end){let wi=0,wa=0;for(let k=0;k<7;k++){const s=iso(d);const n=inst[s]||0,a=arr[s]||0,v=vue[s]||0;wi+=n;wa+=a;cal+=`<button type="button" class="day ${isWE(s)?'we':''} ${d.getMonth()!==CM.m?'out':''} ${s===tday?'today':''} ${UI.calDay===s?'sel':''} ${n||a||v?'has':''}" data-act="calday" data-d="${s}" aria-label="${fd(s)}: ${n} instaladas, ${a} llegadas"><span class="dn">${d.getDate()}</span>${n?`<span class="inst">${n}<small>inst.</small></span>`:''}<span class="evs">${a?`<span class="arr" title="${a} llegan">${ico('down')}<em>${a}<i> llegan</i></em></span>`:''}${v?`<span class="arr vu" title="${v} vuelven">${ico('back')}<em>${v}<i> vuelven</i></em></span>`:''}</span>${n?`<span class="bar" style="width:${n/maxDay*100}%"></span>`:''}</button>`;d.setDate(d.getDate()+1)}cal+=`<div class="wk"><span class="faint">Semana</span><span><b style="color:var(--s-instalada)">${wi}</b> inst.</span><span><b style="color:var(--s-en_obra)">${wa}</b> llegan</span></div>`}
+    const maxDay=Math.max(1,...Object.values(inst),...Object.values(reinst));const d=new Date(start);const tday=today();
+    while(d<=end){let wi=0,wa=0;for(let k=0;k<7;k++){const s=iso(d);const n=inst[s]||0,rr=reinst[s]||0,sa=sinA[s]||0,a=(arr[s]||0)+sa,v=vue[s]||0;wi+=n+rr;wa+=a;const tot=n+rr;
+      cal+=`<button type="button" class="day ${isWE(s)?'we':''} ${d.getMonth()!==CM.m?'out':''} ${s===tday?'today':''} ${UI.calDay===s?'sel':''} ${tot||a||v?'has':''}" data-act="calday" data-d="${s}" aria-label="${fd(s)}: ${tot} instaladas, ${a} llegadas"><span class="dn">${d.getDate()}</span>${tot?`<span class="inst">${tot}<small>inst.</small></span>`:''}<span class="evs">${a?`<span class="arr" title="${a} llegan${sa?` (${sa} sin albarán)`:''}">${ico('down')}<em>${a}<i> llegan</i></em></span>`:''}${v?`<span class="arr vu" title="${v} vuelven">${ico('back')}<em>${v}<i> vuelven</i></em></span>`:''}${rr?`<span class="arr re" title="${rr} recolocadas (ya se habían instalado antes)">${ico('back')}<em>${rr}<i> recolocan</i></em></span>`:''}</span>${tot?`<span class="bar" style="width:${tot/maxDay*100}%"></span>`:''}</button>`;d.setDate(d.getDate()+1)}cal+=`<div class="wk"><span class="faint">Semana</span><span><b style="color:var(--s-instalada)">${wi}</b> inst.</span><span><b style="color:var(--s-en_obra)">${wa}</b> llegan</span></div>`}
   }
   const bls=[...new Set(LIST.map(p=>p.bl))].sort();
   const cell=a=>({va:a.filter(p=>p.color!=='R').length,r:a.filter(p=>p.color==='R').length,t:a.length});
@@ -1979,6 +2059,8 @@ function renderRend(m){
     <div><span class="label">Mejor día</span><b>${best?inst[best]:'—'}</b><small>${best?new Date(best+'T12:00:00').toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'short'}):'sin instalaciones'}</small></div>
     <div><span class="label">Llegadas a obra</span><b style="color:var(--k-en_obra)">${nArr}</b><small>${nVue?nVue+' vueltas de Macrif · ':''}${wkRows.length?nf1(nArr/wkRows.length)+' por semana':''}</small></div>
     <div><span class="label">Avance total de la obra</span><b>${Math.round(instTot/total*100)}%</b><small>${instTot} de ${total} piezas · faltan ${total-instTot}${lab&&nInst?` · a este ritmo ≈ ${Math.ceil((total-instTot)/(nInst/lab))} días lab.`:''}</small></div>
+    ${(()=>{const rw=LIST.filter(p=>p.nReinst);if(!rw.length)return '';const veces=rw.reduce((t,p)=>t+p.nReinst,0);
+      return `<div><span class="label">Retrabajo</span><b style="color:var(--k-inc)">${rw.length}</b><small>piezas que hubo que quitar y volver a colocar · ${veces} colocaciones perdidas</small></div>`})()}
   </div>`;
   B.semana=`  <section class="panel chartcard">
     <div class="sechead"><div><h2>Piezas instaladas por ${unit}</h2><p class="faint" style="margin:2px 0 0;font-size:13px">Cada barra son las piezas marcadas como instaladas ese ${unit}. La línea discontinua es la media${unit==='día'?' por día laborable':''}. Las bandas grises son fines de semana. Pasa el ratón por una barra para ver el detalle.</p></div></div>
@@ -1996,7 +2078,8 @@ function renderRend(m){
     </tbody></table></div></section>
   <section class="panel" style="padding:14px"><div class="sechead"><h2>Avance por bloque (total)</h2><span class="legend-inline"><span><i style="background:var(--k-instalada)"></i>instaladas</span><span><i style="background:var(--k-en_obra)"></i>en obra</span></span></div><div class="bars">${prog}</div></section>
   </div>`;
-  B.calendario=`  <section class="panel calsec" style="padding:14px"><div class="sechead"><h2>Calendario</h2><div class="calnav"><button class="btn sm" data-act="calm" data-d="-1" aria-label="Mes anterior">‹</button><select id="cal-mes" aria-label="Elegir mes">${calMeses().map(([y,m,l])=>`<option value="${y}-${m}" ${y===CM.y&&m===CM.m?'selected':''}>${l}</option>`).join('')}</select><button class="btn sm" data-act="calm" data-d="1" aria-label="Mes siguiente">›</button>${CM.y!==new Date().getFullYear()||CM.m!==new Date().getMonth()?`<button class="btn sm" data-act="calm" data-d="0">Hoy</button>`:''}</div></div><div class="cal">${['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'].map(x=>`<div class="dh">${x}</div>`).join('')}<div class="dh wkh">Total semana</div>${cal}</div>${calDetalle(CM)}</section>
+  const mesesCal=calMeses();const mPri=calMesPrimero();
+  B.calendario=`  <section class="panel calsec" style="padding:14px"><div class="sechead"><div><h2>Calendario</h2><p class="faint" style="margin:2px 0 0;font-size:13px">Todo el histórico de la obra, mes a mes. No depende del periodo elegido arriba.</p></div><div class="calnav"><button class="btn sm" data-act="calm" data-d="-1" aria-label="Mes anterior">‹</button><select id="cal-mes" aria-label="Elegir mes">${mesesCal.map(([y,m,l])=>`<option value="${y}-${m}" ${y===CM.y&&m===CM.m?'selected':''}>${l}</option>`).join('')}</select><button class="btn sm" data-act="calm" data-d="1" aria-label="Mes siguiente">›</button>${CM.y!==new Date().getFullYear()||CM.m!==new Date().getMonth()?`<button class="btn sm" data-act="calm" data-d="0">Hoy</button>`:''}${CM.y!==mPri.y||CM.m!==mPri.m?`<button class="btn sm" data-act="calm" data-d="pri" title="Ir al primer mes en el que llegó material a obra">${ico('back')} Inicio de obra</button>`:''}</div></div><div class="cal">${['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'].map(x=>`<div class="dh">${x}</div>`).join('')}<div class="dh wkh">Total semana</div>${cal}</div>${calDetalle(CM)}</section>
   <section class="panel"><div class="sechead" style="padding:12px 12px 0"><h2>Instaladas en el periodo por bloque y planta</h2><span class="faint" style="font-size:13px">total (verdes+amarillas · rojas)</span></div><div class="tblwrap"><table><thead><tr><th>Bloque</th>${Object.keys(PLANTAS).map(k=>`<th class="r">${k}</th>`).join('')}<th class="r">Total</th></tr></thead><tbody>${bls.map(b=>`<tr><td><b>Bloque ${b.slice(1)}</b></td>${Object.keys(PLANTAS).map(k=>td(cell(inR.filter(p=>p.bl===b&&p.pl===k)))).join('')}${td(cell(inR.filter(p=>p.bl===b)))}</tr>`).join('')}</tbody><tfoot><tr><td>Total</td>${Object.keys(PLANTAS).map(k=>td(cell(inR.filter(p=>p.pl===k)))).join('')}${td(cell(inR))}</tr></tfoot></table></div></section>`;
   m.innerHTML=`<div class="wrap" style="display:flex;flex-direction:column;gap:14px">${pintarBloques('rendimiento',B)}</div>`;
 }
@@ -2787,21 +2870,92 @@ window.addEventListener('resize',()=>sugHide());
 const PROVS={macrif:{n:'Macrif',rol:'Proveedor de piezas',ico:'box'},betacril:{n:'Betacril',rol:'Suministrador de placas',ico:'pallet'},ainan:{n:'Mecanizados Ainan',rol:'Proveedor de sistema · costillas',ico:'wrench'}};
 const adjKey=(prov,tipo,num)=>safeId(`${prov}_${tipo}_${num}`);
 const adjOf=(prov,tipo,num)=>(S.adj||{})[adjKey(prov,tipo,num)]||null;
-function adjChip(prov,tipo,num){const a=adjOf(prov,tipo,num);return a?`<span class="chip info" title="Documento adjunto">${ico('down')} ${a.drive?'Drive':/^image\//.test(a.tipo||'')?'foto':'PDF'}</span>`:''}
+// el tipo MIME del archivo; los adjuntos antiguos lo guardaban en «tipo» (que ahora es alb/fac/ped)
+const adjMime=a=>(a&&(a.mime||a.tipo_mime||(/\//.test(a.tipo||'')?a.tipo:'')))||'';
+function adjChip(prov,tipo,num){const a=adjOf(prov,tipo,num);return a?`<span class="chip info" title="Documento adjunto">${ico('down')} ${a.drive?'Drive':/^image\//.test(adjMime(a))?'foto':'PDF'}</span>`:''}
 function adjBox(prov,tipo,num){
-  const a=adjOf(prov,tipo,num);const k=adjKey(prov,tipo,num);const adm=LIVE&&LIVE.admin;
+  const a=adjOf(prov,tipo,num);const k=adjKey(prov,tipo,num);
   const nombre=(tipo==='alb'?'albarán':tipo==='fac'?'factura':'pedido');
-  if(a)return `<div class="adjbox"><button class="btn pri" data-act="docver" data-k="${k}" data-t="${esc((tipo==='alb'?'Albarán ':tipo==='fac'?'Factura ':'Pedido ')+num)}">${ico('down')} Ver ${/^image\//.test(a.tipo||'')?'foto del':'PDF del'} ${nombre}</button><span class="faint">${esc(a.nombre||'')}${a.drive?' · en Google Drive':' · subido el '+fd(a.subido)}</span>${adm?`<label class="btn sm">Cambiar<input type="file" accept="application/pdf,image/*" hidden data-adjup="${k}" data-prov="${prov}" data-tipo="${tipo}" data-num="${esc(num)}"></label>`:''}</div>`;
-  return `<div class="adjbox none">${adm?`<label class="btn">${ico('down')} Adjuntar PDF del ${nombre}<input type="file" accept="application/pdf,image/*" hidden data-adjup="${k}" data-prov="${prov}" data-tipo="${tipo}" data-num="${esc(num)}"></label>`:''}<span class="faint">Sin documento adjunto${adm?'':' (lo sube el administrador)'}</span></div>`;
+  // puede subir documentos cualquiera que esté dado de alta: en obra los albaranes los recoge quien está allí
+  const puede=!!DOCS;
+  const input=`<input type="file" accept="application/pdf,image/*" hidden data-adjup="${k}" data-prov="${prov}" data-tipo="${tipo}" data-num="${esc(num)}">`;
+  if(a)return `<div class="adjbox"><button class="btn pri" data-act="docver" data-k="${k}" data-t="${esc((tipo==='alb'?'Albarán ':tipo==='fac'?'Factura ':'Pedido ')+num)}">${ico('down')} Ver ${/^image\//.test(adjMime(a))?'foto del':'PDF del'} ${nombre}</button><span class="faint">${esc(a.nombre||'')}${a.drive?' · en Google Drive':' · subido el '+fd(a.subido)+(a.por?' por '+esc(String(a.por).split('@')[0]):'')}</span>${puede?`<label class="btn sm">Cambiar${input}</label>`:''}</div>`;
+  return `<div class="adjbox none">${puede?`<label class="btn">${ico('down')} Adjuntar PDF o foto del ${nombre}${input}</label><span class="faint">También vale una foto hecha con el móvil</span>`:'<span class="faint">Sin conexión con el almacenamiento: podrás adjuntarlo cuando vuelvas a tener señal.</span>'}</div>`;
+}
+/* =================== ALTA DE PEDIDOS, ALBARANES Y FACTURAS (Ainan y Betacril) ===================
+   Un pedido de Ainan son costillas; uno de Betacril son placas. El formulario es el mismo:
+   número, fecha, líneas y, si es factura, el importe. El PDF se adjunta después, desde la ficha. */
+const DOCCOL={ainan:{ped:'ainan_pedidos',alb:'ainan_albaranes',fac:'ainan_facturas'},
+              betacril:{ped:'betacril_pedidos',alb:'betacril_albaranes',fac:'betacril_facturas'}};
+const DOCN={ped:'pedido',alb:'albarán',fac:'factura'};
+const docStore=prov=>prov==='ainan'?(S.ainan||{ped:{},alb:{},fac:{}}):(S.bet||{ped:{},alb:{},fac:{}});
+function lineaVacia(prov){return prov==='ainan'?{concepto:'Costillas',cant:'',bl:'',pl:''}
+  :{concepto:'Placa Betacryl 100 Classic White',placas:'',espesor:'12',m2:'',importe:''}}
+function docNuevo(prov,tipo,id){
+  const st=docStore(prov);
+  if(id&&st[tipo][id]){const d=st[tipo][id];return {prov,tipo,id,v:{num:d.num||'',fecha:d.fecha||today(),total:d.total??'',ref:d.ref||'',lineas:(d.lineas||[]).map(l=>({...l}))}}}
+  return {prov,tipo,id:null,v:{num:'',fecha:today(),total:'',ref:'',lineas:[lineaVacia(prov)]}};
+}
+// leer lo que hay escrito ahora mismo en pantalla (para no perderlo al añadir o quitar líneas)
+function docFormLeer(){
+  const D=UI.docForm;if(!D)return null;
+  const g=x=>{const el=document.getElementById(x);return el?el.value:''};
+  const L=D.v.lineas.map((_,i)=>D.prov==='ainan'
+    ?{concepto:g('dl-c-'+i),cant:g('dl-n-'+i),bl:g('dl-b-'+i),pl:g('dl-p-'+i)}
+    :{concepto:g('dl-c-'+i),placas:g('dl-n-'+i),espesor:g('dl-e-'+i),m2:g('dl-m-'+i),importe:g('dl-i-'+i)});
+  return {num:g('d-num'),fecha:g('d-fecha'),total:g('d-total'),ref:g('d-ref'),lineas:L};
+}
+function docFormSync(){const v=docFormLeer();if(v&&UI.docForm)UI.docForm.v=v}
+function docFormHTML(){
+  const D=UI.docForm;if(!D)return '';
+  const {prov,tipo,v}=D;const esFac=tipo==='fac';
+  const bls=[...new Set(LIST.map(p=>p.bl))].sort();
+  const linea=(l,i)=>prov==='ainan'
+    ?`<tr><td><input type="text" id="dl-c-${i}" value="${esc(l.concepto??'Costillas')}" placeholder="Concepto"></td>
+       <td><input type="number" id="dl-n-${i}" value="${esc(l.cant??'')}" min="0" step="1" placeholder="0" inputmode="numeric"></td>
+       <td><select id="dl-b-${i}"><option value="">— bloque —</option>${bls.map(b=>`<option value="${b}" ${l.bl===b?'selected':''}>Bloque ${b.slice(1)}</option>`).join('')}</select></td>
+       <td><select id="dl-p-${i}"><option value="">— planta —</option>${Object.entries(PLANTAS).map(([k,n])=>`<option value="${k}" ${l.pl===k?'selected':''}>${n}</option>`).join('')}</select></td>
+       <td class="r"><button class="btn sm danger" data-act="docline" data-v="del" data-ix="${i}" title="Quitar línea" ${v.lineas.length>1?'':'disabled'}>${ico('x')}</button></td></tr>`
+    :`<tr><td><input type="text" id="dl-c-${i}" value="${esc(l.concepto??'Placa Betacryl 100 Classic White')}" placeholder="Concepto"></td>
+       <td><input type="number" id="dl-n-${i}" value="${esc(l.placas??'')}" min="0" step="1" placeholder="0" inputmode="numeric"></td>
+       <td><input type="text" id="dl-e-${i}" value="${esc(l.espesor??'')}" placeholder="12" size="3"></td>
+       <td><input type="number" id="dl-m-${i}" value="${esc(l.m2??'')}" min="0" step="0.001" placeholder="0,000" inputmode="decimal"></td>
+       <td><input type="number" id="dl-i-${i}" value="${esc(l.importe??'')}" min="0" step="0.01" placeholder="€" inputmode="decimal"></td>
+       <td class="r"><button class="btn sm danger" data-act="docline" data-v="del" data-ix="${i}" title="Quitar línea" ${v.lineas.length>1?'':'disabled'}>${ico('x')}</button></td></tr>`;
+  const cab=prov==='ainan'
+    ?'<tr><th>Concepto</th><th>Cantidad</th><th>Bloque</th><th>Planta</th><th></th></tr>'
+    :'<tr><th>Concepto</th><th>Placas</th><th>Esp. mm</th><th>m²</th><th>Importe</th><th></th></tr>';
+  return `<section class="panel docform">
+    <div class="sechead"><div><h2>${D.id?'Editar':'Nuevo'} ${DOCN[tipo]} de ${PROVS[prov].n}</h2>
+      <p class="faint" style="margin:2px 0 0;font-size:13px">Apunta lo que pone el papel. El PDF se adjunta luego, desde la propia ficha del ${DOCN[tipo]}.</p></div>
+      <button class="btn sm" data-act="doccancel">${ico('x')} Cerrar</button></div>
+    <div class="g3">
+      <label>Número del ${DOCN[tipo]}<input type="text" id="d-num" value="${esc(v.num)}" placeholder="p. ej. 2026-014" ${D.id?'readonly':''}></label>
+      <label>Fecha<input type="date" id="d-fecha" value="${esc(v.fecha||today())}"></label>
+      ${esFac?`<label>Importe total (€)<input type="number" id="d-total" value="${esc(v.total??'')}" min="0" step="0.01" placeholder="0,00" inputmode="decimal"></label>`
+        :`<label>Referencia / nota (opcional)<input type="text" id="d-ref" value="${esc(v.ref||'')}" placeholder="pedido al que corresponde, transportista…"></label>`}
+    </div>
+    ${esFac?`<label style="display:block;margin-top:8px">Referencia / nota (opcional)<input type="text" id="d-ref" value="${esc(v.ref||'')}" placeholder="albarán al que corresponde…"></label>`:'<input type="hidden" id="d-total" value="">'}
+    <div class="label" style="margin-top:12px">Líneas</div>
+    <div class="tblwrap"><table class="dlt"><thead>${cab}</thead><tbody>${v.lineas.map(linea).join('')}</tbody></table></div>
+    <div class="row" style="justify-content:space-between;margin-top:10px">
+      <button class="btn sm" data-act="docline" data-v="add">+ Añadir línea</button>
+      <div class="row" style="gap:6px">${D.id?`<button class="btn sm danger" data-act="docdel">Borrar este ${DOCN[tipo]}</button>`:''}<button class="btn pri" data-act="docsave">${D.id?'Guardar cambios':`Crear ${DOCN[tipo]}`}</button></div>
+    </div></section>`;
+}
+// botón de alta + el formulario, si es el que está abierto
+function nuevoBtn(prov,tipo){
+  const D=UI.docForm;
+  if(D&&D.prov===prov&&D.tipo===tipo)return docFormHTML();
+  return `<div class="row" style="justify-content:flex-end;margin-bottom:10px"><button class="btn pri sm" data-act="docnew" data-prov="${prov}" data-dt="${tipo}">+ Nuevo ${DOCN[tipo]} de ${PROVS[prov].n}</button></div>`;
 }
 // costillas de un documento de Ainan: líneas {concepto?, cant, bl?, pl?}
 const costLineas=d=>(d.lineas||[]).filter(l=>!l.concepto||/costill/i.test(l.concepto));
 const costCant=d=>costLineas(d).reduce((t,l)=>t+(+l.cant||0),0);
 function costillasData(){
   const A=S.ainan||{ped:{},alb:{},fac:{}};
-  const peds=Object.values(A.ped).sort((a,b)=>(a.fecha||'').localeCompare(b.fecha||''));
-  const albs=Object.values(A.alb).sort((a,b)=>(a.fecha||'').localeCompare(b.fecha||''));
-  const facs=Object.values(A.fac).sort((a,b)=>(a.fecha||'').localeCompare(b.fecha||''));
+  const ord=o=>Object.entries(o).map(([id,d])=>({...d,_id:id})).sort((a,b)=>(a.fecha||'').localeCompare(b.fecha||''));
+  const peds=ord(A.ped),albs=ord(A.alb),facs=ord(A.fac);
   const porPieza=p=>p.cost??2;
   const nec=LIST.reduce((t,p)=>t+porPieza(p),0);
   const necObra=LIST.filter(p=>p.ent.length).reduce((t,p)=>t+porPieza(p),0);
@@ -2817,7 +2971,7 @@ function renderAinan(){
   const C=costillasData();const tab=UI.atab||'resumen';
   const pendLleg=Math.max(0,C.ped-C.lleg),faltaPedir=Math.max(0,C.nec-C.ped);
   const empty=t=>`<div class="empty ainanempty">${ico('wrench')}<b>${t}</b><span>Todavía no hay documentos de Mecanizados Ainan. Cuando los tengas, súbelos a la carpeta de Drive del proveedor y se cargarán aquí.</span></div>`;
-  const docList=(arr,tipo)=>arr.length?arr.slice().reverse().map(d=>`<details class="doccard"><summary><span class="dicon ${tipo==='fac'?'fac':''}">${ico(tipo==='fac'?'box':tipo==='alb'?'truck':'clock')}</span><span class="dmain"><b class="mono">${tipo==='alb'?'Albarán':tipo==='fac'?'Factura':'Pedido'} ${esc(d.num)}</b><span class="muted">${d.fecha?new Date(d.fecha+'T12:00:00').toLocaleDateString('es-ES',{day:'numeric',month:'long',year:'numeric'}):''}</span></span><span class="dnums"><span><b>${costCant(d)}</b> costillas</span>${d.total!=null?`<span class="big">${eur(d.total)}</span>`:''}</span><span class="dchips">${adjChip('ainan',tipo,d.num)}</span></summary><div class="docbody">${adjBox('ainan',tipo,d.num)}<div class="tblwrap"><table><thead><tr><th>Concepto</th><th>Bloque</th><th>Planta</th><th class="r">Cantidad</th></tr></thead><tbody>${(d.lineas||[]).map(l=>`<tr><td>${esc(l.concepto||'Costillas')}</td><td>${esc(l.bl||'—')}</td><td>${esc(l.pl?PLANTAS[l.pl]||l.pl:'—')}</td><td class="r">${l.cant??'—'}</td></tr>`).join('')}</tbody></table></div></div></details>`).join(''):empty(`Sin ${tipo==='alb'?'albaranes':tipo==='fac'?'facturas':'pedidos'} todavía`);
+  const docList=(arr,tipo)=>nuevoBtn('ainan',tipo)+(arr.length?arr.slice().reverse().map(d=>`<details class="doccard"><summary><span class="dicon ${tipo==='fac'?'fac':''}">${ico(tipo==='fac'?'box':tipo==='alb'?'truck':'clock')}</span><span class="dmain"><b class="mono">${tipo==='alb'?'Albarán':tipo==='fac'?'Factura':'Pedido'} ${esc(d.num)}</b><span class="muted">${d.fecha?new Date(d.fecha+'T12:00:00').toLocaleDateString('es-ES',{day:'numeric',month:'long',year:'numeric'}):''}</span></span><span class="dnums"><span><b>${costCant(d)}</b> costillas</span>${d.total!=null?`<span class="big">${eur(d.total)}</span>`:''}</span><span class="dchips">${adjChip('ainan',tipo,d.num)}</span></summary><div class="docbody">${adjBox('ainan',tipo,d.num)}<div class="tblwrap"><table><thead><tr><th>Concepto</th><th>Bloque</th><th>Planta</th><th class="r">Cantidad</th></tr></thead><tbody>${(d.lineas||[]).map(l=>`<tr><td>${esc(l.concepto||'Costillas')}</td><td>${esc(l.bl||'—')}</td><td>${esc(l.pl?PLANTAS[l.pl]||l.pl:'—')}</td><td class="r">${l.cant??'—'}</td></tr>`).join('')}</tbody></table></div><div class="row" style="justify-content:flex-end;margin-top:8px"><button class="btn sm" data-act="docedit" data-prov="ainan" data-dt="${tipo}" data-id="${esc(d._id||'')}">${ico('edit')} Editar</button></div></div></details>`).join(''):empty(`Sin ${tipo==='alb'?'albaranes':tipo==='fac'?'facturas':'pedidos'} todavía`));
   let body='';
   if(tab==='resumen'){
     let acc=0;
@@ -2853,7 +3007,7 @@ const placaCant=d=>(d.lineas||[]).reduce((t,l)=>t+(+l.placas||0),0);
 const placaM2=d=>(d.lineas||[]).reduce((t,l)=>t+(+l.m2||0),0);
 function betacrilData(){
   const B=S.bet||{ped:{},alb:{},fac:{}};
-  const ord=o=>Object.values(o).sort((a,b)=>(a.fecha||'').localeCompare(b.fecha||''));
+  const ord=o=>Object.entries(o).map(([id,d])=>({...d,_id:id})).sort((a,b)=>(a.fecha||'').localeCompare(b.fecha||''));
   const peds=ord(B.ped),albs=ord(B.alb),facs=ord(B.fac);
   const sum=arr=>({n:arr.reduce((t,d)=>t+placaCant(d),0),m2:arr.reduce((t,d)=>t+placaM2(d),0)});
   const ped=sum(peds),lleg=sum(albs),fac=sum(facs);
@@ -2864,7 +3018,7 @@ function betacrilData(){
 }
 function renderBetacril(){
   const B=betacrilData();const tab=UI.btab||'resumen';
-  const docList=(arr,tipo)=>arr.length?arr.slice().reverse().map(d=>`<details class="doccard"><summary><span class="dicon ${tipo==='fac'?'fac':''}">${ico(tipo==='fac'?'box':tipo==='alb'?'truck':'clock')}</span><span class="dmain"><b class="mono">${tipo==='alb'?'Albarán':tipo==='fac'?'Factura':'Pedido'} ${esc(d.num)}</b><span class="muted">${d.fecha?new Date(d.fecha+'T12:00:00').toLocaleDateString('es-ES',{day:'numeric',month:'long',year:'numeric'}):''}</span></span><span class="dnums"><span><b>${f2(placaM2(d))}</b> m²</span>${placaCant(d)?`<span><b>${placaCant(d)}</b> placas</span>`:''}${d.total!=null?`<span class="mut">${eur(d.total)}</span>`:''}</span><span class="dchips">${adjChip('betacril',tipo,d.num)}</span></summary><div class="docbody">${adjBox('betacril',tipo,d.num)}<div class="tblwrap"><table><thead><tr><th>Concepto</th><th class="r">Placas</th><th class="r">Espesor</th><th class="r">m²</th><th class="r">Importe</th></tr></thead><tbody>${(d.lineas||[]).map(l=>`<tr><td>${esc(l.concepto||'Placa Betacryl 100 Classic White')}</td><td class="r">${l.placas??'—'}</td><td class="r">${l.espesor?esc(l.espesor)+' mm':'—'}</td><td class="r">${f2(l.m2)}</td><td class="r mut">${l.importe!=null?eur(l.importe):'—'}</td></tr>`).join('')}</tbody></table></div></div></details>`).join(''):`<div class="empty ainanempty">${ico('pallet')}<b>Sin ${tipo==='alb'?'albaranes':tipo==='fac'?'facturas':'pedidos'} todavía</b><span>En cuanto me pases los albaranes y las facturas de Betacril se cargan aquí, con su PDF.</span></div>`;
+  const docList=(arr,tipo)=>nuevoBtn('betacril',tipo)+(arr.length?arr.slice().reverse().map(d=>`<details class="doccard"><summary><span class="dicon ${tipo==='fac'?'fac':''}">${ico(tipo==='fac'?'box':tipo==='alb'?'truck':'clock')}</span><span class="dmain"><b class="mono">${tipo==='alb'?'Albarán':tipo==='fac'?'Factura':'Pedido'} ${esc(d.num)}</b><span class="muted">${d.fecha?new Date(d.fecha+'T12:00:00').toLocaleDateString('es-ES',{day:'numeric',month:'long',year:'numeric'}):''}</span></span><span class="dnums"><span><b>${f2(placaM2(d))}</b> m²</span>${placaCant(d)?`<span><b>${placaCant(d)}</b> placas</span>`:''}${d.total!=null?`<span class="mut">${eur(d.total)}</span>`:''}</span><span class="dchips">${adjChip('betacril',tipo,d.num)}</span></summary><div class="docbody">${adjBox('betacril',tipo,d.num)}<div class="tblwrap"><table><thead><tr><th>Concepto</th><th class="r">Placas</th><th class="r">Espesor</th><th class="r">m²</th><th class="r">Importe</th></tr></thead><tbody>${(d.lineas||[]).map(l=>`<tr><td>${esc(l.concepto||'Placa Betacryl 100 Classic White')}</td><td class="r">${l.placas??'—'}</td><td class="r">${l.espesor?esc(l.espesor)+' mm':'—'}</td><td class="r">${f2(l.m2)}</td><td class="r mut">${l.importe!=null?eur(l.importe):'—'}</td></tr>`).join('')}</tbody></table></div><div class="row" style="justify-content:flex-end;margin-top:8px"><button class="btn sm" data-act="docedit" data-prov="betacril" data-dt="${tipo}" data-id="${esc(d._id||'')}">${ico('edit')} Editar</button></div></div></details>`).join(''):`<div class="empty ainanempty">${ico('pallet')}<b>Sin ${tipo==='alb'?'albaranes':tipo==='fac'?'facturas':'pedidos'} todavía</b><span>Créalo con el botón de arriba: número, fecha y líneas. El PDF se adjunta después.</span></div>`);
   let body='';
   if(tab==='resumen'){
     const pend=Math.max(0,B.ped.m2-B.lleg.m2);
@@ -2891,7 +3045,7 @@ function renderMacrif(m){
   m.dataset.view='macrif';
   m.innerHTML=`<div class="wrap" style="display:flex;flex-direction:column;gap:14px">
     <div class="provs">${card('macrif',`${f2(M.m2)} m² · ${M.piezas} piezas`)}${card('betacril',B.vacio?'sin documentos todavía':`${f2(B.lleg.m2)} m² de placa`)}${card('ainan',C.vacio?'sin documentos todavía':`${C.albs.length} albaranes · ${C.facs.length} facturas`)}
-      ${LIVE&&LIVE.admin?`<label class="btn sm provup" title="Selecciona varios PDF: se reconocen por el número de albarán o factura en el nombre del archivo">${ico('down')} Subir PDFs<input type="file" id="adj-bulk" accept="application/pdf,image/*" multiple hidden></label>`:''}</div>
+      ${DOCS?`<label class="btn sm provup" title="Selecciona varios PDF: se reconocen por el número de albarán o factura en el nombre del archivo">${ico('down')} Subir PDFs<input type="file" id="adj-bulk" accept="application/pdf,image/*" multiple hidden></label>`:''}</div>
     ${prov==='macrif'?renderMacrifBody():prov==='betacril'?renderBetacril():renderAinan()}
   </div>`;
 }
@@ -2908,16 +3062,19 @@ function adjMatch(nombre,prov){
   return null;
 }
 async function subirAdjunto(file,prov,tipo,num){
-  if(!DOCS)throw new Error('Sin conexión con el almacenamiento');
-  const ext=(file.name.split('.').pop()||'pdf').toLowerCase().replace(/[^a-z0-9]/g,'');
+  if(!DOCS)throw new Error('Sin conexión con el almacenamiento de documentos');
+  if(!file||!file.size)throw new Error('El archivo está vacío');
+  if(file.size>25*1024*1024)throw new Error('El archivo pesa más de 25 MB: comprime el PDF o hazle una foto más pequeña');
+  const ext=(file.name.split('.').pop()||'pdf').toLowerCase().replace(/[^a-z0-9]/g,'')||'pdf';
   const path=`${prov}/${tipo}/${safeId(num)}-${Date.now().toString(36)}.${ext}`;
   await DOCS.upload(path,file);
-  await db.doc('adjuntos/'+adjKey(prov,tipo,num)).set({prov,tipo,num,path,nombre:file.name,tipo_mime:file.type,tipo:file.type||'application/pdf',subido:today(),por:me()});
+  // ¡ojo! «tipo» es alb/fac/ped; el tipo MIME va aparte, en «mime»
+  await db.doc('adjuntos/'+adjKey(prov,tipo,num)).set({prov,tipo,num,path,nombre:file.name,mime:file.type||'application/pdf',subido:today(),por:me()});
 }
 async function verAdjunto(k,titulo){
   const a=(S.adj||{})[k];if(!a)return;
   if(a.drive){const w=window.open(`https://drive.google.com/file/d/${encodeURIComponent(a.drive)}/view`,'_blank','noopener');if(!w)location.href=`https://drive.google.com/file/d/${encodeURIComponent(a.drive)}/view`;return}
-  vistaPrevia(async()=>{const blob=await DOCS.get(a.path);if(!blob)throw new Error('No se pudo descargar el documento (¿sin cobertura y sin copia en este dispositivo?)');return {blob,nombre:a.nombre||titulo+'.pdf',titulo,tipo:a.tipo||blob.type||'application/pdf'}});
+  vistaPrevia(async()=>{const blob=await DOCS.get(a.path);if(!blob)throw new Error('No se pudo descargar el documento (¿sin cobertura y sin copia en este dispositivo?)');return {blob,nombre:a.nombre||titulo+'.pdf',titulo,tipo:adjMime(a)||blob.type||'application/pdf'}});
 }
 
 /* =================== CONTROL DE OBRA: plazos, avisos y previsión =================== */
@@ -3306,12 +3463,30 @@ function tapPiece(id,shift){
 function nextOf(id){const p=P[id];if(!p)return null;const sib=LIST.filter(q=>q.bl===p.bl&&q.pl===p.pl);return sib[sib.indexOf(p)+1]||null}
 function rerenderKeepScroll(){const m=$('#main');const y=m.scrollTop,wy=window.scrollY;render();m.scrollTop=y;if(narrow())window.scrollTo(0,wy)}
 function refreshPlano(){if(UI.tab!=='plano')return;const vis=visiblePieces();drawSvg(vis,false);renderSide(vis);renderSelbar();renderPlano($('#main'))}
-async function doInstall(ids,date,withNext){
+/* No se puede dar por instalada una pieza que no consta que haya llegado a obra:
+   si no hay albarán ni entrega registrada, lo más probable es que sea otra pieza o falte el albarán.
+   Se puede forzar, pero queda escrito quién lo hizo y sale en las comprobaciones. */
+function sinLlegada(ids){return ids.filter(x=>P[x]&&!P[x].ent.length)}
+async function doInstall(ids,date,withNext,forzar){
+  const todas=ids.slice();
+  const faltan=sinLlegada(todas);
+  if(faltan.length&&!forzar){
+    const uno=faltan.length===1;
+    toast(uno?`${faltan[0]}: no consta que haya llegado a obra. No aparece en ningún albarán ni entrega.`
+      :`${faltan.length} de las ${todas.length} piezas no constan como llegadas a obra.`,
+      [['Registrar la llegada',()=>{UI.tab='macrif';UI.prov='macrif';UI.mtab='albaranes';saveUI();$('#main').dataset.view='';render()}],
+       ['Instalar igualmente',()=>doInstall(todas,date,withNext,true)]],true);
+    ids=todas.filter(x=>!faltan.includes(x));
+    if(!ids.length)return;
+  }
   const patches={};for(const id of ids){const p=P[id];if(!p)continue;
     const extra={inst:date};
+    // queda constancia: se instaló sin que constara la llegada
+    if(!p.ent.length)extra.instSinAlb={f:date,por:me(),cuando:today()};
+    else if(p.instSinAlb)extra.instSinAlb=null;
     // una pieza que estaba «en espera» (medios auxiliares, andamios) se resuelve al instalarse
     if(p.incs.some(i=>i.destino==='espera'&&!i.fechaResuelta)){extra.incs=incsFor(p).map((x,ix)=>p.incs[ix].destino==='espera'&&!x.fechaResuelta?{...x,fechaResuelta:date}:x)}
-    patches[id]=withLog(p,`Instalada ${fd(date)}`,extra)}
+    patches[id]=withLog(p,`Instalada ${fd(date)}${!p.ent.length?' · SIN constar su llegada a obra':''}`,extra)}
   const nx=withNext&&ids.length===1?nextOf(ids[0]):null;
   await patchPieces(patches,`${ids.length===1?ids[0]+' instalada':ids.length+' piezas instaladas'} el ${fd(date)}${date!==today()?' (¡no es hoy!)':''}`,nx?{next:['Siguiente ›',()=>{UI.pv==='list'||UI.tab!=='plano'?openPiece(nx.id):openPiece(nx.id)}]}:{});
 }
@@ -3319,6 +3494,14 @@ async function doUninstall(ids){
   const patches={};for(const id of ids){const p=P[id];if(p&&p.inst)patches[id]=withLog(p,`Quitada instalación (${fd(p.inst)})`,{inst:null})}
   if(Object.keys(patches).length)await patchPieces(patches,'Instalación quitada');
 }
+/* La pieza estaba puesta y una incidencia obliga a quitarla. No perdemos la fecha:
+   se guarda en el histórico para saber cuándo se colocó la primera vez y cuánto retrabajo hay. */
+function quitarInst(p,motivo){
+  if(!p||!p.inst)return {};
+  const h=[...(p.instH||[]).map(x=>({...x})),{f:p.inst,quitada:today(),por:me(),motivo:motivo||''}];
+  return {inst:null,instH:h};
+}
+function txtQuit(p){return p&&p.inst?` · se quita la instalación del ${fd(p.inst)} (queda en el histórico)`:''}
 function kParse(k){const [id,ix]=k.split('__');return {p:P[id],ix:+ix,id}}
 async function saveIncs(p,incs,msg,extra={}){return patchPieces({[p.id]:withLog(p,msg,{...extra,incs})},msg)}
 async function currentDev(){
@@ -3423,7 +3606,12 @@ document.addEventListener('click',async e=>{
   case 'pvshare':compartirPrevia();return;
   case 'rcsolo':UI.rc.solo=t.dataset.v==='1';rerenderKeepScroll();return;
   case 'partecsv':await downloads.save({filename:`parte-${UI.hoy||today()}.csv`,data:parteCSV()});return;
-  case 'calm':{perRange();const dd=+t.dataset.d;const now=new Date();const cur=UI.per.mode==='mes'?{y:UI.per.y,m:UI.per.m}:(UI.calM||{y:now.getFullYear(),m:now.getMonth()});const nd=dd===0?new Date(now.getFullYear(),now.getMonth(),1):new Date(cur.y,cur.m+dd,1);const v={y:nd.getFullYear(),m:nd.getMonth()};if(UI.per.mode==='mes'){UI.per.y=v.y;UI.per.m=v.m}else UI.calM=v;UI.calDay=null;rerenderKeepScroll();return}
+  case 'calm':{const raw=t.dataset.d;const now=new Date();const cur=UI.calM||(UI.calM=calMesPorDefecto());
+    let v;
+    if(raw==='pri')v=calMesPrimero();
+    else if(+raw===0)v={y:now.getFullYear(),m:now.getMonth()};
+    else{const nd=new Date(cur.y,cur.m+(+raw),1);v={y:nd.getFullYear(),m:nd.getMonth()}}
+    UI.calM=v;UI.calDay=null;rerenderKeepScroll();return}
   case 'calday':UI.calDay=t.dataset.d||null;rerenderKeepScroll();return;
   case 'unfocus':UI.focus=null;UI.incForm=null;render();return;
   case 'gotoplan':UI.drawer=null;UI.tab='plano';saveUI();render();openPiece(id);return;
@@ -3436,8 +3624,9 @@ document.addEventListener('click',async e=>{
   case 'instsel':{const d=$('#seldate').value;if(!d){toast('Indica la fecha');return}UI.instDate=d;const ids=[...UI.sel];UI.sel.clear();UI.multi=false;await doInstall(ids,d);render();return}
   case 'uninstsel':{const ids=[...UI.sel];UI.sel.clear();UI.multi=false;await doUninstall(ids);render();return}
   case 'medirsel':{const ids=[...UI.sel].filter(x=>!P[x].peds.length);const patches={};ids.forEach(x=>patches[x]=withLog(P[x],'Marcada pendiente de medir en obra',{medir:true}));UI.sel.clear();UI.multi=false;if(ids.length)await patchPieces(patches,`${ids.length} piezas marcadas para medir en obra`);else toast('Las seleccionadas ya están pedidas');render();return}
-  case 'bulkinc':{const tipo=$('#bi-tipo').value,dest=$('#bi-dest').value,desc=$('#bi-desc').value;const ids=[...UI.sel];const patches={};const dev=dest==='macrif'?await currentDev():null;ids.forEach(x=>{const p=P[x];const ni=newInc(tipo,dest,desc);if(dev)ni.paleDev=dev;const extra={incs:[...incsFor(p),ni]};if(dest==='macrif'&&p.inst)extra.inst=null;patches[x]=withLog(p,`Incidencia: ${INC_TIPOS[tipo]}`,extra)});UI.sel.clear();UI.multi=false;UI.bulkInc=false;await patchPieces(patches,`${ids.length} incidencias creadas`);render();return}
-  case 'inst1':{const d=$('#instd-'+id).value;if(!d){toast('Indica la fecha');return}UI.instDate=d;await doInstall([id],d,true);return}
+  case 'bulkinc':{const tipo=$('#bi-tipo').value,dest=$('#bi-dest').value,desc=$('#bi-desc').value;const ids=[...UI.sel];const patches={};const dev=dest==='macrif'?await currentDev():null;ids.forEach(x=>{const p=P[x];const ni=newInc(tipo,dest,desc);if(dev)ni.paleDev=dev;const extra={incs:[...incsFor(p),ni]};if(dest==='macrif')Object.assign(extra,quitarInst(p,INC_TIPOS[tipo]));patches[x]=withLog(p,`Incidencia: ${INC_TIPOS[tipo]}`,extra)});UI.sel.clear();UI.multi=false;UI.bulkInc=false;await patchPieces(patches,`${ids.length} incidencias creadas`);render();return}
+  case 'inst1':{const el=$('#instd-'+id);const d=(el&&el.value)||UI.instDate||today();if(!d){toast('Indica la fecha');return}UI.instDate=d;await doInstall([id],d,true,t.dataset.forzar==='1');return}
+  case 'goalb':UI.tab='macrif';UI.prov='macrif';UI.mtab='albaranes';saveUI();$('#main').dataset.view='';render();$('#main').scrollTop=0;return;
   case 'desanular':{const p=P[id];if(t.dataset.confirm!=='1'){t.dataset.confirm='1';t.innerHTML='¿Seguro? Pulsa otra vez · vuelve a contar en la obra';return}
     const ix=[...p.incs].reverse().findIndex(x=>x.destino==='descartar');
     if(ix<0){toast('Esta pieza no está anulada');return}
@@ -3449,6 +3638,13 @@ document.addEventListener('click',async e=>{
     if(d===p.inst){toast('Es la misma fecha que ya tenía');return}
     UI.instEdit=null;
     await patchPieces({[id]:withLog(p,`Fecha de instalación cambiada de ${fd(p.inst)} a ${fd(d)}`,{inst:d})},`${id}: instalada el ${fd(d)}`);return}
+  case 'insthsave':{const p=P[id];const ix=+t.dataset.ix;const el=$(`#insth-${id}-${ix}`);if(!el||!el.value)return;
+    const h=(p.instH||[]).map(x=>({...x}));if(!h[ix])return;const vieja=h[ix].f;if(vieja===el.value){toast('Es la misma fecha');return}
+    h[ix].f=el.value;h.sort((a,b)=>a.f.localeCompare(b.f));
+    await patchPieces({[id]:withLog(p,`Colocación anterior corregida: ${fd(vieja)} → ${fd(el.value)}`,{instH:h})},'Fecha corregida');return}
+  case 'insthdel':{if(t.dataset.confirm!=='1'){t.dataset.confirm='1';t.title='Pulsa otra vez para borrar esta colocación';t.classList.add('on');return}
+    const p=P[id];const ix=+t.dataset.ix;const h=(p.instH||[]).filter((_,i)=>i!==ix);const q=(p.instH||[])[ix];
+    await patchPieces({[id]:withLog(p,`Borrada una colocación anterior (${q?fd(q.f):'—'})`,{instH:h})},'Colocación borrada del histórico');return}
   case 'uninst':UI.instEdit=null;await doUninstall([id]);return;
   case 'medir':{const p=P[id];await patchPieces({[id]:withLog(p,p.medir?'Quitada marca de medir en obra':'Marcada pendiente de medir en obra',{medir:!p.medir})},p.medir?'Marca quitada':'Marcada para medir en obra');return}
   case 'medirgroup':{const ids=t.dataset.ids.split(',');const patches={};ids.forEach(x=>patches[x]=withLog(P[x],'Marcada pendiente de medir en obra',{medir:true}));await patchPieces(patches,`${ids.length} piezas marcadas para medir en obra`);return}
@@ -3459,7 +3655,7 @@ document.addEventListener('click',async e=>{
   case 'pfdel':{if(t.dataset.confirm!=='1'){t.dataset.confirm='1';t.title='Pulsa otra vez para quitarla';t.classList.add('on');return}
     const p=P[id];const ix=+t.dataset.ix;const fotos=(p.fotos||[]).filter((_,i)=>i!==ix);
     await patchPieces({[id]:withLog(p,'Foto quitada',{fotos})},'Foto quitada');return}
-  case 'incdest':{const {p,ix}=kParse(t.dataset.k);const incs=incsFor(p);const d=t.dataset.dest||t.dataset.v;incs[ix]={...incs[ix],destino:d};const extra={};if(d!=='macrif'){incs[ix].paleDev=null;incs[ix].fechaPale=null}if(d==='macrif'){incs[ix].fechaPale=incs[ix].fechaPale||today();incs[ix].paleDev=incs[ix].paleDev||await currentDev();if(p.inst)extra.inst=null}if(d==='espera')incs[ix].fechaResuelta=null;
+  case 'incdest':{const {p,ix}=kParse(t.dataset.k);const incs=incsFor(p);const d=t.dataset.dest||t.dataset.v;incs[ix]={...incs[ix],destino:d};const extra={};if(d!=='macrif'){incs[ix].paleDev=null;incs[ix].fechaPale=null}if(d==='macrif'){incs[ix].fechaPale=incs[ix].fechaPale||today();incs[ix].paleDev=incs[ix].paleDev||await currentDev();Object.assign(extra,quitarInst(p,'Devuelta a Macrif'))}if(d==='espera')incs[ix].fechaResuelta=null;
     await saveIncs(p,incs,d==='macrif'?'Pieza en palé para retirar':d==='obra'?'Pendiente de reparar en obra':d==='espera'?'Pieza en espera (medios o andamios)':'Pieza anulada'+(incs[ix].desc?': '+incs[ix].desc:''),extra);return}
   case 'incret1':{const k=t.dataset.k;const {p,ix}=kParse(k);const incs=incsFor(p);incs[ix]={...incs[ix],fechaRetirada:$('#ret-'+k).value||today()};await saveIncs(p,incs,'Retirada por el camión');return}
   case 'incvuelta':{const k=t.dataset.k;const {p,ix}=kParse(k);const incs=incsFor(p);incs[ix]={...incs[ix],fechaVuelta:$('#vue-'+k).value||today()};await saveIncs(p,incs,'Vuelta a obra');return}
@@ -3467,7 +3663,7 @@ document.addEventListener('click',async e=>{
   case 'incesp':{const k=t.dataset.k;const {p,ix}=kParse(k);const incs=incsFor(p);incs[ix]={...incs[ix],fechaResuelta:$('#esp-'+k).value||today()};await saveIncs(p,incs,'Espera resuelta');return}
   case 'saveinc':{const k=t.dataset.k;const {p,ix}=kParse(k);const g=x=>$(`#${x}-${CSS.escape(k)}`).value;const incs=incsFor(p);const prev=incs[ix];const dest=g('ia');
     const x={...prev,tipo:g('it'),fecha:g('if')||null,destino:dest,desc:g('id')};const extra={};
-    if(dest==='macrif'){x.fechaPale=g('ipl')||prev.fechaPale||x.fecha||today();x.fechaRetirada=g('ie')||null;x.retiradaRef=g('ip');x.fechaVuelta=g('iv')||null;x.fechaReparada=null;if(!x.fechaRetirada){x.retiradaId=null;if(!x.paleDev)x.paleDev=await currentDev()}if(prev.destino!=='macrif'&&p.inst)extra.inst=null}
+    if(dest==='macrif'){x.fechaPale=g('ipl')||prev.fechaPale||x.fecha||today();x.fechaRetirada=g('ie')||null;x.retiradaRef=g('ip');x.fechaVuelta=g('iv')||null;x.fechaReparada=null;if(!x.fechaRetirada){x.retiradaId=null;if(!x.paleDev)x.paleDev=await currentDev()}if(prev.destino!=='macrif')Object.assign(extra,quitarInst(p,'Devuelta a Macrif'))}
     else{x.paleDev=null;x.fechaPale=null;x.fechaRetirada=null;x.retiradaRef='';x.retiradaId=null;x.fechaVuelta=null;x.fechaReparada=dest==='obra'?(g('ir')||null):null;x.fechaResuelta=dest==='espera'?(g('ies')||null):null}
     incs[ix]=x;await saveIncs(p,incs,'Incidencia editada',extra);return}
   case 'delinc':{if(t.dataset.confirm!=='1'){t.dataset.confirm='1';t.textContent='¿Seguro? Pulsa otra vez';return}const {p,ix}=kParse(t.dataset.k);const incs=incsFor(p).filter((_,i)=>i!==ix);await saveIncs(p,incs,'Incidencia eliminada');return}
@@ -3513,9 +3709,39 @@ document.addEventListener('click',async e=>{
   case 'goped':UI.tab='macrif';UI.prov='macrif';UI.mtab='pedidos';saveUI();$('#main').dataset.view='';render();$('#main').scrollTop=0;return;
   case 'pztab':UI.pz=t.dataset.v;$('#main').dataset.view='';render();$('#main').scrollTop=0;return;
   case 'goprov':UI.tab='macrif';UI.prov=t.dataset.v;saveUI();$('#main').dataset.view='';render();$('#main').scrollTop=0;return;
-  case 'prov':UI.prov=t.dataset.v;UI.mopen=null;render();return;
-  case 'btab':UI.btab=t.dataset.v;rerenderKeepScroll();return;
-  case 'atab':UI.atab=t.dataset.v;render();return;
+  case 'prov':UI.prov=t.dataset.v;UI.mopen=null;UI.docForm=null;render();return;
+  /* ---- alta de pedidos, albaranes y facturas de Ainan y Betacril ---- */
+  case 'docnew':{UI.docForm=docNuevo(t.dataset.prov,t.dataset.dt,null);rerenderKeepScroll();return}
+  case 'docedit':{const prov=t.dataset.prov,tipo=t.dataset.dt;const did=t.dataset.id;if(!did){toast('Este documento es antiguo y no se puede editar desde aquí');return}
+    UI.docForm=docNuevo(prov,tipo,did);rerenderKeepScroll();return}
+  case 'doccancel':UI.docForm=null;rerenderKeepScroll();return;
+  case 'docline':{const D=UI.docForm;if(!D)return;docFormSync();
+    if(t.dataset.v==='add')D.v.lineas.push(lineaVacia(D.prov));
+    else{const ix=+t.dataset.ix;if(D.v.lineas.length>1)D.v.lineas.splice(ix,1)}
+    rerenderKeepScroll();return}
+  case 'docsave':{const D=UI.docForm;if(!D)return;const v=docFormLeer();
+    const num=String(v.num||'').trim();
+    if(!num){toast('Ponle el número que trae el documento');return}
+    const col=DOCCOL[D.prov][D.tipo];const st=docStore(D.prov);
+    const did=D.id||safeId(num);
+    if(!D.id&&st[D.tipo][did]){toast(`Ya hay un ${DOCN[D.tipo]} de ${PROVS[D.prov].n} con el número ${num}`);return}
+    const lineas=v.lineas.map(l=>D.prov==='ainan'
+      ?{concepto:String(l.concepto||'Costillas').trim(),cant:+l.cant||0,bl:l.bl||null,pl:l.pl||null}
+      :{concepto:String(l.concepto||'Placa Betacryl 100 Classic White').trim(),placas:l.placas===''?null:+l.placas||0,espesor:l.espesor||null,m2:+l.m2||0,importe:l.importe===''?null:+l.importe||0})
+      .filter(l=>D.prov==='ainan'?l.cant>0:(l.m2>0||l.placas));
+    if(!lineas.length){toast(D.prov==='ainan'?'Pon al menos una línea con cantidad de costillas':'Pon al menos una línea con m² o placas');return}
+    const data={num,fecha:v.fecha||today(),lineas,ref:v.ref||'',por:me(),creado:D.id?(st[D.tipo][did]||{}).creado||today():today()};
+    if(D.tipo==='fac')data.total=v.total===''||v.total==null?null:+v.total;
+    try{await db.doc(col+'/'+did).set(data)}catch(er){toast('No se ha podido guardar: '+(er.message||er),null,true);return}
+    const n=DOCN[D.tipo];UI.docForm=null;
+    toast(`${n[0].toUpperCase()+n.slice(1)} ${num} de ${PROVS[D.prov].n} guardado${D.id?'':'. Ahora puedes adjuntarle el PDF'}`);
+    render();return}
+  case 'docdel':{const D=UI.docForm;if(!D||!D.id)return;
+    if(t.dataset.confirm!=='1'){t.dataset.confirm='1';t.textContent='¿Seguro? Pulsa otra vez';return}
+    try{await db.doc(DOCCOL[D.prov][D.tipo]+'/'+D.id).delete()}catch(er){toast('No se ha podido borrar: '+(er.message||er),null,true);return}
+    UI.docForm=null;toast('Documento borrado');render();return}
+  case 'btab':UI.btab=t.dataset.v;UI.docForm=null;rerenderKeepScroll();return;
+  case 'atab':UI.atab=t.dataset.v;UI.docForm=null;render();return;
   case 'docver':verAdjunto(t.dataset.k,t.dataset.t);return;
   case 'mtab':UI.mtab=t.dataset.v;UI.mopen=null;UI.revEdit=null;render();return;
   case 'revedit':UI.revEdit=t.dataset.key;rerenderKeepScroll();return;
@@ -3531,7 +3757,7 @@ document.addEventListener('click',async e=>{
     rerenderKeepScroll();return}
   case 'incsave':{const p=P[id];const F=UI.incF;if(!p||!F||!F.tipo||!F.dest)return;F.desc=$('#incf-desc').value;F.fecha=$('#incf-fecha').value||today();
     const ni=newInc(F.tipo,F.dest,F.desc);ni.fecha=F.fecha;const extra={};
-    if(F.dest==='macrif'){ni.fechaPale=F.fecha;ni.paleDev=await currentDev();if(p.inst)extra.inst=null}
+    if(F.dest==='macrif'){ni.fechaPale=F.fecha;ni.paleDev=await currentDev();Object.assign(extra,quitarInst(p,INC_TIPOS[F.tipo]||'Devuelta a Macrif'))}
     UI.incForm=null;UI.incF=null;
     if(F.file&&FOTOS){try{toast('Subiendo foto…');const blob=await compressImage(F.file);const path=`${p.id}/${ni.id}/${Date.now()}.jpg`;await FOTOS.upload(path,blob);ni.fotos=[path]}catch(err){toast('La foto no se pudo subir; la incidencia se guarda sin foto')}}
     await saveIncs(p,[...incsFor(p),ni],F.dest==='descartar'?`Pieza anulada${F.desc?': '+F.desc:''}`:`Incidencia: ${INC_TIPOS[F.tipo]} · ${({macrif:'a palé de devolución',obra:'reparar en obra',espera:'en espera'})[F.dest]||''}`,extra);return}
@@ -3571,7 +3797,7 @@ document.addEventListener('change',async e=>{
   if(id==='rep-desde'||id==='rep-hasta'){UI.rep[id.slice(4)]=e.target.value;render();return}
   if(id==='per-desde'||id==='per-hasta'){perRange();UI.per[id.slice(4)]=e.target.value;if(UI.per.desde&&UI.per.hasta&&UI.per.desde>UI.per.hasta){toast('La fecha «desde» es posterior a «hasta»');return}rerenderKeepScroll();return}
   if(id==='rc-fecha'){UI.rc.fecha=e.target.value||today();UI.rc.sel=null;rerenderKeepScroll();return}
-  if(id==='cal-mes'){const [y,m]=e.target.value.split('-').map(Number);perRange();if(UI.per.mode==='mes'){UI.per.y=y;UI.per.m=m}else UI.calM={y,m};UI.calDay=null;rerenderKeepScroll();return}
+  if(id==='cal-mes'){const [y,m]=e.target.value.split('-').map(Number);UI.calM={y,m};UI.calDay=null;rerenderKeepScroll();return}
   if(e.target.dataset.adjup){const f=e.target.files&&e.target.files[0];if(!f)return;const {prov,tipo,num}=e.target.dataset;toast('Subiendo documento…');try{await subirAdjunto(f,prov,tipo,num);toast('Documento adjuntado')}catch(er){toast('No se pudo subir: '+(er.message||er),null,true)}return}
   if(id==='adj-bulk'){const fs=[...(e.target.files||[])];if(!fs.length)return;const prov=UI.prov||'macrif';let ok=0;const no=[];toast(`Subiendo ${fs.length} documentos…`);
     for(const f of fs){const mm=adjMatch(f.name,prov);if(!mm){no.push(f.name);continue}try{await subirAdjunto(f,prov,mm.tipo,mm.num);ok++;toast(`Subidos ${ok} de ${fs.length}…`)}catch(er){no.push(f.name+' ('+(er.message||'error')+')')}}
@@ -3832,10 +4058,21 @@ document.addEventListener('focusout',()=>{if(schedule._pending){schedule._pendin
   downloads={async saveBlob({filename,blob}){const u=URL.createObjectURL(blob);const a=document.createElement('a');a.href=u;a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),4000);toast('PDF descargado: '+filename);return {status:'saved'}},
     async save({filename,data}){const blob=new Blob([data],{type:'text/csv;charset=utf-8'});const u=URL.createObjectURL(blob);const a=document.createElement('a');a.href=u;a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),2000);return {status:'saved'}}};
 
+  // traducir los errores del almacenamiento a algo que se entienda en obra
+  function docsErr(e){
+    const m=String((e&&(e.message||e.error))||e||'');
+    if(/Bucket not found|bucket.*not.*exist/i.test(m))return 'Falta crear el almacén de documentos en Supabase (bucket «documentos»). Pásame el aviso y te doy el SQL: es una sola vez.';
+    if(/row-level security|violates|not authorized|403|permission/i.test(m))return 'Tu usuario no tiene permiso para guardar documentos. Hay que darte de alta en «usuarios_permitidos».';
+    if(/payload too large|413|exceeded the maximum/i.test(m))return 'El archivo pesa demasiado para subirlo. Prueba a comprimir el PDF.';
+    if(/Failed to fetch|NetworkError|timeout|tardó/i.test(m))return 'No se ha podido subir: la conexión se ha cortado. Inténtalo otra vez con mejor cobertura.';
+    return m||'No se ha podido guardar el documento';
+  }
   DOCS={
-    async upload(path,file){if(!navigator.onLine)throw new Error('Sin cobertura: sube el documento cuando tengas señal');const {error}=await withTimeout(sb.storage.from('documentos').upload(path,file,{contentType:file.type||'application/pdf',upsert:true}),120000);if(error)throw error;try{await idb.put('kv','doc:'+path,file)}catch(x){}},
+    async upload(path,file){if(!navigator.onLine)throw new Error('Sin cobertura: sube el documento cuando tengas señal');
+      const {error}=await withTimeout(sb.storage.from('documentos').upload(path,file,{contentType:file.type||'application/pdf',upsert:true}),120000);
+      if(error)throw new Error(docsErr(error));try{await idb.put('kv','doc:'+path,file)}catch(x){}},
     async get(path){try{const b=await idb.get('kv','doc:'+path);if(b)return b}catch(x){}
-      const {data,error}=await withTimeout(sb.storage.from('documentos').download(path),60000);if(error)throw error;try{await idb.put('kv','doc:'+path,data)}catch(x){}return data}
+      const {data,error}=await withTimeout(sb.storage.from('documentos').download(path),60000);if(error)throw new Error(docsErr(error));try{await idb.put('kv','doc:'+path,data)}catch(x){}return data}
   };
   FOTOS={
     async upload(path,blob){
