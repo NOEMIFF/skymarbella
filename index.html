@@ -2844,11 +2844,13 @@ async function buildRecuentoPDF(){
   y=pdfKpis(doc,y,[['Piezas pedidas',T.ped,PC.acc,`${rows.length} pedidos`],['Enviadas',T.env,PC.env,'recibidas en obra'],['Devueltas a Macrif',T.dev,PC.dev,'pendientes de reponer'],['Sin enviar',T.pend,PC.pend,'nunca recibidas'],['Faltan en total',T.falta,PC.ink,n2(tot(x=>x.m2P))+' m2']]);
   y=pdfBarra(doc,y+5,[['Enviadas',T.env,PC.env],['Devueltas',T.dev,PC.dev],['Sin enviar',T.pend,PC.pend]],T.ped);
   txt(doc,'Resumen por pedido',M,y+6,{size:11,bold:true});
+  const tfill={fillColor:PC.accSoft,textColor:PC.ink,fontStyle:'bold'};
   doc.autoTable({...TB,startY:y+9,
     head:[['Pedido','Fecha','Pedidas','Enviadas','Devueltas','Sin enviar','Faltan','V','A','R','m2 faltan','Avance']],
-    body:rows.map(x=>[x.d.num,fd(x.d.fecha),x.lin.length,x.env,x.dev.length||'—',x.pend.length||'—',x.falta.length,x.cntP.V||'—',x.cntP.A||'—',x.cntP.R||'—',n3(x.m2P),{content:'',av:x}]),
-    foot:[['Total','',T.ped,T.env,T.dev,T.pend,T.falta,tot(x=>x.cntP.V),tot(x=>x.cntP.A),tot(x=>x.cntP.R),n3(tot(x=>x.m2P)),'']],
-    footStyles:{fillColor:PC.accSoft,textColor:PC.ink,fontStyle:'bold'},showFoot:'lastPage',
+    body:rows.map(x=>[x.d.num,fd(x.d.fecha),x.lin.length,x.env,x.dev.length||'—',x.pend.length||'—',x.falta.length,x.cntP.V||'—',x.cntP.A||'—',x.cntP.R||'—',n3(x.m2P),{content:'',av:x}]).concat([[
+      {content:'Total',styles:tfill},{content:'',styles:tfill},{content:T.ped,styles:tfill},{content:T.env,styles:tfill},{content:T.dev,styles:tfill},{content:T.pend,styles:tfill},{content:T.falta,styles:tfill},
+      {content:tot(x=>x.cntP.V),styles:tfill},{content:tot(x=>x.cntP.A),styles:tfill},{content:tot(x=>x.cntP.R),styles:tfill},{content:n3(tot(x=>x.m2P)),styles:tfill},{content:'',styles:tfill}
+    ]]),
     columnStyles:{0:{fontStyle:'bold'},2:{halign:'right'},3:{halign:'right',textColor:PC.env},4:{halign:'right',textColor:PC.dev},5:{halign:'right',textColor:PC.pend},6:{halign:'right',fontStyle:'bold'},7:{halign:'center'},8:{halign:'center'},9:{halign:'center'},10:{halign:'right'},11:{cellWidth:traz?40:24}},
     didDrawCell:d=>{
       if(d.section==='head'&&[7,8,9].includes(d.column.index)){const c=['V','A','R'][d.column.index-7];doc.setFillColor(...PC[c]);doc.circle(d.cell.x+d.cell.width/2,d.cell.y+d.cell.height/2,1.6,'F');}
