@@ -19,7 +19,7 @@
   --tV:#2E9E4F; --tA:#E0A800; --tR:#D5403A;
   --s-instalada:#15803D; --s-en_obra:#2F6FB3; --s-en_obra-bg:#DCEAF8; --s-pedida:#56687A; --s-pedida-bg:#FFFFFF; --s-medir:#7B4FC9; --s-sin_pedir:#9AA5AD; --s-sin_pedir-bg:#EEF0F1;
   --p-instalada:#15803D; --p-en_obra:#2F6FB3; --p-pedida:#E39410; --p-medir:#7B4FC9; --p-sin_pedir:#E3E7EA;
-  --k-instalada:#15803D; --k-en_obra:#3B82C4; --k-pedida:#F2A71B; --k-medir:#7B4FC9; --k-sin_pedir:#D3D8DC; --k-inc:#D81B60; --k-espera:#5A6B8C; --k-descartada:#3A3F44; --kInkDark:#1C2326;
+  --k-instalada:#15803D; --k-en_obra:#3B82C4; --k-pedida:#F2A71B; --k-medir:#7B4FC9; --k-sin_pedir:#D3D8DC; --k-inc:#D81B60; --k-espera:#5A6B8C; --k-descartada:#3A3F44; --k-reparar:#F7B4D2; --kInkDark:#1C2326;
   --wood:#B07A43; --wood2:#8A5A2B; --film:#9CC7E6; --film2:#FFFFFF; --filmOp:.34;
   --s-inc_detectada:#D81B60; --s-inc_pale:#EF7D1A; --s-inc_macrif:#A0522D; --s-inc_reparar:#00838F; --s-descartada:#3A3F44; --s-inc_espera:#4E5D78;
   --ok:#0B6B45; --warn:#B9620B; --bad:#C4204F; --info:#1F5E7A;
@@ -35,7 +35,7 @@
     --canvas:#161B1D; --sel:#6FB3D1; --palC:#5B9BE0; --palCSoft:#1F3347; --palO:#E0A24A;
     --s-sin_pedir:#6C777E; --s-sin_pedir-bg:#262D30; --s-pedida:#9DB0C2; --s-pedida-bg:#1B2124; --s-en_obra:#5B9BE0; --s-en_obra-bg:#1F3347; --s-instalada:#2FB36A; --s-medir:#A07BE6;
     --p-instalada:#2FB36A; --p-en_obra:#4F8FD6; --p-pedida:#E8A33A; --p-medir:#A07BE6; --p-sin_pedir:#3A4448; --s-descartada:#8A9197; --s-inc_macrif:#C0703F; --s-inc_reparar:#20A7B5; --s-inc_espera:#8FA0C0;
-    --k-instalada:#2FB36A; --k-en_obra:#4F8FD6; --k-pedida:#E8A33A; --k-medir:#9A73E0; --k-sin_pedir:#4A5358; --k-inc:#F0508A; --k-espera:#7C8CAE; --k-descartada:#8A9197; --kInkDark:#111;
+    --k-instalada:#2FB36A; --k-en_obra:#4F8FD6; --k-pedida:#E8A33A; --k-medir:#9A73E0; --k-sin_pedir:#4A5358; --k-inc:#F0508A; --k-espera:#7C8CAE; --k-descartada:#8A9197; --k-reparar:#E58FBB; --kInkDark:#111;
     --ok:#3FBF8A; --warn:#F0A04B; --bad:#F06292; --info:#6FB3D1;
     --okSoft:#17332A; --warnSoft:#3A2A17; --badSoft:#3A1C27; --infoSoft:#1E3440; --film2:#EAF2F6; --filmOp:.15;
   }
@@ -1123,13 +1123,20 @@ const iso=d=>new Date(d.getTime()-d.getTimezoneOffset()*6e4).toISOString().slice
 const today=()=>iso(new Date());
 const ico=(n,cls='')=>n?`<svg class="ico ${cls}" aria-hidden="true"><use href="#i-${n}"/></svg>`:'';
 const KEY={instalada:'instalada',en_obra:'en_obra',pedida:'pedida',medir:'medir',sin_pedir:'sin_pedir',inc_detectada:'inc',inc_pale:'inc',inc_macrif:'inc',inc_reparar:'inc',inc_espera:'espera',descartada:'descartada'};
-const DARK=new Set(['pedida','sin_pedir']);
+const DARK=new Set(['pedida','sin_pedir','reparar']);
 const estColor=e=>`var(--k-${KEY[e]||e})`;
 const estInk=e=>DARK.has(KEY[e])?'var(--kInkDark)':'#fff';
 const faseColor=e=>`var(--s-${e})`;
 const tipoColor=t=>t?`var(--t${t})`:'var(--ink3)';
 const tdot=t=>`<span class="tdot" style="--c:${tipoColor(t)}" title="${TIPOS[t]?.n||''}"></span>`;
-function pillE(p){const m=ESTM[p.estado];const extra=p.estado==='instalada'?' '+fd(p.inst):(p.inst&&p.estado!=='instalada'?' · instalada':'');return `<span class="pill" style="--c:${estColor(p.estado)};color:${estInk(p.estado)}">${ico(m.ico||'box')}${m.n}${extra}</span>`}
+// una pieza instalada puede seguir teniendo abierta una incidencia de «reparar en obra»:
+// para eso sigue mostrando la llave inglesa y un rosa clarito propio, aunque cuente como instalada.
+const necesitaReparar=p=>!!(p.open&&p.open._fase==='reparar');
+function dispEst(p){
+  if(necesitaReparar(p)&&p.estado==='instalada')return {ico:'wrench',color:'var(--k-reparar)',ink:DARK.has('reparar')?'var(--kInkDark)':'#fff',n:'Instalada · reparar en obra'};
+  const m=ESTM[p.estado];return {ico:m.ico||'box',color:estColor(p.estado),ink:estInk(p.estado),n:m.n};
+}
+function pillE(p){const d=dispEst(p);const extra=p.estado==='instalada'?' '+fd(p.inst):(p.inst&&p.estado!=='instalada'?' · instalada':'');return `<span class="pill" style="--c:${d.color};color:${d.ink}">${ico(d.ico)}${d.n}${extra}</span>`}
 function diasNat(desde){return Math.max(0,Math.round((new Date(today())-new Date(desde))/864e5))}
 function diasLab(desde){const d=new Date(desde+'T12:00:00'),h=new Date(today()+'T12:00:00');let n=0;d.setDate(d.getDate()+1);while(d<=h){const w=d.getDay();if(w>0&&w<6)n++;d.setDate(d.getDate()+1)}return n}
 function safeId(s){return String(s).replace(/[^A-Za-z0-9_\-.~:@+]/g,'_')}
@@ -1261,10 +1268,14 @@ function derive(){
     const open=p.incs.filter(i=>!CLOSED.has(i._fase));
     p.open=open.length?open[open.length-1]:null;
     const last=p.incs[p.incs.length-1];
+    // una incidencia de "devolver a Macrif" (pale/retirada) saca la pieza de obra: no cuenta como instalada aunque tenga fecha.
+    // el resto de incidencias (detectada, reparar en obra, en espera) no la quitan de su sitio: si está instalada, sigue instalada.
+    const fueraDeObra=p.open&&(p.open._fase==='pale'||p.open._fase==='retirada');
     let e;
-    if(p.open)e=FASE_EST[p.open._fase];
+    if(fueraDeObra)e=FASE_EST[p.open._fase];
     else if(last&&last._fase==='descartada'&&!p.ent.some(x=>x.fecha>(last.fecha||'')))e='descartada';
     else if(p.inst)e='instalada';
+    else if(p.open)e=FASE_EST[p.open._fase];
     else if(p.ent.length)e='en_obra';
     else if(p.peds.length)e='pedida';
     else if(p.medir)e='medir';
@@ -1448,7 +1459,7 @@ function render(){
 function visiblePieces(){return ALL.filter(p=>(UI.planta==='ALL'||p.pl===UI.planta)&&bloqueMatch(p.bl)&&GEO[p.id])}
 function matchShow(p){
   if(!UI.tipos.has(p.color))return false;
-  switch(UI.show){case 'inst':return p.estado==='instalada';case 'noinst':return !p.inst;case 'obra':return p.estado==='en_obra';case 'inc':return !!p.open&&p.estado!=='inc_espera';case 'espera':return p.estado==='inc_espera';case 'notas':return p.nNotas>0;case 'anul':return p.estado==='descartada';case 'pend':return p.estado==='pedida';case 'medir':return p.estado==='medir';case 'sinp':return p.estado==='sin_pedir';default:return true}
+  switch(UI.show){case 'inst':return p.estado==='instalada';case 'noinst':return !p.inst;case 'obra':return p.estado==='en_obra';case 'inc':return !!p.open&&p.estado!=='inc_espera';case 'espera':return p.estado==='inc_espera';case 'reparar':return necesitaReparar(p);case 'notas':return p.nNotas>0;case 'anul':return p.estado==='descartada';case 'pend':return p.estado==='pedida';case 'medir':return p.estado==='medir';case 'sinp':return p.estado==='sin_pedir';default:return true}
 }
 function renderPlano(m){
   const vis=visiblePieces();
@@ -1528,11 +1539,11 @@ function drawSvg(vis,refit){
   }
 
   const parts=vis.map(p=>{
-    const g=GEO[p.id];const m=ESTM[p.estado];
+    const g=GEO[p.id];const m=dispEst(p);
     const cls=['pc'];if(UI.sel.has(p.id))cls.push('sel');if(UI.focus===p.id&&!UI.multi)cls.push('focus');if(!matchShow(p))cls.push('dim');if(g[4])cls.push('ghost');
     const cx=g[2],cy=g[3];
     const pts=g[1].split(' ').map(s=>{const [x,y]=s.split(',').map(Number);return `${(cx+(x-cx)*.97).toFixed(2)},${(cy+(y-cy)*.97).toFixed(2)}`}).join(' ');
-    const fill=estColor(p.estado),stroke='none',icon=m.ico,ink=estInk(p.estado);
+    const fill=m.color,stroke='none',icon=m.ico,ink=m.ink;
     const badge=icon?`<g class="badge"><use href="#i-${icon}" x="${cx-.27}" y="${cy-.27}" width=".54" height=".54" style="color:${ink}"/></g>`:'';
     const tdotS='';
     const selm=UI.sel.has(p.id)?`<g class="selmark"><circle cx="${cx}" cy="${cy-.95}" r=".42"/><use href="#i-check" x="${cx-.27}" y="${cy-1.22}" width=".54" height=".54"/></g>`:'';
@@ -1560,15 +1571,15 @@ function renderPList(vis){
   const hidden=vis.length-rows.length;
   let last='';
   const html=rows.map(p=>{
-    const m=ESTM[p.estado];const sel=UI.sel.has(p.id);const L=PALOC[p.id];
-    const extra=p.inst?`instalada ${fd(p.inst)}`:p.open?(INC_TIPOS[p.open.tipoInc]||'incidencia'):L?(L.t==='in'?palName(L.g):`devolución nº ${L.d.num||'—'}`):p.estado==='pedida'?esc(p.ped||''):'';
+    const m=dispEst(p);const sel=UI.sel.has(p.id);const L=PALOC[p.id];const rep=necesitaReparar(p);
+    const extra=rep?'reparar en obra'+(p.inst?` · instalada ${fd(p.inst)}`:''):p.inst?`instalada ${fd(p.inst)}`:p.open?(INC_TIPOS[p.open.tipoInc]||'incidencia'):L?(L.t==='in'?palName(L.g):`devolución nº ${L.d.num||'—'}`):p.estado==='pedida'?esc(p.ped||''):'';
     const canQ=!UI.multi&&!p.inst&&!p.open&&p.ent.length;
     const head=bloqueEsMultiple()&&p.bl!==last?`<div class="plhead">Bloque ${p.bl.slice(1)}</div>`:'';last=p.bl;
     return `${head}<div class="prow ${sel?'sel':''} ${UI.focus===p.id&&!UI.multi?'focus':''}" role="button" tabindex="0" data-prow="${p.id}" style="--t:${tipoColor(p.color)}">
       ${UI.multi?`<span class="pchk" aria-hidden="true">${sel?ico('check'):''}</span>`:''}
       <span class="pn">${esc(p.n)}</span>
       <span class="pmain"><b class="mono">${p.id}${p.nNotas?` <span class="notamk" title="${p.nNotas} nota${p.nNotas===1?'':'s'}">${ico('note')}</span>`:''}</b><small>${TIPOS[p.color]?.n||''}${extra?' · '+extra:''}</small></span>
-      <span class="pst" style="background:${estColor(p.estado)};color:${estInk(p.estado)}" title="${m.n}">${ico(m.ico||'box')}<em>${({instalada:'Instalada',en_obra:'En obra',pedida:'Pedida',medir:'Medir',sin_pedir:'Sin pedir',inc_detectada:'Incidencia',inc_pale:'En palé dev.',inc_macrif:'En Macrif',inc_reparar:'Reparar',inc_espera:'En espera',descartada:'Anulada'})[p.estado]||m.n}</em></span>
+      <span class="pst" style="background:${m.color};color:${m.ink}" title="${m.n}">${ico(m.ico)}<em>${rep?'Reparar':({instalada:'Instalada',en_obra:'En obra',pedida:'Pedida',medir:'Medir',sin_pedir:'Sin pedir',inc_detectada:'Incidencia',inc_pale:'En palé dev.',inc_macrif:'En Macrif',inc_reparar:'Reparar',inc_espera:'En espera',descartada:'Anulada'})[p.estado]||m.n}</em></span>
       ${canQ?`<button class="qinst" data-act="qinst" data-id="${p.id}" aria-label="Marcar ${p.id} instalada">${ico('check')}</button>`:'<span class="qsp"></span>'}
     </div>`}).join('');
   el.innerHTML=(html||'<p class="empty">Ninguna pieza con este filtro.</p>')+(hidden?`<p class="faint" style="text-align:center;font-size:13px;margin:10px 0">${hidden} piezas ocultas por el filtro · <button class="linkbtn" data-act="showall">mostrar todas</button></p>`:'');
@@ -1618,6 +1629,7 @@ function renderSide(vis){
   const tip=['V','A','R'].map(t=>{const all=act.filter(q=>q.color===t),i=all.filter(q=>q.inst).length;return `<button data-tipo="${t}" aria-pressed="${UI.tipos.has(t)}" style="--c:${tipoColor(t)}"><span class="label" style="color:${tipoColor(t)}">${TIPOS[t].n}s</span><div><b>${i}</b><span class="faint num"> / ${all.length}</span></div><div class="tbar"><u style="width:${all.length?i/all.length*100:0}%"></u></div></button>`}).join('');
   const rows=[['instalada','Instaladas','check','inst'],['en_obra','En obra, sin instalar',null,'obra'],['pedida','Pedidas, sin llegar','clock','pend'],['medir','Falta medir en obra','ruler','medir'],['sin_pedir','Sin pedir',null,'sinp'],['inc','Con incidencia','alert','inc'],['espera','En espera (medios / andamios)','clock','espera']];
   const incI=act.filter(q=>q.open&&q.estado!=='inc_espera');
+  const repI=act.filter(q=>necesitaReparar(q));
   const notaI=vis.filter(q=>q.nNotas);
   const fp=$('#findpiece');const fpv=fp?fp.value:'';
   side.innerHTML=`<input type="search" id="findpiece" placeholder="Buscar pieza, p. ej. B03-P1-14" value="${esc(fpv)}" style="width:100%;flex:none">
@@ -1626,6 +1638,7 @@ function renderSide(vis){
     <div class="progress"><div class="pbar">${rows.map(([k])=>{const n=k==='inc'?incI.length:cnt(k);return n?`<u style="width:${n/tot*100}%;background:var(--k-${k})" title="${n}"></u>`:''}).join('')}</div>
     <div class="row" style="justify-content:space-between;margin-top:4px"><span><b style="font-size:22px">${tot?Math.round(ni/tot*100):0}%</b> <span class="muted">instalado</span></span><span class="muted num">${ni} / ${tot} piezas</span></div></div>
     <div class="legend big">${rows.map(([k,l,icn,f])=>{const n=k==='inc'?incI.length:cnt(k);if(k==='espera'&&!n)return '';return `<button class="lg" data-show="${f}" aria-pressed="${UI.show===f}"><span class="sw" style="--c:var(--k-${k});color:${DARK.has(k)?'var(--kInkDark)':'#fff'}">${ico(icn)}</span><span>${l}</span><b class="num">${n}</b></button>`}).join('')}
+      ${repI.length?`<button class="lg" data-show="reparar" aria-pressed="${UI.show==='reparar'}"><span class="sw" style="--c:var(--k-reparar);color:${DARK.has('reparar')?'var(--kInkDark)':'#fff'}">${ico('wrench')}</span><span>Reparar en obra</span><b class="num">${repI.length}</b></button>`:''}
       <button class="lg" data-show="notas" aria-pressed="${UI.show==='notas'}"><span class="sw" style="--c:var(--ink);color:var(--panel)">${ico('note')}</span><span>Con notas o fotos</span><b class="num">${notaI.length}</b></button>
       ${anul.length?`<button class="lg" data-show="anul" aria-pressed="${UI.show==='anul'}"><span class="sw" style="--c:var(--k-descartada);color:#fff">${ico('x')}</span><span>Anuladas (no cuentan)</span><b class="num">${anul.length}</b></button>`:''}</div>
     ${incI.length?`<div class="faint" style="font-size:12.5px;margin:4px 0 0 32px">${['inc_detectada','inc_pale','inc_macrif','inc_reparar','inc_espera'].map(e=>{const n=vis.filter(q=>q.estado===e).length;return n?`${ico(ESTM[e].ico)} ${n} ${ESTM[e].n.toLowerCase()}`:''}).filter(Boolean).join(' · ')}</div>`:''}
@@ -1704,7 +1717,7 @@ function fotosBlock(p){
     ${FOTOS?`<label class="addphoto big pf"><span>${ico('camera')} Añadir foto con nota</span><small class="faint">Se guarda en la ficha de la pieza</small><input type="file" accept="image/*" capture="environment" hidden data-pfoto="${p.id}"></label>`:'<p class="faint" style="margin:0">Sin conexión con el almacenamiento de fotos.</p>'}</div>`;
 }
 function pieceCard(p,inDrawer){
-  const t=TIPOS[p.color]||{n:'—',d:''};const m=ESTM[p.estado];
+  const t=TIPOS[p.color]||{n:'—',d:''};const m=dispEst(p);
   const tl=[];
   p.peds.forEach(x=>tl.push([x.fecha,`${x.tipo==='reposicion'?'Pedido de reposición':'Pedido'} <b class="mono">${esc(x.doc)}</b>`,'var(--s-pedida)']));
   p.ent.forEach(e=>tl.push([e.fecha,`${e.vuelta?'<b>Vuelta a obra</b> en':'Llega en'} ${e.sinAlb?'entrega':'albarán'} <b class="mono">${esc(e.doc)}</b> · ${f3(e.m2)} m²${e.pale?` · palé ${e.pale}`:''}`,e.vuelta?'var(--ok)':'var(--s-en_obra)']));
@@ -1715,11 +1728,11 @@ function pieceCard(p,inDrawer){
     if(h.quitada)tl.push([h.quitada,`Quitada de su sitio${h.motivo?` · ${esc(h.motivo)}`:''}`,'var(--k-inc)'])});
   if(p.inst)tl.push([p.inst,`<b>Instalada</b>${p.nReinst?` <span class="faint">(${p.nReinst+1}ª vez · definitiva)</span>`:''}`,'var(--s-instalada)']);
   tl.sort((a,b)=>(a[0]||'').localeCompare(b[0]||''));
-  const sub=p.estado==='pedida'?`${esc(p.ped)} · hace ${diasNat(p.fped)} días (${diasLab(p.fped)} lab.)`:p.estado==='instalada'?`el ${fd(p.inst)}${p.nReinst?` · se colocó por primera vez el ${fd(p.instPri)}`:''}`:p.open?INC_TIPOS[p.open.tipoInc]:p.estado==='en_obra'?`llegó el ${fd(p.ent[p.ent.length-1].fecha)}${p.nReinst?` · ya estuvo colocada el ${fd(p.instPri)}`:''}`:'';
+  const sub=p.estado==='pedida'?`${esc(p.ped)} · hace ${diasNat(p.fped)} días (${diasLab(p.fped)} lab.)`:p.estado==='instalada'?`el ${fd(p.inst)}${necesitaReparar(p)?' · pendiente de reparar en obra':''}${p.nReinst?` · se colocó por primera vez el ${fd(p.instPri)}`:''}`:p.open?INC_TIPOS[p.open.tipoInc]:p.estado==='en_obra'?`llegó el ${fd(p.ent[p.ent.length-1].fecha)}${p.nReinst?` · ya estuvo colocada el ${fd(p.instPri)}`:''}`:'';
   return `<section class="${inDrawer?'':'panel'} piececard" id="piececard">
     <div class="piecehead"><div><div class="code">${tdot(p.color)}${p.id}</div><div class="muted">${t.n} · ${p.tipo==='C'?'curva':'recta'} en planta · Bloque ${p.bl.slice(1)} · ${PLANTAS[p.pl]}</div></div>
     <div class="row" style="gap:4px;flex:none">${(()=>{const sib=LIST.filter(q=>q.bl===p.bl&&q.pl===p.pl);const k=sib.indexOf(p);return `<button class="btn sm" data-act="pnav" data-id="${sib[k-1]?.id||''}" ${k>0?'':'disabled'} aria-label="Pieza anterior">‹</button><button class="btn sm" data-act="pnav" data-id="${sib[k+1]?.id||''}" ${k<sib.length-1?'':'disabled'} aria-label="Pieza siguiente">›</button>`})()}<button class="btn sm" data-act="${inDrawer?'closedrawer':'unfocus'}" aria-label="Cerrar ficha">${ico('x')}</button></div></div>
-    <div class="bigstate" style="--c:${estColor(p.estado)};color:${estInk(p.estado)}">${ico(m.ico||'box')}<div>${m.n}${sub?`<small>${sub}</small>`:''}</div>${p.inst?`<button class="stedit" data-act="insttoggle" data-id="${p.id}" aria-expanded="${UI.instEdit===p.id}" title="Cambiar la fecha de instalación">${ico(UI.instEdit===p.id?'x':'edit')}</button>`:''}</div>
+    <div class="bigstate" style="--c:${m.color};color:${m.ink}">${ico(m.ico)}<div>${m.n}${sub?`<small>${sub}</small>`:''}</div>${p.inst?`<button class="stedit" data-act="insttoggle" data-id="${p.id}" aria-expanded="${UI.instEdit===p.id}" title="Cambiar la fecha de instalación">${ico(UI.instEdit===p.id?'x':'edit')}</button>`:''}</div>
     ${p.nReinst?`<div class="reinst">${ico('back')}<div><b>Esta pieza se ha colocado ${p.nReinst+1} ${p.nReinst+1===2?'veces':'veces'}</b><small>${(p.instH||[]).map((h,i)=>`${i+1}ª el ${fd(h.f)}${h.quitada?` (quitada el ${fd(h.quitada)}${h.motivo?` · ${esc(h.motivo)}`:''})`:''}`).join(' · ')}${p.inst?` · ${p.nReinst+1}ª el ${fd(p.inst)}`:' · ahora mismo no está puesta'}</small></div></div>`:''}
     ${p.inst&&UI.instEdit===p.id?`<div class="stediting"><label for="instd-${p.id}">Fecha de instalación${p.nReinst?' (la última, la que cuenta)':''}</label><div class="row"><input type="date" id="instd-${p.id}" value="${p.inst}"><button class="btn ok sm" data-act="instedit" data-id="${p.id}">Guardar</button><button class="btn sm danger" data-act="uninst" data-id="${p.id}">Quitar instalación</button></div>
       ${p.nReinst?`<div class="label" style="margin-top:10px">Colocaciones anteriores</div>${(p.instH||[]).map((h,ix)=>`<div class="row" style="gap:6px;margin-top:4px"><input type="date" id="insth-${p.id}-${ix}" value="${h.f}" aria-label="Fecha de una colocación anterior"><button class="btn sm pri" data-act="insthsave" data-id="${p.id}" data-ix="${ix}">Guardar</button><button class="btn sm danger" data-act="insthdel" data-id="${p.id}" data-ix="${ix}" title="Esta colocación no ocurrió">${ico('x')}</button></div>`).join('')}`:''}</div>`:''}
@@ -2455,7 +2468,7 @@ function planMap(pl){
   let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;const bb={};
   for(const p of ps){const b=bb[p.bl]=bb[p.bl]||[1e9,1e9,-1e9,-1e9];for(const pt of GEO[p.id][1].split(' ')){const [x,y]=pt.split(',').map(Number);x0=Math.min(x0,x);y0=Math.min(y0,y);x1=Math.max(x1,x);y1=Math.max(y1,y);b[0]=Math.min(b[0],x);b[1]=Math.min(b[1],y);b[2]=Math.max(b[2],x);b[3]=Math.max(b[3],y)}}
   const pad=3,top=5;
-  const poly=ps.map(p=>`<g data-open="${p.id}" class="mp"><title>${p.id} · ${TIPOS[p.color]?.n||''} · ${ESTM[p.estado].n}${p.inst?' '+fd(p.inst):''}</title><polygon points="${GEO[p.id][1]}" style="fill:${estColor(p.estado)}"/></g>`).join('');
+  const poly=ps.map(p=>`<g data-open="${p.id}" class="mp"><title>${p.id} · ${TIPOS[p.color]?.n||''} · ${dispEst(p).n}${p.inst?' '+fd(p.inst):''}</title><polygon points="${GEO[p.id][1]}" style="fill:${dispEst(p).color}"/></g>`).join('');
   const tl=ps.map(p=>`<polygon class="mtl" points="${GEO[p.id][1]}" style="stroke:${tipoColor(p.color)}"/>`).join('');
   const labs=Object.entries(bb).map(([b,r])=>{const all=ps.filter(p=>p.bl===b);const i=all.filter(p=>p.inst).length;const inc=all.filter(p=>p.open).length;return `<text x="${(r[0]+r[2])/2}" y="${r[1]-1.4}" class="mpl">B${b.slice(1)} · ${Math.round(i/all.length*100)}%${inc?` · ⚠${inc}`:''}</text>`}).join('');
   const all=ps.length,ins=ps.filter(p=>p.inst).length;
