@@ -117,6 +117,61 @@ textarea{width:100%;resize:vertical}
 .sechead{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:8px;flex-wrap:wrap}
 .sechead h2{font-size:17px}
 .kv{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:14px}
+/* buscador único */
+.drawer.bus{max-width:620px}
+.busg{display:flex;gap:8px;padding:12px 14px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--panel);z-index:2}
+.busg input{flex:1;font-size:16px;padding:9px 11px}
+.busres{padding:6px 0 14px}
+.busres h4{margin:12px 14px 5px;font-size:11.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink3)}
+.busit{display:flex;gap:10px;align-items:center;width:100%;text-align:left;padding:9px 14px;border:0;background:none;cursor:pointer;border-top:1px solid var(--line)}
+.busit:hover,.busit:focus-visible{background:var(--panel2)}
+.busit .bi{flex:none;width:30px;height:30px;border-radius:8px;background:var(--panel2);display:grid;place-items:center}
+.busit .bi .ico{width:16px;height:16px}
+.busit b{display:block;font-size:14px}
+.busit small{display:block;font-size:12px;color:var(--ink2);margin-top:1px}
+/* ¿cuándo nos quedamos sin material? */
+.rogrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;margin-top:10px}
+.ro{border:1px solid var(--line);border-radius:9px;padding:10px 12px;background:var(--panel)}
+.ro .label{display:block;font-size:12px;color:var(--ink2)}
+.ro b{display:block;font-size:20px;font-weight:800;line-height:1.25;margin-top:2px}
+.ro small{display:block;font-size:11.5px;color:var(--ink3);margin-top:2px;line-height:1.35}
+.ro.warn{border-color:var(--warn,#C9820B)}
+.roaviso{display:flex;gap:8px;align-items:flex-start;margin-top:10px;padding:9px 11px;border-radius:8px;background:var(--panel2);font-size:13px;line-height:1.4}
+.roaviso .ico{width:16px;height:16px;flex:none;margin-top:2px}
+.roaviso.mal{background:var(--badSoft,var(--panel2));color:var(--ink)}
+.rocards{display:none;flex-direction:column;gap:8px;margin-top:10px}
+.rocard{border:1px solid var(--line);border-radius:9px;padding:9px 11px;background:var(--panel)}
+.rocard.mal{border-color:var(--bad,#C0392B)}
+.rocl{display:flex;gap:12px;flex-wrap:wrap;margin-top:5px;font-size:12px;color:var(--ink2)}
+.rotabla{margin-top:10px}
+.rotabla tr.ro-mal td{background:var(--badSoft,transparent)}
+@media (max-width:760px){.rocards{display:flex}.rotabla{display:none}}
+/* copia de seguridad y Excel */
+.datosgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.datosbtn{display:flex;gap:11px;align-items:flex-start;text-align:left;padding:13px 14px;border:1px solid var(--line);border-radius:10px;background:var(--panel);cursor:pointer}
+.datosbtn:hover{background:var(--panel2)}
+.datosbtn.pri{border-color:var(--accent);background:var(--accentSoft)}
+.datosbtn .di{flex:none;width:34px;height:34px;border-radius:9px;background:var(--panel2);display:grid;place-items:center}
+.datosbtn.pri .di{background:var(--panel)}
+.datosbtn .di .ico{width:18px;height:18px}
+.datosbtn b{display:block;font-size:14.5px}
+.datosbtn small{display:block;color:var(--ink2);font-size:12px;line-height:1.35;margin-top:2px}
+.copiaest{display:flex;gap:7px;align-items:flex-start;margin-top:10px;font-size:12.5px;color:var(--ink2);background:var(--panel2);border-radius:8px;padding:8px 10px}
+.copiaest .ico{width:15px;height:15px;flex:none;margin-top:1px}
+.copiaest.mal{background:var(--warnSoft,var(--panel2));color:var(--ink)}
+@media (max-width:640px){.datosgrid{grid-template-columns:1fr}}
+/* desglose de facturas por concepto */
+.fdes{border:1px solid var(--line);border-radius:10px;background:var(--panel2);padding:10px;margin:0 0 10px}
+.fdt{font-size:12px;font-weight:800;color:var(--ink2);letter-spacing:.04em;text-transform:uppercase;margin:0 2px 8px}
+.fdg{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.fdc{display:flex;flex-direction:column;gap:3px;padding:9px 11px;border-radius:8px;background:var(--panel);border:1px solid var(--line)}
+.fdc .fdl{display:flex;align-items:center;gap:5px;font-size:12.5px;color:var(--ink2);line-height:1.25}
+.fdc b{font-size:17px;font-weight:800;font-variant-numeric:tabular-nums;color:var(--ink)}
+.fdc small{font-size:11.5px;color:var(--ink3);font-variant-numeric:tabular-nums}
+.fdc.t{background:var(--accentSoft);border-color:var(--accent)}
+.fdc.x{border-style:dashed}
+@media (max-width:860px){.fdg{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:420px){.fdg{grid-template-columns:1fr}}
 .kv dt{color:var(--ink3)} .kv dd{margin:0;text-align:right;font-variant-numeric:tabular-nums}
 
 /* ---------- plano ---------- */
@@ -1129,6 +1184,46 @@ const estInk=e=>DARK.has(KEY[e])?'var(--kInkDark)':'#fff';
 const faseColor=e=>`var(--s-${e})`;
 const tipoColor=t=>t?`var(--t${t})`:'var(--ink3)';
 const tdot=t=>`<span class="tdot" style="--c:${tipoColor(t)}" title="${TIPOS[t]?.n||''}"></span>`;
+/* ---- desglose de una factura en 3 conceptos: rojas / verdes+amarillas / machihembrado ---- */
+function facDes(f){
+  const d={R:0,VA:0,sin:0,nR:0,nVA:0,nSin:0};
+  (f.lineas||[]).forEach(l=>{
+    const c=(P[l.p]||{}).color, m=+l.m2||0;
+    if(c==='R'){d.R+=m;d.nR++}
+    else if(c==='V'||c==='A'){d.VA+=m;d.nVA++}
+    else {d.sin+=m;d.nSin++}
+  });
+  d.machi=+f.m2Machi||0;
+  d.total=d.R+d.VA+d.sin+d.machi;
+  const pr=+f.precio||179;
+  d.eR=d.R*pr;d.eVA=d.VA*pr;d.eSin=d.sin*pr;
+  d.eMachi=(f.impMachi!=null&&f.impMachi!=='')?+f.impMachi:d.machi*pr;
+  d.eTotal=d.eR+d.eVA+d.eMachi+d.eSin;
+  return d;
+}
+const FD_K=['R','VA','sin','machi','total','eR','eVA','eMachi','eSin','eTotal','nR','nVA','nSin'];
+function facDesTotal(fs){
+  const t={};FD_K.forEach(k=>t[k]=0);
+  (fs||[]).forEach(f=>{const d=facDes(f);FD_K.forEach(k=>t[k]+=d[k]||0)});
+  return t;
+}
+function fdCel(cls,dots,lab,m2,eu,n){
+  return `<div class="fdc ${cls}">
+    <span class="fdl">${dots}${lab}</span>
+    <b>${f3(m2)} m²</b>
+    <small>${eu!=null?eur(eu):'&nbsp;'}${n!=null?` · ${n} piezas`:''}</small>
+  </div>`;
+}
+function fdStrip(d,tit){
+  const pto=c=>`<span class="tdot" style="--c:var(--t${c})"></span>`;
+  return `<div class="fdes">${tit?`<div class="fdt">${esc(tit)}</div>`:''}<div class="fdg">
+    ${fdCel('r',pto('R'),'Rojas',d.R,d.eR,d.nR)}
+    ${fdCel('va',pto('V')+pto('A'),'Verdes y amarillas',d.VA,d.eVA,d.nVA)}
+    ${fdCel('m','','Machihembrado',d.machi,d.eMachi,null)}
+    ${d.sin?fdCel('x','','Sin color en el despiece',d.sin,d.eSin,d.nSin):''}
+    ${fdCel('t','','Total de los conceptos',d.total,d.eTotal,null)}
+  </div></div>`;
+}
 // una pieza instalada puede seguir teniendo abierta una incidencia de «reparar en obra»:
 // para eso sigue mostrando la llave inglesa y un rosa clarito propio, aunque cuente como instalada.
 const necesitaReparar=p=>!!(p.open&&p.open._fase==='reparar');
@@ -1442,7 +1537,7 @@ function kpis(){
   if(!tabsVisibles().includes(UI.tab)){UI.tab='inicio'}
   renderBnav(Object.fromEntries(tabs.map(t=>[t[0],t[2]||0])));document.body.classList.toggle('selmode',UI.tab==='plano'&&UI.multi);
   $('#tabs').innerHTML=tabs.map(([k,l,c])=>`<button class="tab" role="tab" aria-selected="${UI.tab===k}" data-tab="${k}">${l}${c?`<span class="cnt">${c}</span>`:''}</button>`).join('')
-    +`<button class="tab orgbtn" data-act="orgopen" title="Organizar la app a tu gusto">${ico('sliders')}</button>`;
+    +`<button class="tab orgbtn" data-act="busopen" title="Buscar una pieza, un albarán, una factura, un pedido o un palé (tecla /)">${ico('select')}</button>`+`<button class="tab orgbtn" data-act="orgopen" title="Organizar la app a tu gusto">${ico('sliders')}</button>`;
 }
 function render(){
   if(!S.loaded.b)return;
@@ -2279,13 +2374,15 @@ function renderMacrifBody(){
       <div class="docbody">${adjBox('macrif','alb',a.num)}${revBox(key,'Albarán revisado (piezas y cantidades comprobadas)')}
       <div class="tblwrap"><table><thead><tr><th>Pieza</th><th>Color</th><th class="r">m²</th><th class="r">Palé</th><th>Factura</th><th>Estado</th></tr></thead><tbody>${I.ls.map(l=>{const p=P[l.p];const v=I.isV(l);return `<tr class="click" data-open="${l.p}"><td class="mono">${l.p}${v?' <span class="chip ok">vuelta</span>':''}</td><td>${tdot(l.c)}${p&&l.c&&p.color!==l.c?' <span class="chip warn">≠ plano</span>':''}</td><td class="r">${f3(l.m2)}</td><td class="r">${l.pale??''}</td><td>${p&&p.fac.length?p.fac.map(f=>`<span class="mono">${f.doc}</span>`).join(', '):(v?'<span class="faint">no se factura</span>':'<span class="chip warn">no</span>')}</td><td>${p?pillE(p):''}</td></tr>`}).join('')}</tbody></table></div></div></details>`}).join('')||'<p class="empty">No hay albaranes.</p>';
   }else if(tab==='facturas'){
-    body=facts.map(f=>{const s=(f.lineas||[]).reduce((t,l)=>t+(l.m2||0),0);const bad=ALERTS.find(a=>a.doc===f.num);const key='fac_'+f.num;return `<details class="doccard" ${UI.mopen===key?'open':''} data-key="${key}"><summary>
+    const FDT=facDesTotal(facts);
+    body=(facts.length?fdStrip(FDT,`Total de las ${facts.length} facturas`):'')+facts.map(f=>{const s=(f.lineas||[]).reduce((t,l)=>t+(l.m2||0),0);const bad=ALERTS.find(a=>a.doc===f.num);const key='fac_'+f.num;return `<details class="doccard" ${UI.mopen===key?'open':''} data-key="${key}"><summary>
       <span class="dicon fac">${ico('box')}</span>
       <span class="dmain"><b class="mono">Factura ${esc(f.num)}</b><span class="muted">${new Date(f.fecha+'T12:00:00').toLocaleDateString('es-ES',{day:'numeric',month:'long',year:'numeric'})}</span></span>
       <span class="dnums"><span><b>${(f.lineas||[]).length}</b> piezas</span><span><b>${f3(f.m2Piezas)}</b> m²</span><span>base <b>${eur(f.base)}</b></span><span class="big">${eur(f.total)}</span></span>
       <span class="dchips">${adjChip('macrif','fac',f.num)}${bad?'<span class="chip bad">descuadre</span>':'<span class="chip ok">cuadra</span>'}${revChip(key)}</span></summary>
       <div class="docbody">${adjBox('macrif','fac',f.num)}${bad?`<p class="chip bad" style="white-space:normal;display:block;padding:6px 8px;margin:0 0 8px">${esc(bad.d)}</p>`:''}${revBox(key,'Factura revisada (importes comprobados)')}
       <div class="grid2" style="gap:10px;margin:8px 0"><dl class="kv"><dt>Piezas: ${f3(f.m2Piezas)} m² × ${eur(f.precio)}</dt><dd>${eur(f.impPiezas)}</dd><dt>Suma de las piezas listadas</dt><dd>${f3(s)} m²</dd><dt>Machihembrado: ${f3(f.m2Machi)} m²</dt><dd>${eur(f.impMachi)}</dd>${(f.otros||[]).map(o=>`<dt>${esc(o.concepto)}</dt><dd>${eur(o.importe)}</dd>`).join('')}</dl><dl class="kv"><dt>Base imponible</dt><dd>${eur(f.base)}</dd><dt>IVA 21 %</dt><dd>${eur((f.total||0)-(f.base||0))}</dd><dt><b>Total</b></dt><dd><b>${eur(f.total)}</b></dd></dl></div>
+      ${fdStrip(facDes(f),'')}
       ${(f.lineas||[]).length?`<div class="tblwrap"><table><thead><tr><th>Pieza</th><th class="r">m² factura</th><th class="r">m² albarán</th><th>Albaranes</th></tr></thead><tbody>${f.lineas.map(l=>{const p=P[l.p];const la=p&&p.ent.length?p.ent[0]:null;const diff=la&&l.m2!=null&&Math.abs(la.m2-l.m2)>0.015;return `<tr class="click" data-open="${l.p}"><td class="mono">${l.p}</td><td class="r">${f3(l.m2)}</td><td class="r">${la?f3(la.m2):'—'}${diff?' <span class="chip warn">≠</span>':''}</td><td>${p&&p.ent.length?p.ent.map(e=>`<span class="mono">${e.doc}</span>${e.vuelta?'↩':''}`).join(', '):'<span class="chip bad">sin albarán</span>'}${p&&p.fac.length>1?' <span class="chip bad">2ª factura</span>':''}</td></tr>`}).join('')}</tbody></table></div>`:''}
       </div></details>`}).join('')||'<p class="empty">No hay facturas.</p>';
   }else{
@@ -2303,8 +2400,66 @@ function renderMacrifBody(){
 }
 
 /* =================== drawer / fotos =================== */
+/* =================== drawer / fotos =================== */
+/* =================== BUSCADOR ÚNICO ===================
+   Una sola caja para todo: el código de una pieza, un número de albarán, de factura,
+   de pedido o de palé. Lo que se escribe suele venir de un papel, así que se ignoran
+   espacios, guiones y mayúsculas. */
+const _norm=s=>String(s==null?'':s).toUpperCase().replace(/[^A-Z0-9]/g,'');
+function buscarTodo(q0){
+  const q=_norm(q0);
+  if(q.length<2)return [];
+  const hit=s=>_norm(s).includes(q);
+  const R=[];
+  const grupo=(g,ico_,arr,fn,max)=>{const h=arr.filter(fn.f).slice(0,max||8);h.forEach(x=>R.push({g,ico:ico_,...fn.m(x)}));
+    return arr.filter(fn.f).length-h.length};
+  const mas={};
+  mas.Piezas=grupo('Piezas','box',ALL,{f:p=>hit(p.id),m:p=>({t:p.id,c:tipoColor(p.color),
+    s:`${(TIPOS[p.color]||{}).n||''} · Bloque ${p.bl.slice(1)} · ${PLANTAS[p.pl]||p.pl} · ${((ESTM[p.estado])||{}).n||p.estado}`,
+    act:{k:'pieza',v:p.id}})},10);
+  mas.Pedidos=grupo('Pedidos','clock',PEDS,{f:d=>hit(d.num),m:d=>({t:'Pedido '+d.num,
+    s:`${fd(d.fecha)} · ${d.lineasX.length} piezas${d.pend?` · faltan ${d.pend} por llegar`:' · completo'}`,
+    act:{k:'prov',v:'macrif',m:'pedidos'}})});
+  mas.Albaranes=grupo('Albaranes','truck',Object.values(S.albs||{}),{f:a=>hit(a.num),m:a=>({t:'Albarán '+a.num,
+    s:`${fd(a.fecha)} · ${(a.lineas||[]).length} piezas${a.sinAlbaran?' · entrada manual':''}`,
+    act:{k:'prov',v:'macrif',m:'albaranes'}})});
+  mas.Facturas=grupo('Facturas','select',Object.values(S.facts||{}),{f:f=>hit(f.num),m:f=>({t:'Factura '+f.num,
+    s:`${fd(f.fecha)} · ${(f.lineas||[]).length} piezas${f.total!=null?' · '+eur(f.total):''}`,
+    act:{k:'prov',v:'macrif',m:'facturas'}})});
+  mas['Palés']=grupo('Palés','pallet',PALES,{f:g=>hit(palName(g))||hit(g.pale)||g.albs.some(hit),m:g=>({t:palName(g),
+    s:`${fd(g.fecha)} · ${g.total} piezas · ${g.st==='cerrado'?'sin abrir':g.st==='abierto'?'abierto':'vacío'}`,
+    act:{k:'pale',v:g.key}})});
+  const otros=[];
+  ['ainan','betacril'].forEach(pv=>['ped','alb','fac'].forEach(k=>
+    Object.values(((pv==='ainan'?S.ainan:S.bet)||{})[k]||{}).filter(d=>hit(d.num)).slice(0,5).forEach(d=>
+      otros.push({g:'Otros proveedores',ico:PROVS[pv].ico,t:`${{ped:'Pedido',alb:'Albarán',fac:'Factura'}[k]} ${d.num}`,
+        s:`${PROVS[pv].n} · ${fd(d.fecha)}`,act:{k:'prov',v:pv,m:{ped:'pedidos',alb:'albaranes',fac:'facturas'}[k]}}))));
+  R.push(...otros);
+  return {items:R,mas};
+}
+function busResultados(){
+  const q=UI.busQ||'';
+  if(_norm(q).length<2)return `<p class="faint busvacio">Escribe al menos dos caracteres. Vale el código de una pieza (<b>B03-P1-14</b>), un albarán, una factura, un pedido o un palé.</p>`;
+  const {items,mas}=buscarTodo(q);
+  if(!items.length)return `<p class="faint busvacio">Nada con «${esc(q)}». Prueba con menos caracteres: se ignoran los espacios, los guiones y las mayúsculas.</p>`;
+  const grupos=[...new Set(items.map(x=>x.g))];
+  return grupos.map(g=>`<div class="busg"><span class="label">${g}</span>
+    ${items.filter(x=>x.g===g).map(x=>`<button class="busit" data-act="busgo" data-k="${x.act.k}" data-v="${esc(x.act.v)}" ${x.act.m?`data-m="${x.act.m}"`:''}>
+      <span class="bi" ${x.c?`style="color:${x.c}"`:''}>${ico(x.ico)}</span>
+      <span><b>${esc(x.t)}</b><small>${esc(x.s)}</small></span></button>`).join('')}
+    ${mas[g]>0?`<span class="faint" style="font-size:12px">y ${mas[g]} más…</span>`:''}</div>`).join('');
+}
+function hojaBuscar(){
+  return `<div class="piecehead"><div><div class="code">${ico('select')} Buscar</div>
+      <div class="muted">Piezas, albaranes, facturas, pedidos y palés, todo en el mismo sitio.</div></div>
+    <button class="btn sm" data-act="cerrarbus" aria-label="Cerrar">${ico('x')}</button></div>
+  <input type="search" id="bus-q" placeholder="B03-P1-14, 2026-021, PEDIDO 07…" value="${esc(UI.busQ||'')}" autocomplete="off" style="width:100%;margin-top:10px">
+  <div id="bus-res" class="busres">${busResultados()}</div>`;
+}
+
 function renderDrawer(){
   const o=$('#overlay');
+  if(UI.busSheet){o.innerHTML=`<div class="modalbg" data-act="bgclose"><div class="drawer bus" role="dialog" aria-label="Buscar">${hojaBuscar()}</div></div>`;const i=o.querySelector('#bus-q');if(i&&document.activeElement!==i){i.focus();i.setSelectionRange(i.value.length,i.value.length)}return}
   if(UI.orgSheet){const keep=o.querySelector('.drawer')?.scrollTop||0;o.innerHTML=`<div class="modalbg" data-act="bgclose"><div class="drawer" role="dialog" aria-label="Organizar la app">${hojaOrganizar()}</div></div>`;o.querySelector('.drawer').scrollTop=keep;return}
   if(UI.live){const keep=o.querySelector('.drawer')?.scrollTop||0;o.innerHTML=`<div class="modalbg" data-act="bgclose"><div class="drawer livedrawer" role="dialog" aria-label="Actividad">${liveDrawer()}</div></div>`;o.querySelector('.drawer').scrollTop=keep;return}
   if(UI.drawerPale&&!UI.drawer){const keep=o.querySelector('.drawer')?.scrollTop||0;o.innerHTML=`<div class="modalbg" data-act="bgclose"><div class="drawer" role="dialog" aria-label="Palé">${paleDrawer()}</div></div>`;o.querySelector('.drawer').scrollTop=keep;return}
@@ -2561,6 +2716,7 @@ function renderInicio(m){
   B.avisos=panelAvisos(5);
   B.hoy=hoyCard();
   B.material=panelMaterial();
+  B.rotura=panelRotura();
   B.kpis=`<div class="dkpis">
     ${kpi('var(--k-en_obra)','En obra sin instalar',G.en_obra,`${llegadas.length} han llegado en total`,'obra','box')}
     ${kpi('var(--k-pedida)','Faltan por llegar',falta.length,`${f2(falta.reduce((t,p)=>t+m2De(p).m2,0))} m²${enMacrif.length?` · +${enMacrif.length} en Macrif`:''}`,'pend','truck')}
@@ -2592,6 +2748,7 @@ function renderInicio(m){
         <div class="dpal"><span class="label">En obra</span><b>${pAb.length+pCe.length}</b><div class="dpal-split"><span><i style="background:var(--ink2)"></i><b>${pCe.length}</b> sin abrir <small>(${pCe.reduce((t,g)=>t+g.rest.length,0)} piezas)</small></span><span><i style="background:var(--accent)"></i><b>${pAb.length}</b> abiertos <small>(${pAb.reduce((t,g)=>t+g.rest.length,0)} piezas quedan)</small></span></div></div>
         <div class="dpal dev"><span class="label">Para devolver a Macrif</span><b>${devN}</b><small>piezas en ${devs.length} palé${devs.length===1?'':'s'}</small>${devN?`<button class="btn sm" data-act="gotodev">${ico('truck')} Preparar envío</button>`:''}</div>
       </div></section>`})();
+  B.datos=panelDatos();
   m.innerHTML=`<div class="wrap dash">${pintarBloques('inicio',B)}</div>`;
 }
 
@@ -2700,7 +2857,7 @@ function renderBnav(counts){
     `<button data-act="navmore" aria-expanded="${!!UI.navMore}" aria-current="${inMore?'page':'false'}">${ico('dots')}<span>Más</span>${counts.macrif?`<i>${counts.macrif}</i>`:''}</button>`;
   const sh=$('#navsheet');if(!sh)return;
   sh.hidden=!UI.navMore;
-  sh.innerHTML=UI.navMore?`<div class="navsheet-bg" data-act="navmore"></div><div class="navsheet-in">${MORE.map(([k,l,i])=>`<button data-tab="${k}" aria-current="${UI.tab===k?'page':'false'}">${ico(i)}<span>${l}</span>${counts[k]?`<i>${counts[k]}</i>`:''}</button>`).join('')}<button data-act="orgopen">${ico('sliders')}<span>Organizar</span></button><button data-act="live">${ico('select')}<span>${LIVE&&LIVE.admin?'Actividad':'Equipo'}</span>${LIVE&&LIVE.peers.length>1?`<i>${LIVE.peers.length}</i>`:''}</button><div class="navsheet-foot"><span class="faint">${esc(me())}</span><button class="btn sm" data-act="logout2">Salir</button></div></div>`:'';
+  sh.innerHTML=UI.navMore?`<div class="navsheet-bg" data-act="navmore"></div><div class="navsheet-in">${MORE.map(([k,l,i])=>`<button data-tab="${k}" aria-current="${UI.tab===k?'page':'false'}">${ico(i)}<span>${l}</span>${counts[k]?`<i>${counts[k]}</i>`:''}</button>`).join('')}<button data-act="busopen">${ico('select')}<span>Buscar</span></button><button data-act="orgopen">${ico('sliders')}<span>Organizar</span></button><button data-act="live">${ico('select')}<span>${LIVE&&LIVE.admin?'Actividad':'Equipo'}</span>${LIVE&&LIVE.peers.length>1?`<i>${LIVE.peers.length}</i>`:''}</button><div class="navsheet-foot"><span class="faint">${esc(me())}</span><button class="btn sm" data-act="logout2">Salir</button></div></div>`:'';
 }
 
 /* =================== QUIÉN ESTÁ CONECTADO Y QUÉ HACE =================== */
@@ -3460,6 +3617,7 @@ const BLOQUES={
     ['avisos','Atención hoy','lo que frena la obra, ordenado por antigüedad'],
     ['hoy','Parte del día','lo instalado hoy y las incidencias del día'],
     ['material','Dónde hay material listo','piezas en obra agrupadas por bloque y planta'],
+    ['rotura','¿Cuándo nos quedamos sin material?','simula la obra día a día y dice hasta qué día hay trabajo y cuál es el último día para pedir'],
     ['kpis','Cifras rápidas','accesos directos a cada estado'],
     ['anuladas','Piezas anuladas','repercusión de lo que se ha quitado del proyecto'],
     ['bloques','Fichas de bloque','avance de cada bloque y de cada planta'],
@@ -3467,6 +3625,7 @@ const BLOQUES={
     ['rend','Rendimiento de las 4 últimas semanas','gráfico de piezas instaladas por día'],
     ['incres','Incidencias por fase','en qué punto está cada incidencia abierta'],
     ['palres','Palés','sin abrir, abiertos y pendientes de devolver'],
+    ['datos','Copia de seguridad y Excel','bajar toda la obra a un archivo, por si acaso'],
   ],
   incidencias:[
     ['nueva','Abrir una incidencia','buscador para empezar una incidencia nueva'],
@@ -3610,6 +3769,377 @@ function hojaOrganizar(){
   <div class="row" style="justify-content:space-between;margin-top:16px"><button class="btn sm danger" data-act="orgresetall">Dejarlo todo como venía</button><span class="faint" style="font-size:12px">Se guarda para ${esc((me()||'').split('@')[0])}</span></div>`;
 }
 
+/* =================== ¿CUÁNDO NOS QUEDAMOS SIN MATERIAL? ===================
+   Cruza tres cosas que la app ya sabe: lo que hay en obra sin colocar, a qué ritmo
+   se está colocando y cuánto tarda Macrif desde que se pide. De ahí sale la única
+   frase que importa: hasta qué día hay trabajo y cuál es el último día para pedir. */
+const masDias=(f,n)=>iso(new Date(new Date(f+'T12:00:00').getTime()+n*864e5));
+const RETRASO_ASUMIDO=15;   // un pedido que ya pasó de plazo: se supone que llega en 15 días
+/* Simula la obra día a día: se coloca al ritmo real, entra lo que está pedido el día
+   en que se espera, y se mira si en algún momento no queda material que colocar.
+   Devuelve el primer día laborable sin material, o que la obra termina antes. */
+function simulaMaterial(ps,ritmo,ref,hoy){
+  const lleg={};
+  ps.filter(p=>p.estado==='pedida').forEach(p=>{
+    const d=p.peds[p.peds.length-1];if(!d||!d.fecha)return;
+    let f=masDias(d.fecha,ref);
+    if(f<hoy)f=masDias(hoy,RETRASO_ASUMIDO);   // ya va tarde: se le da un margen
+    lleg[f]=(lleg[f]||0)+1;
+  });
+  let stock=ps.filter(p=>p.estado==='en_obra').length;
+  let restante=ps.filter(p=>!p.inst).length;
+  const d=new Date(hoy+'T12:00:00');
+  for(let k=0;k<500&&restante>0;k++){
+    const s=iso(d);stock+=lleg[s]||0;
+    const w=d.getDay();
+    if(w>0&&w<6){
+      if(stock<1)return {agota:s,acaba:false};
+      const pon=Math.min(ritmo,stock,restante);stock-=pon;restante-=pon;
+    }
+    d.setDate(d.getDate()+1);
+  }
+  return {agota:null,acaba:restante<=0};
+}
+function rotura(){
+  const hoy=today();
+  const P=plazoMacrif();const ref=P.ref;            // días naturales que tarda Macrif de verdad
+  const d0=iso(new Date(Date.now()-27*864e5));      // últimas 4 semanas
+  const labRec=labEntre(d0,hoy)||1;
+  const ritmoDe=ps=>ps.filter(p=>p.inst&&p.inst>=d0).length/labRec;
+
+  const zona=(ps,b)=>{
+    const stock=ps.filter(p=>p.estado==='en_obra').length;
+    const camino=ps.filter(p=>p.estado==='pedida').length;
+    const porPedir=ps.filter(p=>p.estado==='sin_pedir'||p.estado==='medir').length;
+    const ritmo=ritmoDe(ps);
+    if(ritmo<=0)return {b,ritmo:0,stock,camino,porPedir,falta:ps.filter(p=>!p.inst).length,activo:false,
+      agota:null,acaba:false,cob:null,limite:null,tarde:false,paron:0,faltan:0};
+    const {agota,acaba}=simulaMaterial(ps,ritmo,ref,hoy);
+    const cob=agota?labEntre(hoy,agota):null;
+    const limite=agota?masDias(agota,-ref):null;               // último día para mandar el pedido
+    const tarde=!!(limite&&limite<hoy);
+    // si ya vamos tarde: lo que se pida hoy llega el hoy+ref, y hasta entonces se para
+    const paron=tarde?labEntre(agota,masDias(hoy,ref)):0;
+    return {b,ritmo,stock,camino,porPedir,falta:ps.filter(p=>!p.inst).length,activo:true,
+      agota,acaba,cob,limite,tarde,paron,faltan:Math.ceil(ritmo*paron)};
+  };
+  const bls=[...new Set(LIST.map(p=>p.bl))].sort();
+  const zonas=bls.map(b=>zona(LIST.filter(p=>p.bl===b),b)).sort((a,b)=>{
+    if(a.activo!==b.activo)return a.activo?-1:1;
+    return (a.agota||'9999').localeCompare(b.agota||'9999');
+  });
+  const G=zona(LIST,'TODA');
+  const enRiesgo=zonas.filter(z=>z.activo&&z.agota);
+  const tardes=zonas.filter(z=>z.tarde);
+  return {...G,ref,plazo:P,zonas,enRiesgo,tardes,
+    sinRitmo:G.ritmo<=0,
+    urgente:!!(G.limite&&G.limite<=masDias(hoy,10)),
+    pedTarde:P.tarde.length};
+}
+function panelRotura(){
+  const R=rotura();
+  if(!LIST.length)return '';
+  if(R.sinRitmo)return `<section class="panel dcard"><div class="sechead"><div><h2>${ico('clock')} ¿Cuándo nos quedamos sin material?</h2></div></div>
+    <p class="empty" style="margin:0">Todavía no hay instalaciones en las últimas 4 semanas, así que no se puede medir el ritmo. En cuanto se coloquen piezas, aquí saldrá hasta qué día hay trabajo y cuál es el último día para pedir sin parar.</p></section>`;
+  const hoy=today();
+  const col=R.tarde?'var(--bad)':R.urgente?'var(--warn)':'var(--ok)';
+  const dl=n=>`${n} día${n===1?'':'s'} lab.`;
+  return `<section class="panel dcard rotura">
+    <div class="sechead"><div><h2>${ico('truck')} ¿Cuándo nos quedamos sin material?</h2>
+      <p class="faint" style="margin:2px 0 0;font-size:13px">${R.stock} piezas en obra y ${R.camino} en camino, colocando ${nf1(R.ritmo)} al día laborable. Macrif tarda ${R.ref} días desde que se le pide.</p></div>
+      <button class="btn sm" data-act="goped">Ver pedidos</button></div>
+    <div class="rogrid">
+      <div class="ro" style="--c:${R.agota?'var(--k-en_obra)':'var(--ok)'}"><span class="label">Hay trabajo hasta</span>
+        <b>${R.agota?fd(R.agota):(R.acaba?'el final':'—')}</b>
+        <small>${R.agota?`${dl(R.cob)} contando lo que hay en obra y lo que está pedido`:R.acaba?'con lo que hay en obra y lo pedido se llega a terminar la obra sin parar':'—'}</small></div>
+      <div class="ro" style="--c:${col}"><span class="label">${R.tarde?'Había que haber pedido el':'Último día para pedir'}</span>
+        <b style="color:${col}">${R.limite?fd(R.limite):'—'}</b>
+        <small>${R.tarde?`Vamos tarde: lo que se pida hoy no llega hasta el ${fd(masDias(hoy,R.ref))}.`
+          :R.urgente?'Es en menos de diez días. Conviene mandar el pedido ya.'
+          :R.limite?'Pedido ese día, el material llega justo antes de quedarse sin nada que colocar.'
+          :'No hace falta pedir más para no parar: lo pedido cubre hasta el final.'}</small></div>
+      ${R.tarde?`<div class="ro" style="--c:var(--bad)"><span class="label">Parón previsto</span><b style="color:var(--bad)">${dl(R.paron)}</b>
+        <small>del ${fd(R.agota)} al ${fd(masDias(hoy,R.ref))}. Son ≈ ${R.faltan} piezas que no se van a poder colocar.</small></div>`
+        :`<div class="ro" style="--c:var(--k-sin_pedir)"><span class="label">Dibujadas y sin pedir</span><b>${R.porPedir||'ninguna'}</b>
+        <small>${R.porPedir?`si se piden hoy, no llegan antes del ${fd(masDias(hoy,R.ref))}`:'todo lo dibujado está pedido o en obra'}</small></div>`}
+      ${R.pedTarde?`<div class="ro" style="--c:var(--warn)"><span class="label">Pedidos fuera de plazo</span><b style="color:var(--warn)">${R.pedTarde}</b>
+        <small>${R.plazo.tarde.slice(0,3).map(d=>`${d.num} (${d.dn} días, faltan ${d.pend})`).join(' · ')}. Aquí se cuenta que llegan en ${RETRASO_ASUMIDO} días.</small></div>`:''}
+    </div>
+    ${R.tardes.length?`<div class="roaviso">${ico('alert')}<div><b>${R.tardes.length===1?'Un bloque se va a quedar parado':`${R.tardes.length} bloques se van a quedar parados`}</b>
+      <small>${R.tardes.map(z=>`<b>Bloque ${z.b.slice(1)}</b>: sin material el ${fd(z.agota)}, ${z.paron} días lab. parado`).join(' · ')}. El pedido de estos bloques tenía que haber salido ya.</small></div></div>`:''}
+    <div class="rocards">${R.zonas.map(z=>`<div class="rocard ${z.tarde?'mal':''}">
+      <div class="row" style="justify-content:space-between;align-items:baseline">
+        <b>Bloque ${z.b.slice(1)}</b>${z.activo?`<span class="faint">${nf1(z.ritmo)}/día · ${z.stock} en obra</span>`:'<span class="chip neu">sin actividad</span>'}</div>
+      ${z.activo?`<div class="rocl"><span>Se queda sin material</span><b>${z.agota?fd(z.agota):'no se queda'}</b></div>
+      ${z.limite?`<div class="rocl"><span>Pedir antes del</span><b style="${z.tarde?'color:var(--bad)':''}">${fd(z.limite)}${z.tarde?' · ya pasó':''}</b></div>`:''}
+      <div class="rocl"><span>Da para</span><b>${z.cob!=null?`${z.cob} días lab.`:'hasta el final'}</b></div>`:''}
+      <div class="rocl"><span>En camino · sin pedir</span><b>${z.camino||0} · ${z.porPedir||0}</b></div>
+    </div>`).join('')}</div>
+    <div class="tblwrap rotabla" style="margin-top:10px"><table><thead><tr><th>Bloque</th><th class="r">En obra</th><th class="r">En camino</th><th class="r">Ritmo/día</th><th class="r">Da para</th><th>Se queda sin material</th><th>Pedir antes del</th><th class="r">Sin pedir</th></tr></thead><tbody>
+      ${R.zonas.map(z=>`<tr class="${z.tarde?'ro-mal':''}">
+        <td><b>Bloque ${z.b.slice(1)}</b>${z.activo?'':' <span class="chip neu">sin actividad</span>'}</td>
+        <td class="r">${z.stock||'—'}</td><td class="r">${z.camino||'—'}</td>
+        <td class="r">${z.activo?nf1(z.ritmo):'—'}</td>
+        <td class="r">${z.cob!=null?dl(z.cob):(z.activo?'hasta el final':'—')}</td>
+        <td class="num">${z.agota?fd(z.agota):(z.activo?'<span class="chip ok">no se queda</span>':'—')}</td>
+        <td class="num" style="${z.tarde?'color:var(--bad);font-weight:700':''}">${z.limite?fd(z.limite):'—'}</td>
+        <td class="r">${z.porPedir||'—'}</td></tr>`).join('')}
+    </tbody></table></div>
+    <p class="faint" style="font-size:12.5px;margin:8px 0 0">Se simula día a día: se coloca al ritmo de las últimas 4 semanas de cada bloque y va entrando lo que está pedido según la fecha del pedido más los ${R.ref} días que tarda Macrif (su peor caso medido, no el prometido). Un pedido que ya pasó de plazo se cuenta como si llegara en ${RETRASO_ASUMIDO} días. Los bloques sin actividad reciente no se predicen.</p>
+  </section>`;
+}
+
+/* =================== COPIA DE SEGURIDAD Y EXCEL DE LA OBRA ===================
+   Un .xlsx y un .zip son lo mismo por dentro: un zip de archivos XML. Aquí se montan
+   a mano, sin descargar ninguna librería, para que la copia se pueda hacer también
+   en obra y sin cobertura. Todo ocurre en el móvil o el ordenador: no sale nada fuera. */
+
+/* ---- zip (sin comprimir: rápido y sin dependencias) ---- */
+const _crcT=(()=>{const t=new Uint32Array(256);for(let n=0;n<256;n++){let c=n;for(let k=0;k<8;k++)c=(c&1)?(0xEDB88320^(c>>>1)):(c>>>1);t[n]=c>>>0}return t})();
+function crc32(u8){let c=0xFFFFFFFF;for(let i=0;i<u8.length;i++)c=_crcT[(c^u8[i])&0xFF]^(c>>>8);return (c^0xFFFFFFFF)>>>0}
+const _TE=new TextEncoder();
+const _b=(...n)=>new Uint8Array(n);
+const _u16=n=>[n&255,(n>>8)&255];
+const _u32=n=>[n&255,(n>>8)&255,(n>>16)&255,(n>>>24)&255];
+function zipStore(files){
+  const partes=[],central=[];let off=0;
+  for(const f of files){
+    const nm=_TE.encode(f.name);
+    const d=f.data instanceof Uint8Array?f.data:_TE.encode(String(f.data));
+    const c=crc32(d);
+    const lh=_b(..._u32(0x04034b50),..._u16(20),..._u16(0),..._u16(0),..._u16(0),..._u16(0),
+      ..._u32(c),..._u32(d.length),..._u32(d.length),..._u16(nm.length),..._u16(0));
+    partes.push(lh,nm,d);
+    central.push(_b(..._u32(0x02014b50),..._u16(20),..._u16(20),..._u16(0),..._u16(0),..._u16(0),..._u16(0),
+      ..._u32(c),..._u32(d.length),..._u32(d.length),..._u16(nm.length),..._u16(0),..._u16(0),..._u16(0),..._u16(0),
+      ..._u32(0),..._u32(off)),nm);
+    off+=lh.length+nm.length+d.length;
+  }
+  let cl=0;central.forEach(x=>cl+=x.length);
+  const fin=_b(..._u32(0x06054b50),..._u16(0),..._u16(0),..._u16(files.length),..._u16(files.length),..._u32(cl),..._u32(off),..._u16(0));
+  return new Blob([...partes,...central,fin],{type:'application/zip'});
+}
+
+/* ---- xlsx ---- */
+const xEsc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/[\x00-\x08\x0B\x0C\x0E-\x1F]/g,'');
+function colLetra(n){let s='';n++;while(n>0){const m=(n-1)%26;s=String.fromCharCode(65+m)+s;n=(n-m-1)/26}return s}
+const hojaNombre=s=>String(s).replace(/[\[\]:*?\/\\]/g,' ').slice(0,31);
+function hojaXML(rows,anchos){
+  const cuerpo=rows.map((r,i)=>`<row r="${i+1}">${r.map((v,j)=>{
+    if(v==null||v==='')return '';
+    const ref=colLetra(j)+(i+1);
+    if(typeof v==='number'&&isFinite(v))return `<c r="${ref}"${i?'':' s="1"'}><v>${v}</v></c>`;
+    return `<c r="${ref}" t="inlineStr"${i?'':' s="1"'}><is><t xml:space="preserve">${xEsc(v)}</t></is></c>`;
+  }).join('')}</row>`).join('');
+  const cols=(anchos&&anchos.length)?`<cols>${anchos.map((w,i)=>`<col min="${i+1}" max="${i+1}" width="${w}" customWidth="1"/>`).join('')}</cols>`:'';
+  return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetViews><sheetView workbookViewId="0"><pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/></sheetView></sheetViews>${cols}<sheetData>${cuerpo}</sheetData></worksheet>`;
+}
+// hojas: [{nombre, filas:[[...]], anchos?}]
+function xlsxBlob(hojas){
+  const n=hojas.length;
+  const files=[
+    {name:'[Content_Types].xml',data:`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/>${hojas.map((_,i)=>`<Override PartName="/xl/worksheets/sheet${i+1}.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>`).join('')}</Types>`},
+    {name:'_rels/.rels',data:`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>`},
+    {name:'xl/workbook.xml',data:`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets>${hojas.map((h,i)=>`<sheet name="${xEsc(hojaNombre(h.nombre))}" sheetId="${i+1}" r:id="rId${i+1}"/>`).join('')}</sheets></workbook>`},
+    {name:'xl/_rels/workbook.xml.rels',data:`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">${hojas.map((_,i)=>`<Relationship Id="rId${i+1}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet${i+1}.xml"/>`).join('')}<Relationship Id="rId${n+1}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>`},
+    {name:'xl/styles.xml',data:`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><fonts count="2"><font><sz val="11"/><name val="Calibri"/></font><font><b/><sz val="11"/><name val="Calibri"/></font></fonts><fills count="2"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill></fills><borders count="1"><border/></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="2"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/><xf numFmtId="0" fontId="1" fillId="0" borderId="0" xfId="0" applyFont="1"/></cellXfs><cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>`},
+  ];
+  hojas.forEach((h,i)=>files.push({name:`xl/worksheets/sheet${i+1}.xml`,data:hojaXML(h.filas,h.anchos)}));
+  const z=zipStore(files);
+  return z.slice(0,z.size,'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+}
+
+/* ---- los datos de la obra, hoja a hoja ---- */
+const _f=s=>s?fd(s):'';
+const _est=p=>((typeof ESTM!=='undefined'&&ESTM[p.estado])||{}).n||p.estado||'';
+function hojasObra(){
+  const H=[];
+  const R=(typeof rotura==='function'&&LIST.length)?rotura():null;
+  const V=typeof prevision==='function'?prevision():null;
+  const M=typeof macrifData==='function'?macrifData():null;
+  // 1 · resumen
+  const res=[['Concepto','Valor','Detalle']];
+  res.push(['Fecha de la copia',fd(today()),'']);
+  res.push(['Piezas dibujadas',LIST.length,'sin contar las anuladas']);
+  res.push(['Piezas anuladas',ANUL.length,'fuera del cómputo de la obra']);
+  res.push(['Instaladas',LIST.filter(p=>p.inst).length,LIST.length?Math.round(LIST.filter(p=>p.inst).length/LIST.length*100)+' %':'']);
+  res.push(['En obra sin colocar',LIST.filter(p=>p.estado==='en_obra').length,'']);
+  res.push(['Pedidas sin llegar',LIST.filter(p=>p.estado==='pedida').length,'']);
+  res.push(['Dibujadas sin pedir',LIST.filter(p=>['sin_pedir','medir'].includes(p.estado)).length,'']);
+  res.push(['Con incidencia abierta',LIST.filter(p=>p.open).length,'']);
+  res.push(['Colocadas más de una vez',LIST.filter(p=>p.nReinst).length,'retrabajo']);
+  if(V){res.push(['Ritmo (últimas 4 semanas)',+V.ritmo.toFixed(2),'piezas por día laborable']);
+        res.push(['Fecha prevista de fin',_f(V.fin),V.objetivo?'objetivo: '+_f(V.objetivo):'sin objetivo']);}
+  if(R&&!R.sinRitmo){res.push(['Hay trabajo hasta',_f(R.agota),'con el material que hay en obra']);
+        res.push(['Último día para pedir',_f(R.limite),'plazo medido de Macrif: '+R.ref+' días']);}
+  if(M){res.push(['m² suministrados por Macrif',+(M.m2||0).toFixed(2),M.piezas+' piezas']);}
+  H.push({nombre:'Resumen',filas:res,anchos:[34,18,46]});
+  // 2 · piezas
+  const pz=[['Código','Bloque','Planta','Nº','Tipo','m² despiece','m² albarán','Costillas','Estado',
+    'Instalada el','1ª colocación','Veces colocada','Llegó a obra el','Pedido','Fecha pedido',
+    'Albaranes','Facturas','Palé','Nº incidencias','Incidencia abierta','Notas','Anulada','Motivo anulación']];
+  ALL.forEach(p=>{
+    const anul=p.estado==='descartada';
+    const ia=anul?[...p.incs].reverse().find(x=>x.destino==='descartar'):null;
+    const L=PALOC[p.id];
+    pz.push([p.id,'Bloque '+p.bl.slice(1),PLANTAS[p.pl]||p.pl,p.n,(TIPOS[p.color]||{}).n||'',
+      p.m2??'',p.ent.length?(p.ent[p.ent.length-1].m2??''):'',p.cost??'',_est(p),
+      _f(p.inst),p.nReinst?_f(p.instPri):'',p.nReinst?p.nReinst+1:(p.inst?1:0),
+      p.ent.length?_f(p.ent[0].fecha):'',p.ped||'',_f(p.fped),
+      p.ent.map(e=>e.doc).join(' · '),p.fac.map(f=>f.doc).join(' · '),
+      L?(L.t==='in'?palName(L.g):'devolución nº '+(L.d.num||'')):'',
+      p.incs.length,p.open?(INC_TIPOS[p.open.tipoInc]||''):'',
+      (p.notas||'').replace(/\s+/g,' '),anul?'Sí':'',anul?((ia&&ia.desc)||''):'']);
+  });
+  H.push({nombre:'Piezas',filas:pz,anchos:[13,11,15,5,9,11,11,9,24,12,12,10,13,12,12,18,16,18,8,20,40,8,40]});
+  // 3 · incidencias
+  const inc=[['Pieza','Bloque','Planta','Tipo','Detectada el','Qué se hace','Fase','En palé el','Retirada el','Vuelta el','Reparada el','Resuelta el','Descripción']];
+  ALL.forEach(p=>p.incs.forEach(i=>inc.push([p.id,'Bloque '+p.bl.slice(1),PLANTAS[p.pl]||p.pl,
+    INC_TIPOS[i.tipoInc]||i.tipoInc||'',_f(i.fecha),DESTINOS[i.destino||'']||'',FASES[i._fase]||i._fase||'',
+    _f(i.fechaPale),_f(i.fechaRetirada),_f(i.fechaVuelta),_f(i.fechaReparada),_f(i.fechaResuelta),
+    (i.desc||'').replace(/\s+/g,' ')])));
+  H.push({nombre:'Incidencias',filas:inc,anchos:[13,11,15,26,12,30,16,11,11,11,11,11,44]});
+  // 4 · pedidos de Macrif
+  const ped=[['Pedido','Fecha','Tipo','Piezas','Han llegado','Pendientes','Días desde el pedido','Piezas pendientes']];
+  PEDS.forEach(d=>ped.push([d.num,_f(d.fecha),d.tipo||'',d.lineasX.length,d.llegadas,d.pend,d.dn,
+    d.pendL.map(l=>l.p).join(' ')]));
+  H.push({nombre:'Pedidos Macrif',filas:ped,anchos:[16,12,14,8,11,11,20,60]});
+  // 5 · albaranes y 6 · facturas
+  const alb=[['Albarán','Fecha','Piezas','m²','Sin albarán (entrada manual)','Piezas']];
+  Object.values(S.albs).sort((a,b)=>(a.fecha||'').localeCompare(b.fecha||'')).forEach(a=>{
+    const ls=a.lineas||[];alb.push([a.num,_f(a.fecha),ls.length,+ls.reduce((t,l)=>t+(+l.m2||0),0).toFixed(3),
+      a.sinAlbaran?'Sí':'',ls.map(l=>l.p).join(' ')])});
+  H.push({nombre:'Albaranes Macrif',filas:alb,anchos:[16,12,8,11,26,60]});
+  const fac=[['Factura','Fecha','Piezas','m² rojas','m² verdes y amarillas','m² machihembrado','m² de los 3 conceptos','Importe','€/m²','Piezas']];
+  const _fl=Object.values(S.facts).sort((a,b)=>(a.fecha||'').localeCompare(b.fecha||''));
+  _fl.forEach(f=>{
+    const ls=f.lineas||[],d=facDes(f);
+    fac.push([f.num,_f(f.fecha),ls.length,+d.R.toFixed(3),+d.VA.toFixed(3),+d.machi.toFixed(3),+d.total.toFixed(3),
+      f.total??'',f.precio??'',ls.map(l=>l.p).join(' ')])});
+  if(_fl.length){const dT=facDesTotal(_fl);
+    fac.push(['TOTAL','',dT.nR+dT.nVA+dT.nSin,+dT.R.toFixed(3),+dT.VA.toFixed(3),+dT.machi.toFixed(3),+dT.total.toFixed(3),'','',''])}
+  H.push({nombre:'Facturas Macrif',filas:fac,anchos:[16,12,8,11,20,18,19,12,10,60]});
+  // 7 · palés
+  const pal=[['Tipo','Palé','Fecha','Estado','Piezas','Códigos']];
+  PALES.forEach(g=>pal.push(['Llegada',palName(g),_f(g.fecha),g.st==='cerrado'?'sin abrir':g.st==='abierto'?'abierto':'vacío',
+    g.total,g.lineas.join(' ')]));
+  DEVS.forEach(d=>pal.push(['Devolución',d.virtual?'sin número':'nº '+(d.num||''),_f(d.creado),
+    d.enviado?'enviado el '+_f(d.enviado):'preparándose',d.items.length,d.items.map(x=>x.p.id).join(' ')]));
+  H.push({nombre:'Palés',filas:pal,anchos:[13,22,12,20,8,60]});
+  // 8 · otros proveedores
+  const pr=[['Proveedor','Documento','Número','Fecha','Concepto','Cantidad','m²','Importe']];
+  const vol=(prov,k,nom)=>Object.values((prov==='ainan'?S.ainan:S.bet)[k]||{})
+    .sort((a,b)=>(a.fecha||'').localeCompare(b.fecha||''))
+    .forEach(d=>(d.lineas||[]).forEach(l=>pr.push([PROVS[prov].n,nom,d.num,_f(d.fecha),
+      l.concepto||'',l.cant??l.placas??'',l.m2??'',l.importe??d.total??''])));
+  ['ped','alb','fac'].forEach(k=>{const nom={ped:'Pedido',alb:'Albarán',fac:'Factura'}[k];
+    vol('ainan',k,nom);vol('betacril',k,nom)});
+  H.push({nombre:'Otros proveedores',filas:pr,anchos:[20,12,22,12,46,11,11,12]});
+  return H;
+}
+
+/* ---- la copia de seguridad de verdad: todo tal cual está guardado ---- */
+function copiaRows(){
+  const rows=[];const add=(col,id,data)=>{if(data!=null)rows.push({col,id,data})};
+  Object.values(S.bloques||{}).forEach(b=>Object.entries(b.piezas||{}).forEach(([id,d])=>add('pieza',id,d)));
+  const mapa={pedidos:S.peds,albaranes:S.albs,facturas:S.facts,pales:S.pales,retiradas:S.rets,revisiones:S.revs,adjuntos:S.adj};
+  Object.entries(mapa).forEach(([col,o])=>Object.entries(o||{}).forEach(([id,d])=>add(col,id,d)));
+  ['ped','alb','fac'].forEach(k=>{
+    Object.entries((S.ainan||{})[k]||{}).forEach(([id,d])=>add({ped:'ainan_pedidos',alb:'ainan_albaranes',fac:'ainan_facturas'}[k],id,d));
+    Object.entries((S.bet||{})[k]||{}).forEach(([id,d])=>add({ped:'betacril_pedidos',alb:'betacril_albaranes',fac:'betacril_facturas'}[k],id,d));
+  });
+  add('config','proyecto',S.cfg);add('config','objetivo',S.plan);
+  return rows;
+}
+function copiaSQL(rows){
+  const q=s=>String(s).replace(/'/g,"''");
+  return `-- =====================================================================
+-- SKY MARBELLA · COPIA DE SEGURIDAD DEL ${fd(today())}
+-- ${rows.length} registros. Hecha desde la app por ${me()||'—'}.
+--
+-- ESTO RESTAURA LA OBRA AL ESTADO DE ESE DÍA.
+-- No lo ejecutes salvo que quieras volver atrás: machaca lo que haya ahora.
+-- Se pega entero en Supabase > SQL Editor > New query > Run.
+-- =====================================================================
+insert into public.docs (col,id,data,updated_by) values
+${rows.map(r=>`('${q(r.col)}','${q(r.id)}','${q(JSON.stringify(r.data))}'::jsonb,'copia')`).join(',\n')}
+on conflict (col,id) do update set data = excluded.data;
+`;
+}
+function bajar(nombre,blob){
+  const u=URL.createObjectURL(blob);const a=document.createElement('a');
+  a.href=u;a.download=nombre;document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(u),8000);
+}
+const copiaFecha=()=>{try{return localStorage.getItem('sky-copia')||''}catch(e){return ''}};
+function marcarCopia(){try{localStorage.setItem('sky-copia',today())}catch(e){}}
+
+async function descargarExcel(){
+  toast('Preparando el Excel…');
+  const b=xlsxBlob(hojasObra());
+  bajar(`SKY-MARBELLA-obra-${today()}.xlsx`,b);
+  toast('Excel descargado: una hoja por cada cosa de la obra');
+}
+async function descargarCopia(){
+  toast('Preparando la copia…');
+  const rows=copiaRows();
+  const resumen=`SKY MARBELLA · copia de seguridad del ${fd(today())}
+Hecha por: ${me()||'—'}
+
+Qué hay en esta carpeta
+  datos.json      todos los registros tal cual están guardados (${rows.length})
+  restaurar.sql   el mismo contenido listo para devolverlo a Supabase
+  obra.xlsx       la obra en Excel, para leerla sin la app
+
+Cómo se restaura
+  Abrir Supabase > SQL Editor > New query, pegar restaurar.sql entero y pulsar Run.
+  OJO: eso deja la obra como estaba el ${fd(today())} y machaca lo que haya en ese momento.
+  No hace falta para nada más: para consultar los datos vale con obra.xlsx.
+
+Resumen de la obra ese día
+  ${LIST.length} piezas dibujadas · ${LIST.filter(p=>p.inst).length} instaladas · ${ANUL.length} anuladas
+  ${Object.keys(S.albs||{}).length} albaranes · ${Object.keys(S.facts||{}).length} facturas · ${Object.keys(S.peds||{}).length} pedidos
+`;
+  const xls=xlsxBlob(hojasObra());
+  const buf=new Uint8Array(await xls.arrayBuffer());
+  const z=zipStore([
+    {name:'datos.json',data:JSON.stringify(rows,null,1)},
+    {name:'restaurar.sql',data:copiaSQL(rows)},
+    {name:'obra.xlsx',data:buf},
+    {name:'LEEME.txt',data:resumen},
+  ]);
+  bajar(`SKY-MARBELLA-copia-${today()}.zip`,z);
+  marcarCopia();
+  toast(`Copia descargada: ${rows.length} registros. Guárdala donde no se pierda.`);
+}
+
+/* ---- panel ---- */
+function panelDatos(){
+  const rows=copiaRows().length;
+  const ult=copiaFecha();
+  const dias=ult?diasNat(ult):null;
+  const viejo=!ult||dias>=30;
+  return `<section class="panel dcard datos">
+    <div class="sechead"><div><h2>${ico('down')} Copia de seguridad y Excel</h2>
+      <p class="faint" style="margin:2px 0 0;font-size:13px">Toda la obra cabe en un archivo. Se prepara aquí mismo, en este dispositivo: no pasa por ningún sitio.</p></div></div>
+    <div class="datosgrid">
+      <button class="datosbtn" data-act="bajaexcel"><span class="di">${ico('select')}</span>
+        <span><b>Excel de la obra</b><small>Una hoja por cada cosa: piezas, incidencias, pedidos, albaranes, facturas, palés y proveedores. Para mirar, filtrar o mandar a quien haga falta.</small></span></button>
+      <button class="datosbtn pri" data-act="bajacopia"><span class="di">${ico('box')}</span>
+        <span><b>Copia de seguridad completa</b><small>Un zip con los ${rows} registros, el Excel y el archivo que los devuelve a su sitio si algún día pasa algo.</small></span></button>
+    </div>
+    <div class="copiaest ${viejo?'mal':''}">${ico(viejo?'alert':'check')}<span>${ult
+      ? `Última copia: <b>${fd(ult)}</b>${dias?` · hace ${dias} día${dias===1?'':'s'}`:' · hoy'}${viejo?'. Conviene bajar otra.':''}`
+      : '<b>Todavía no has bajado ninguna copia.</b> Los datos de la obra viven solo en Supabase; una copia al mes te cubre un susto que no tiene vuelta atrás.'}</span></div>
+  </section>`;
+}
+
 /* =================== acciones =================== */
 let toastT;function toast(t,acts,sticky){clearTimeout(toastT);let el=$('#toast');if(!el){el=document.createElement('div');el.id='toast';el.className='toast';el.setAttribute('role','status');document.body.appendChild(el)}
   el.innerHTML='';const s=document.createElement('span');s.textContent=t;el.appendChild(s);el.classList.toggle('err',sticky===true);el.classList.toggle('inc',sticky==='inc');
@@ -3722,6 +4252,14 @@ document.addEventListener('click',async e=>{
   if(t.dataset.open&&!t.dataset.act){UI.live=false;if(UI.drawerPale){UI.drawerPale=null}openPiece(t.dataset.open);return}
   const a=t.dataset.act,id=t.dataset.id;
   switch(a){
+  case 'busopen':UI.busSheet=true;UI.navMore=false;UI.busQ=UI.busQ||'';renderDrawer();return;
+  case 'cerrarbus':UI.busSheet=false;UI.busQ='';renderDrawer();return;
+  case 'busgo':{const k=t.dataset.k,v=t.dataset.v,m=t.dataset.m;UI.busSheet=false;UI.busQ='';
+    if(k==='pieza'){renderDrawer();openPiece(v);return}
+    if(k==='pale'){UI.drawerPale=v;renderDrawer();return}
+    UI.tab='macrif';UI.prov=v;if(m){UI.mtab=m;UI.atab=m;UI.btab=m}saveUI();$('#main').dataset.view='';render();$('#main').scrollTop=0;return}
+  case 'bajaexcel':descargarExcel();return;
+  case 'bajacopia':descargarCopia();return;
   case 'closelight':if(e.target.closest('.lbscroll')&&!e.target.closest('[data-act]'))return;$('#lightbox').innerHTML='';return;
   case 'lbzoom':{const lb=$('.lightbox.plano');if(lb)lb.classList.toggle('zoomed');return}
   case 'bgclose':if(e.target===t){UI.live=false;UI.drawer=null;UI.drawerPale=null;if(UI.tab==='plano')UI.focus=null;render()}return;
@@ -3979,7 +4517,9 @@ document.addEventListener('change',async e=>{
   if(id==='hide-rev'){UI.hideRev=e.target.checked;rerenderKeepScroll();return}
   if(e.target.dataset.incdest){const k=e.target.dataset.incdest;document.querySelectorAll(`[data-for][data-k="${CSS.escape(k)}"]`).forEach(el=>el.hidden=el.dataset.for!==e.target.value);return}
   if(id==='seldate')UI.instDate=e.target.value;
-  if(id==='findpiece'||id==='gsearch'){const v=e.target.value;if(v.trim()){const hit=normCode(v);if(hit){openPiece(hit);if(id==='gsearch')e.target.value=''}else toast('No encontrada: prueba «3p114» o «B03-P1-14»')}return}
+  if(id==='findpiece'||id==='gsearch'){const v=e.target.value;if(v.trim()){const hit=normCode(v);
+    if(hit){openPiece(hit);if(id==='gsearch')e.target.value=''}
+    else{UI.busSheet=true;UI.busQ=v;if(id==='gsearch')e.target.value='';e.target.blur();renderDrawer()}}return}
   if(id==='incf-photo'){const f=e.target.files&&e.target.files[0];if(f&&UI.incF){const de=$('#incf-desc'),fe=$('#incf-fecha');if(de)UI.incF.desc=de.value;if(fe)UI.incF.fecha=fe.value;UI.incF.file=f;rerenderKeepScroll()}return}
   if(e.target.dataset.pfoto){
     const file=e.target.files&&e.target.files[0];if(!file)return;
@@ -4009,6 +4549,16 @@ document.addEventListener('change',async e=>{
 });
 let tfT;document.addEventListener('input',e=>{if(e.target.id==='tf-q'){clearTimeout(tfT);tfT=setTimeout(()=>{UI.tf.q=e.target.value;render();const el=$('#tf-q');el.focus();el.setSelectionRange(el.value.length,el.value.length)},250)}});
 document.addEventListener('toggle',e=>{const el=e.target;if(el.classList&&el.classList.contains('doccard')){if(el.open)UI.mopen=el.dataset.key;else if(UI.mopen===el.dataset.key)UI.mopen=null}},true);
+// lo que se escribe en el buscador, con un respiro para no recalcular en cada tecla
+let busT;document.addEventListener('input',e=>{if(e.target.id==='bus-q'){UI.busQ=e.target.value;
+  clearTimeout(busT);busT=setTimeout(()=>{const c=$('#bus-res');if(c)c.innerHTML=busResultados()},160)}});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'&&UI.busSheet){UI.busSheet=false;UI.busQ='';renderDrawer();return}
+  if(e.key!=='/'||e.ctrlKey||e.metaKey||e.altKey)return;
+  const t=e.target,tag=(t.tagName||'').toLowerCase();
+  if(tag==='input'||tag==='textarea'||tag==='select'||t.isContentEditable)return;
+  e.preventDefault();UI.busSheet=true;UI.navMore=false;UI.busQ=UI.busQ||'';renderDrawer();
+});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('#pdfprev').hidden){cerrarPrevia();return}if(e.key==='Escape'&&UI.live){UI.live=false;renderDrawer();return}if(e.key==='/'&&!/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)){const g=$('#gsearch');if(g){e.preventDefault();g.focus()}return}if(e.key==='Escape'){if(UI.navMore){UI.navMore=false;kpis();return}if($('#lightbox').innerHTML){$('#lightbox').innerHTML='';return}if(UI.drawer){UI.drawer=null;render()}else if(UI.multi){UI.multi=false;UI.sel.clear();render()}else if(UI.focus){UI.focus=null;render()}}});
 
 /* arrastrar bloques y secciones para reordenarlos */
