@@ -1144,7 +1144,21 @@ body.pvopen{overflow:hidden}
 .nectab td.sep .necsub{text-align:right}
 .nectab tfoot td{border-top:2px solid var(--line2);font-weight:700;color:var(--ink2);font-size:12.5px}
 /* el resumen de arriba puede ser largo: que parta linea en vez de empujar la pagina */
-.necs .sechead .chip{white-space:normal;max-width:100%}
+.necs .sechead .chip{display:inline-block;white-space:normal;max-width:100%;line-height:1.45}
+.nectab td.est{color:var(--ink3)}
+.nectab th small{display:block;font-weight:500;font-size:10px;letter-spacing:0;text-transform:none;color:var(--ink3);margin-top:1px}
+.necsub.ok{color:var(--accent)}
+.necsub.falta{color:var(--bad,#C0392B);font-weight:700}
+.nectab td.sep .necsub.ok,.nectab td.sep .necsub.falta{text-align:right}
+/* en el movil la tabla no cabe: se arrastra de lado, pero el nombre del material
+   se queda pegado a la izquierda para no perder de vista de que fila es */
+@media(max-width:700px){
+  .nectab td:first-child .faint{display:none}
+  .nectab td:first-child,.nectab th:first-child{white-space:nowrap;position:sticky;left:0;z-index:2}
+  .nectab td:first-child{background:var(--panel);box-shadow:1px 0 0 var(--line)}
+  .nectab th:first-child{box-shadow:1px 0 0 var(--line)}
+  .nectab th small{display:none}
+}
 .mbody.pad{padding:14px}
 .costgrid{display:grid;grid-template-columns:minmax(260px,1fr) 2fr;gap:14px;align-items:start}
 .costhero{border:2px solid var(--accent);border-radius:10px;padding:14px;background:var(--accentSoft)}
@@ -1291,6 +1305,10 @@ const pedKey=p=>p.inst?'instalada':p.ent.length?'en_obra':p.peds.length?'pedida'
    Por cada costilla: 2 escuadras, 3 tacos keil y 4 tornillos de 5,5x25.
    Por cada escuadra: 1 tornillo a hormigón. */
 const COST_DEF=2;
+/* piezas que se preven en total, incluidos los bloques 8, 9 y 10 que todavia no
+   estan dibujados. Sirve para la columna "Estimado": cuando entren esos bloques
+   y el dibujo suba de las 778 de ahora, esta cifra deja de hacer falta. */
+const PIEZAS_EST=1111;
 const costTipo=p=>p.pergola?'B':'A';
 const costDe=p=>{const n=(p.cost==null?COST_DEF:+p.cost);return isFinite(n)&&n>=0?n:COST_DEF};
 /* los seis materiales que se controlan, en orden de aparicion en la tabla */
@@ -3740,8 +3758,15 @@ function costillasData(){
     // lo mismo visto desde las piezas: lo que ya esta puesto y lo que espera en obra
     const dk={costA:'A',costB:'B'}[k]||k;
     const colocado=Dinst[dk]||0, sinColocar=Dsin[dk]||0, paraObra=colocado+sinColocar;
-    return {k,n,nota,nec,ped,obra,pedEf,esCost,colocado,paraObra,sinColocar,
+    // lo mismo pero contando las piezas que se preven en total, no solo las dibujadas
+    const est=D.piezas?Math.round(nec/D.piezas*PIEZAS_EST):0;
+    // de lo que ha llegado, lo que ya se gasto en las piezas puestas y lo que queda
+    const quedaObra=Math.max(0,obra-colocado);
+    // y si eso llega o no para las piezas que estan en obra esperando
+    const sobraObra=quedaObra-sinColocar;
+    return {k,n,nota,nec,est,ped,obra,pedEf,esCost,colocado,paraObra,sinColocar,quedaObra,sobraObra,
             porLlegar:Math.max(0,nec-paraObra),
+            faltaEst:Math.max(0,est-pedEf),
             faltaPedir:Math.max(0,nec-pedEf),faltaLlegar:Math.max(0,pedEf-obra)};
   });
   return {peds,albs,facs,nec,necObra,necInst,ped,lleg,fac,porBl,sinBl,D,Dobra,Dinst,mat,docPed,docObra,vacio:!peds.length&&!albs.length&&!facs.length};
@@ -3814,35 +3839,49 @@ function panelNecesidades(){
         const val=campo==='ped'?r.ped:r.obra;
         return `<td class="r">${nf(val)}</td>`;
       };
+      // "queda en obra": lo que ha llegado menos lo que ya se ha gastado en lo puesto.
+      // Debajo dice si llega o no para las piezas que estan en obra sin colocar.
+      const celdaQueda=r=>{
+        if(!r.obra)return '<td class="r sep">\u2014</td>';
+        if(!r.sinColocar)return `<td class="r sep">${nf(r.quedaObra)}</td>`;
+        const s=r.sobraObra;
+        const pie=s>0?`<small class="necsub ok">sobran ${nf(s)}</small>`
+                 :s===0?'<small class="necsub ok">justo</small>'
+                 :`<small class="necsub falta">faltan ${nf(-s)} \u00b7 pedir ya</small>`;
+        return `<td class="r sep ${s<0?'mal':''}">${nf(r.quedaObra)}${pie}</td>`;
+      };
       const fila=r=>`<tr>
         <td><b>${r.n}</b> <span class="faint">${r.nota}</span></td>
         <td class="r"><b>${nf(r.nec)}</b></td>
-        <td class="r">${r.colocado?nf(r.colocado):'\u2014'}</td>
+        <td class="r est">${r.est?nf(r.est):'\u2014'}</td>
+        <td class="r sep">${r.colocado?nf(r.colocado):'\u2014'}</td>
         <td class="r ${r.sinColocar?'listo':''}">${r.sinColocar?nf(r.sinColocar):'\u2014'}</td>
         <td class="r sep">${r.obra?nf(r.obra):'\u2014'}${r.faltaLlegar?`<small class="necsub"><i>${nf(r.faltaLlegar)} por llegar</i></small>`:''}</td>
+        ${celdaQueda(r)}
         <td class="r ${r.faltaPedir?'mal':'bien'}">${r.faltaPedir?nf(r.faltaPedir):'\u2014'}</td></tr>`;
       const totPedir=C.mat.reduce((t,r)=>t+r.faltaPedir,0);
       return `<section class="panel dcard necs">
         <div class="sechead"><div><h2>${ico('wrench')} Material necesario</h2>
-          <p class="faint" style="margin:2px 0 0;font-size:13px">Lo que hace falta para terminar la obra, calculado sobre las ${nf(C.D.piezas)} piezas dibujadas con ${COST_DEF} costillas por pieza. <b>Colocado</b> es lo que ya va puesto y <b>en obra sin colocar</b> lo que hace falta para las piezas que ya están en obra esperando. <b>Llegado a obra</b> es el material que de verdad ha entrado, contado de los albaranes de Ainan y de lo que anotes en Movimiento de material. ${C.D.pergolas?`${nf(C.D.pergolas)} son de p\u00e9rgola y llevan costilla B.`:'Todav\u00eda no has marcado ninguna pieza como p\u00e9rgola, as\u00ed que todas las costillas salen de tipo A.'}</p></div>
+          <p class="faint" style="margin:2px 0 0;font-size:13px">Lo que hace falta para terminar la obra, calculado sobre las ${nf(C.D.piezas)} piezas dibujadas con ${COST_DEF} costillas por pieza. <b>Colocado</b> es lo que ya va puesto y <b>en obra sin colocar</b> lo que hace falta para las piezas que ya están en obra esperando. <b>Llegado a obra</b> es el material que de verdad ha entrado, contado de los albaranes de Ainan y de lo que anotes en Movimiento de material, y <b>queda en obra</b> es lo que sobra de eso una vez descontado lo que ya se ha gastado en lo colocado: debajo te dice si llega o no para las piezas que esperan. <b>Estimado</b> cuenta ${nf(PIEZAS_EST)} piezas en total en vez de las ${nf(C.D.piezas)} dibujadas, para prever los bloques 8, 9 y 10. ${C.D.pergolas?`${nf(C.D.pergolas)} son de p\u00e9rgola y llevan costilla B.`:'Todav\u00eda no has marcado ninguna pieza como p\u00e9rgola, as\u00ed que todas las costillas salen de tipo A.'}</p></div>
           ${totPedir?`<span class="chip bad">faltan ${nf(totPedir)} unidades por pedir</span>`:'<span class="chip ok">todo pedido</span>'}
           ${(()=>{const o=C.mat.reduce((t,r)=>t+r.paraObra,0),s=C.mat.reduce((t,r)=>t+r.sinColocar,0);
-            return o?`<span class="chip">${nf(o)} unidades para las piezas que hay en obra${s?`, de las que <b>${nf(s)}</b> son para las que faltan por colocar`:''}</span>`:''})()}</div>
+            return o?`<span class="chip">${nf(o)} unidades para las piezas que hay en obra${s?`, de las que <b>${nf(s)}</b> son para las que faltan por colocar`:''}</span>`:''})()}
+          ${(()=>{const f=C.mat.filter(r=>r.obra&&r.sinColocar&&r.sobraObra<0);
+            return f.length?`<span class="chip bad">no llega para las piezas que esperan en obra: ${f.map(r=>`<b>${r.n.toLowerCase()}</b> (faltan ${nf(-r.sobraObra)})`).join(', ')} \u00b7 hay que pedir cuanto antes</span>`:''})()}</div>
         <div class="tblwrap"><table class="nectab"><thead><tr>
           <th rowspan="2">Material</th>
-          <th class="r grp" colspan="3">Lo que hace falta, seg\u00fan las piezas</th>
-          <th class="r grp sep" colspan="2">Lo que tenemos, seg\u00fan albaranes y movimiento</th>
+          <th class="r grp" colspan="2">Para toda la obra</th>
+          <th class="r grp sep" colspan="2">Para las piezas que hay en obra</th>
+          <th class="r grp sep" colspan="3">Lo que tenemos, seg\u00fan albaranes y movimiento</th>
         </tr><tr>
-          <th class="r">Necesario</th><th class="r">Colocado</th><th class="r">En obra sin colocar</th>
-          <th class="r sep">Llegado a obra</th><th class="r">Falta por pedir</th>
-        </tr></thead><tbody>${C.mat.map(fila).join('')}</tbody>
-        <tfoot><tr><td>Total de unidades</td>
-          <td class="r">${nf(C.mat.reduce((t,r)=>t+r.nec,0))}</td>
-          <td class="r">${nf(C.mat.reduce((t,r)=>t+r.colocado,0))}</td>
-          <td class="r">${nf(C.mat.reduce((t,r)=>t+r.sinColocar,0))}</td>
-          <td class="r sep">${nf(C.mat.reduce((t,r)=>t+r.obra,0))}</td>
-          <td class="r">${nf(C.mat.reduce((t,r)=>t+r.faltaPedir,0))}</td></tr></tfoot></table></div>
-        <p class="faint" style="margin:10px 0 0;font-size:12.5px">Las <b>costillas</b> salen de los pedidos y albaranes de Mecanizados Ainan. Las <b>escuadras, tornillos y tacos</b> salen de lo que anotes en <b>Movimiento de material</b>. Aqu\u00ed no se escribe nada a mano: esta tabla solo suma.</p>
+          <th class="r">Necesario<small>las ${nf(C.D.piezas)} dibujadas</small></th>
+          <th class="r">Estimado<small>${nf(PIEZAS_EST)} previstas</small></th>
+          <th class="r sep">Colocado</th><th class="r">Sin colocar</th>
+          <th class="r sep">Llegado a obra</th>
+          <th class="r">Queda en obra<small>\u00bfllega para lo que espera?</small></th>
+          <th class="r">Falta por pedir</th>
+        </tr></thead><tbody>${C.mat.map(fila).join('')}</tbody></table></div>
+        <p class="faint" style="margin:10px 0 0;font-size:12.5px">Las <b>costillas</b> salen de los pedidos y albaranes de Mecanizados Ainan. Las <b>escuadras, tornillos y tacos</b> salen de lo que anotes en <b>Movimiento de material</b>. Aqu\u00ed no se escribe nada a mano: esta tabla solo suma. Las ${nf(PIEZAS_EST)} piezas previstas son una estimaci\u00f3n puesta a mano; cuando entren los bloques 8, 9 y 10 el <b>Necesario</b> ya ser\u00e1 el de verdad.</p>
       </section>`})();
     return necBloque;
 }
