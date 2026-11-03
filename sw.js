@@ -1,7 +1,10 @@
 // SKY MARBELLA · permite abrir la app sin cobertura
-const V='sky-v23';
+const V='sky-v25';
 const CORE=['./','index.html'];
-const PLANOS=["planos_PEDIDO_07.js", "planos_PEDIDO_14.js", "planos_PEDIDO_15.js", "planos_PEDIDO_16.js", "planos_PEDIDO_17.js", "planos_PEDIDO_18.js", "planos_PEDIDO_19.js", "pdf.js", "pdf.worker.js"];
+// Los planos (31 archivos, unos 33 MB) ya NO se bajan todos al instalar: seria una
+// barbaridad en el movil con datos. Cada plano se guarda solo cuando se abre una vez,
+// y a partir de ahi ya se ve sin cobertura. Esto si conviene tenerlo de antemano.
+const PLANOS=["pdf.js", "pdf.worker.js"];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(V).then(c=>c.addAll(CORE)).then(()=>self.skipWaiting()));
   caches.open(V).then(c=>Promise.all(PLANOS.map(u=>c.match(u).then(m=>m||fetch(u).then(r=>r.ok&&c.put(u,r)).catch(()=>{})))))});
 self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==V).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
