@@ -1139,6 +1139,9 @@ body.pvopen{overflow:hidden}
 .necsub{display:block;font-size:11.5px;color:var(--ink3);margin-top:2px}
 .necsub i{font-style:normal;color:var(--warn,#C9820B)}
 .nectab td.listo{color:var(--accent);font-weight:700}
+.nectab th.grp{font-size:10.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--ink3);font-weight:700;text-align:center;padding-bottom:2px}
+.nectab .sep{border-left:2px solid var(--line2)}
+.nectab td.sep .necsub{text-align:right}
 .nectab tfoot td{border-top:2px solid var(--line2);font-weight:700;color:var(--ink2);font-size:12.5px}
 /* el resumen de arriba puede ser largo: que parta linea en vez de empujar la pagina */
 .necs .sechead .chip{white-space:normal;max-width:100%}
@@ -3816,23 +3819,29 @@ function panelNecesidades(){
         <td class="r"><b>${nf(r.nec)}</b></td>
         <td class="r">${r.colocado?nf(r.colocado):'\u2014'}</td>
         <td class="r ${r.sinColocar?'listo':''}">${r.sinColocar?nf(r.sinColocar):'\u2014'}</td>
+        <td class="r sep">${r.obra?nf(r.obra):'\u2014'}${r.faltaLlegar?`<small class="necsub"><i>${nf(r.faltaLlegar)} por llegar</i></small>`:''}</td>
         <td class="r ${r.faltaPedir?'mal':'bien'}">${r.faltaPedir?nf(r.faltaPedir):'\u2014'}</td></tr>`;
       const totPedir=C.mat.reduce((t,r)=>t+r.faltaPedir,0);
       return `<section class="panel dcard necs">
         <div class="sechead"><div><h2>${ico('wrench')} Material necesario</h2>
-          <p class="faint" style="margin:2px 0 0;font-size:13px">Lo que hace falta para terminar la obra, calculado sobre las ${nf(C.D.piezas)} piezas dibujadas con ${COST_DEF} costillas por pieza. <b>Colocado</b> es lo que ya va puesto y <b>en obra sin colocar</b> lo que hace falta para las piezas que ya están en obra esperando. ${C.D.pergolas?`${nf(C.D.pergolas)} son de p\u00e9rgola y llevan costilla B.`:'Todav\u00eda no has marcado ninguna pieza como p\u00e9rgola, as\u00ed que todas las costillas salen de tipo A.'}</p></div>
+          <p class="faint" style="margin:2px 0 0;font-size:13px">Lo que hace falta para terminar la obra, calculado sobre las ${nf(C.D.piezas)} piezas dibujadas con ${COST_DEF} costillas por pieza. <b>Colocado</b> es lo que ya va puesto y <b>en obra sin colocar</b> lo que hace falta para las piezas que ya están en obra esperando. <b>Llegado a obra</b> es el material que de verdad ha entrado, contado de los albaranes de Ainan y de lo que anotes en Movimiento de material. ${C.D.pergolas?`${nf(C.D.pergolas)} son de p\u00e9rgola y llevan costilla B.`:'Todav\u00eda no has marcado ninguna pieza como p\u00e9rgola, as\u00ed que todas las costillas salen de tipo A.'}</p></div>
           ${totPedir?`<span class="chip bad">faltan ${nf(totPedir)} unidades por pedir</span>`:'<span class="chip ok">todo pedido</span>'}
           ${(()=>{const o=C.mat.reduce((t,r)=>t+r.paraObra,0),s=C.mat.reduce((t,r)=>t+r.sinColocar,0);
             return o?`<span class="chip">${nf(o)} unidades para las piezas que hay en obra${s?`, de las que <b>${nf(s)}</b> son para las que faltan por colocar`:''}</span>`:''})()}</div>
         <div class="tblwrap"><table class="nectab"><thead><tr>
-          <th>Material</th><th class="r">Necesario</th><th class="r">Colocado</th>
-          <th class="r">En obra sin colocar</th><th class="r">Falta por pedir</th>
+          <th rowspan="2">Material</th>
+          <th class="r grp" colspan="3">Lo que hace falta, seg\u00fan las piezas</th>
+          <th class="r grp sep" colspan="2">Lo que tenemos, seg\u00fan albaranes y movimiento</th>
+        </tr><tr>
+          <th class="r">Necesario</th><th class="r">Colocado</th><th class="r">En obra sin colocar</th>
+          <th class="r sep">Llegado a obra</th><th class="r">Falta por pedir</th>
         </tr></thead><tbody>${C.mat.map(fila).join('')}</tbody>
-        <tfoot><tr><td>Para las piezas que hay en obra</td>
-          <td class="r">\u2014</td>
+        <tfoot><tr><td>Total de unidades</td>
+          <td class="r">${nf(C.mat.reduce((t,r)=>t+r.nec,0))}</td>
           <td class="r">${nf(C.mat.reduce((t,r)=>t+r.colocado,0))}</td>
           <td class="r">${nf(C.mat.reduce((t,r)=>t+r.sinColocar,0))}</td>
-          <td class="r">\u2014</td></tr></tfoot></table></div>
+          <td class="r sep">${nf(C.mat.reduce((t,r)=>t+r.obra,0))}</td>
+          <td class="r">${nf(C.mat.reduce((t,r)=>t+r.faltaPedir,0))}</td></tr></tfoot></table></div>
         <p class="faint" style="margin:10px 0 0;font-size:12.5px">Las <b>costillas</b> salen de los pedidos y albaranes de Mecanizados Ainan. Las <b>escuadras, tornillos y tacos</b> salen de lo que anotes en <b>Movimiento de material</b>. Aqu\u00ed no se escribe nada a mano: esta tabla solo suma.</p>
       </section>`})();
     return necBloque;
