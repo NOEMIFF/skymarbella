@@ -1,5 +1,5 @@
 // SKY MARBELLA · permite abrir la app sin cobertura
-const V='sky-v26';
+const V='sky-v28';
 const CORE=['./','index.html'];
 // Los planos (31 archivos, unos 33 MB) ya NO se bajan todos al instalar: seria una
 // barbaridad en el movil con datos. Cada plano se guarda solo cuando se abre una vez,
@@ -19,3 +19,4 @@ self.addEventListener('fetch',e=>{
     fetch(e.request).then(r=>{clearTimeout(t);if(r.ok&&(e.request.mode==='navigate'||/index\.html$|\/$/.test(u.pathname))){const cp=r.clone();caches.open(V).then(c=>c.put('index.html',cp))}if(!done){done=true;res(r)}}).catch(()=>{clearTimeout(t);caches.match('index.html').then(m=>{if(!done){done=true;res(m||Response.error())}})});
   }));
 });
+ 
